@@ -1,0 +1,117 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      new_version: ${{ steps.configure.outputs.NEW_VERSION }}
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+
+      - name: "Setup Java 17"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: "Configure"
+        id: configure
+        run: |
+          VERSION=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)
+          NEW_VERSION=$(echo $VERSION | awk -F. '{$NF = $NF + 1;} 1' OFS=.)
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"      
+      - name: "Bump version"
+        run: mvn versions:set -DnewVersion=$NEW_VERSION
+        env:
+          NEW_VERSION: ${{ steps.configure.outputs.new_version }}
+
+      - name: "Compile"
+        run: mvn clean compile
+
+      - name: Create tag
+        run: |
+          git add pom.xml
+          git commit -m "Bump version to $NEW_VERSION [skip ci]"
+          git tag v$NEW_VERSION
+          git push
+          git push --tags
+        env:
+          NEW_VERSION: ${{ steps.configure.outputs.new_version }}
+  build:
+    needs: create_tag
+    strategy:
+      matrix:
+        include:
+          - id: "deb-build"
+            os: ubuntu-22.04
+            build: "mvn clean compile package jpackage:jpackage"
+            path: |
+                dist/*.deb
+                target/*.jar
+          - id: "mac-build"
+            os: macos-14
+            build: "mvn clean compile package jpackage:jpackage -Pmacos-arm64"
+            path: |
+                dist/*.dmg
+                target/*.jar
+          - id: "win-build"
+            os: windows-2022
+            build: "mvn clean compile package jpackage:jpackage -Pwindows"
+            path: |
+                dist/*.msi
+                target/*.jar
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+        with:
+          ref: v${{ needs.create_tag.outputs.new_version }}
+
+      - name: "Setup Java 17"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: "Build"
+        run: ${{ matrix.build }}
+
+      - name: "Upload artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.id }}
+          path: ${{ matrix.path }}
+          if-no-files-found: error
+  release:
+    needs: 
+      - create_tag
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: "Download artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: "Make release"
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          tag_name: v${{ needs.create_tag.outputs.new_version }}
+          files: |
+            dist/**/*.deb
+            dist/**/*.dmg
+            dist/**/*.msi
+            dist/**/*.jar

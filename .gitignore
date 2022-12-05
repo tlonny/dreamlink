@@ -1,0 +1,16 @@
+.project
+.DS_Store
+.classpath
+target/
+.idea/
+.settings/
+.log
+dist/
+levels/
+.config.json
+*.log
+.vscode
+.env
+.envrc
+.histfile
+.DS_Store
