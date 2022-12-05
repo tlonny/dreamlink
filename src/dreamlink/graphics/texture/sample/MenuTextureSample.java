@@ -1,0 +1,366 @@
+package dreamlink.graphics.texture.sample;
+
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
+
+import dreamlink.graphics.texture.TextureUnit;
+
+public class MenuTextureSample extends TextureSample {
+
+    private final static Vector2ic atlasDimensions = new Vector2i(256, 256);
+
+    public final static Vector2ic patchDimensions = new Vector2i(4);
+    public final static Vector2ic halfIconDimensions = new Vector2i(8);
+    public final static Vector2ic iconDimensions = new Vector2i(16);
+    public final static Vector2ic halfGlyphDimensions = new Vector2i(4, 8);
+    public final static Vector2ic avatarDimensions = new Vector2i(32);
+    public final static Vector2ic glyphDimensions = new Vector2i(8, 16);
+
+    public static final MenuTextureSample background = new MenuTextureSample(new Vector2i(0, 0), patchDimensions);
+    public static final MenuTextureSample blueHighlight = new MenuTextureSample(new Vector2i(4, 0), patchDimensions);
+    public static final MenuTextureSample windowBackground = new MenuTextureSample(new Vector2i(0, 4), patchDimensions);
+    public static final MenuTextureSample white = new MenuTextureSample(new Vector2i(4, 4), patchDimensions);
+
+    public static final MenuTextureSample dropDownArrow = new MenuTextureSample(new Vector2i(8, 0), halfIconDimensions);
+    public static final MenuTextureSample reticule = new MenuTextureSample(new Vector2i(16, 0), halfIconDimensions);
+    public static final MenuTextureSample reticuleInteraction = new MenuTextureSample(new Vector2i(24, 0), halfIconDimensions);
+
+    public static final MenuTextureSample sliderLeft = new MenuTextureSample(new Vector2i(48, 0), halfGlyphDimensions);
+    public static final MenuTextureSample sliderMiddle = new MenuTextureSample(new Vector2i(52, 0), halfGlyphDimensions);
+    public static final MenuTextureSample sliderRight = new MenuTextureSample(new Vector2i(56, 0), halfGlyphDimensions);
+
+    public static final MenuTextureSample buttonTopLeft = new MenuTextureSample(new Vector2i(0, 8), patchDimensions);
+    public static final MenuTextureSample buttonLeft = new MenuTextureSample(new Vector2i(0, 12), patchDimensions);
+    public static final MenuTextureSample buttonBottomLeft = new MenuTextureSample(new Vector2i(0, 16), patchDimensions);
+    public static final MenuTextureSample buttonTop = new MenuTextureSample(new Vector2i(4, 8), patchDimensions);
+    public static final MenuTextureSample buttonCenter = new MenuTextureSample(new Vector2i(4, 12), patchDimensions);
+    public static final MenuTextureSample buttonBottom = new MenuTextureSample(new Vector2i(4, 16), patchDimensions);
+    public static final MenuTextureSample buttonTopRight = new MenuTextureSample(new Vector2i(8, 8), patchDimensions);
+    public static final MenuTextureSample buttonRight = new MenuTextureSample(new Vector2i(8, 12), patchDimensions);
+    public static final MenuTextureSample buttonBottomRight = new MenuTextureSample(new Vector2i(8, 16), patchDimensions);
+
+    public static final MenuTextureSample buttonPressedTopLeft = new MenuTextureSample(new Vector2i(12, 8), patchDimensions);
+    public static final MenuTextureSample buttonPressedLeft = new MenuTextureSample(new Vector2i(12, 12), patchDimensions);
+    public static final MenuTextureSample buttonPressedBottomLeft = new MenuTextureSample(new Vector2i(12, 16), patchDimensions);
+    public static final MenuTextureSample buttonPressedTop = new MenuTextureSample(new Vector2i(16, 8), patchDimensions);
+    public static final MenuTextureSample buttonPressedCenter = new MenuTextureSample(new Vector2i(16, 12), patchDimensions);
+    public static final MenuTextureSample buttonPressedBottom = new MenuTextureSample(new Vector2i(16, 16), patchDimensions);
+    public static final MenuTextureSample buttonPressedTopRight = new MenuTextureSample(new Vector2i(20, 8), patchDimensions);
+    public static final MenuTextureSample buttonPressedRight = new MenuTextureSample(new Vector2i(20, 12), patchDimensions);
+    public static final MenuTextureSample buttonPressedBottomRight = new MenuTextureSample(new Vector2i(20, 16), patchDimensions);
+
+    public static final MenuTextureSample buttonDisabledTopLeft = new MenuTextureSample(new Vector2i(24, 8), patchDimensions);
+    public static final MenuTextureSample buttonDisabledLeft = new MenuTextureSample(new Vector2i(24, 12), patchDimensions);
+    public static final MenuTextureSample buttonDisabledBottomLeft = new MenuTextureSample(new Vector2i(24, 16), patchDimensions);
+    public static final MenuTextureSample buttonDisabledTop = new MenuTextureSample(new Vector2i(28, 8), patchDimensions);
+    public static final MenuTextureSample buttonDisabledCenter = new MenuTextureSample(new Vector2i(28, 12), patchDimensions);
+    public static final MenuTextureSample buttonDisabledBottom = new MenuTextureSample(new Vector2i(28, 16), patchDimensions);
+    public static final MenuTextureSample buttonDisabledTopRight = new MenuTextureSample(new Vector2i(32, 8), patchDimensions);
+    public static final MenuTextureSample buttonDisabledRight = new MenuTextureSample(new Vector2i(32, 12), patchDimensions);
+    public static final MenuTextureSample buttonDisabledBottomRight = new MenuTextureSample(new Vector2i(32, 16), patchDimensions);
+
+    public static final MenuTextureSample tabTopLeft = new MenuTextureSample(new Vector2i(36, 8), patchDimensions);
+    public static final MenuTextureSample tabLeft = new MenuTextureSample(new Vector2i(36, 12), patchDimensions);
+    public static final MenuTextureSample tabBottomLeft = new MenuTextureSample(new Vector2i(36, 16), patchDimensions);
+    public static final MenuTextureSample tabTop = new MenuTextureSample(new Vector2i(40, 8), patchDimensions);
+    public static final MenuTextureSample tabCenter = new MenuTextureSample(new Vector2i(40, 12), patchDimensions);
+    public static final MenuTextureSample tabBottom = new MenuTextureSample(new Vector2i(40, 16), patchDimensions);
+    public static final MenuTextureSample tabTopRight = new MenuTextureSample(new Vector2i(44, 8), patchDimensions);
+    public static final MenuTextureSample tabRight = new MenuTextureSample(new Vector2i(44, 12), patchDimensions);
+    public static final MenuTextureSample tabBottomRight = new MenuTextureSample(new Vector2i(44, 16), patchDimensions);
+
+    public static final MenuTextureSample windowTopLeft = new MenuTextureSample(new Vector2i(48, 8), patchDimensions);
+    public static final MenuTextureSample windowLeft = new MenuTextureSample(new Vector2i(48, 12), patchDimensions);
+    public static final MenuTextureSample windowBottomLeft = new MenuTextureSample(new Vector2i(48, 16), patchDimensions);
+    public static final MenuTextureSample windowTop = new MenuTextureSample(new Vector2i(52, 8), patchDimensions);
+    public static final MenuTextureSample windowCenter = new MenuTextureSample(new Vector2i(52, 12), patchDimensions);
+    public static final MenuTextureSample windowBottom = new MenuTextureSample(new Vector2i(52, 16), patchDimensions);
+    public static final MenuTextureSample windowTopRight = new MenuTextureSample(new Vector2i(56, 8), patchDimensions);
+    public static final MenuTextureSample windowRight = new MenuTextureSample(new Vector2i(56, 12), patchDimensions);
+    public static final MenuTextureSample windowBottomRight = new MenuTextureSample(new Vector2i(56, 16), patchDimensions);
+
+    public static final MenuTextureSample dialogTopLeft = new MenuTextureSample(new Vector2i(60, 8), patchDimensions);
+    public static final MenuTextureSample dialogLeft = new MenuTextureSample(new Vector2i(60, 12), patchDimensions);
+    public static final MenuTextureSample dialogBottomLeft = new MenuTextureSample(new Vector2i(60, 16), patchDimensions);
+    public static final MenuTextureSample dialogTop = new MenuTextureSample(new Vector2i(64, 8), patchDimensions);
+    public static final MenuTextureSample dialogCenter = new MenuTextureSample(new Vector2i(64, 12), patchDimensions);
+    public static final MenuTextureSample dialogBottom = new MenuTextureSample(new Vector2i(64, 16), patchDimensions);
+    public static final MenuTextureSample dialogTopRight = new MenuTextureSample(new Vector2i(68, 8), patchDimensions);
+    public static final MenuTextureSample dialogRight = new MenuTextureSample(new Vector2i(68, 12), patchDimensions);
+    public static final MenuTextureSample dialogBottomRight = new MenuTextureSample(new Vector2i(68, 16), patchDimensions);
+
+    public static final MenuTextureSample dialogDisabledTopLeft = new MenuTextureSample(new Vector2i(72, 8), patchDimensions);
+    public static final MenuTextureSample dialogDisabledLeft = new MenuTextureSample(new Vector2i(72, 12), patchDimensions);
+    public static final MenuTextureSample dialogDisabledBottomLeft = new MenuTextureSample(new Vector2i(72, 16), patchDimensions);
+    public static final MenuTextureSample dialogDisabledTop = new MenuTextureSample(new Vector2i(76, 8), patchDimensions);
+    public static final MenuTextureSample dialogDisabledCenter = new MenuTextureSample(new Vector2i(76, 12), patchDimensions);
+    public static final MenuTextureSample dialogDisabledBottom = new MenuTextureSample(new Vector2i(76, 16), patchDimensions);
+    public static final MenuTextureSample dialogDisabledTopRight = new MenuTextureSample(new Vector2i(80, 8), patchDimensions);
+    public static final MenuTextureSample dialogDisabledRight = new MenuTextureSample(new Vector2i(80, 12), patchDimensions);
+    public static final MenuTextureSample dialogDisabledBottomRight = new MenuTextureSample(new Vector2i(80, 16), patchDimensions);
+
+    public static final MenuTextureSample dialogBlurredTopLeft = new MenuTextureSample(new Vector2i(84, 8), patchDimensions);
+    public static final MenuTextureSample dialogBlurredLeft = new MenuTextureSample(new Vector2i(84, 12), patchDimensions);
+    public static final MenuTextureSample dialogBlurredBottomLeft = new MenuTextureSample(new Vector2i(84, 16), patchDimensions);
+    public static final MenuTextureSample dialogBlurredTop = new MenuTextureSample(new Vector2i(88, 8), patchDimensions);
+    public static final MenuTextureSample dialogBlurredCenter = new MenuTextureSample(new Vector2i(88, 12), patchDimensions);
+    public static final MenuTextureSample dialogBlurredBottom = new MenuTextureSample(new Vector2i(88, 16), patchDimensions);
+    public static final MenuTextureSample dialogBlurredTopRight = new MenuTextureSample(new Vector2i(92, 8), patchDimensions);
+    public static final MenuTextureSample dialogBlurredRight = new MenuTextureSample(new Vector2i(92, 12), patchDimensions);
+    public static final MenuTextureSample dialogBlurredBottomRight = new MenuTextureSample(new Vector2i(92, 16), patchDimensions);
+
+    public static final MenuTextureSample separatorTopLeft = new MenuTextureSample(new Vector2i(96, 8), patchDimensions);
+    public static final MenuTextureSample separatorLeft = new MenuTextureSample(new Vector2i(96, 12), patchDimensions);
+    public static final MenuTextureSample separatorBottomLeft = new MenuTextureSample(new Vector2i(96, 16), patchDimensions);
+    public static final MenuTextureSample separatorTop = new MenuTextureSample(new Vector2i(100, 8), patchDimensions);
+    public static final MenuTextureSample separatorCenter = new MenuTextureSample(new Vector2i(100, 12), patchDimensions);
+    public static final MenuTextureSample separatorBottom = new MenuTextureSample(new Vector2i(100, 16), patchDimensions);
+    public static final MenuTextureSample separatorTopRight = new MenuTextureSample(new Vector2i(104, 8), patchDimensions);
+    public static final MenuTextureSample separatorRight = new MenuTextureSample(new Vector2i(104, 12), patchDimensions);
+    public static final MenuTextureSample separatorBottomRight = new MenuTextureSample(new Vector2i(104, 16), patchDimensions);
+
+    public static final MenuTextureSample cursorPointer = new MenuTextureSample(new Vector2i(0, 32), iconDimensions);
+    public static final MenuTextureSample cursorArrow = new MenuTextureSample(new Vector2i(16, 32), iconDimensions);
+    public static final MenuTextureSample cursorGrab = new MenuTextureSample(new Vector2i(32, 32), iconDimensions);
+
+    public static final MenuTextureSample checkBoxTick = new MenuTextureSample(new Vector2i(48, 32), iconDimensions);
+
+    public static final MenuTextureSample iconSoundMute = new MenuTextureSample(new Vector2i(0, 48), iconDimensions);
+    public static final MenuTextureSample iconSoundUnmute = new MenuTextureSample(new Vector2i(16, 48), iconDimensions);
+    public static final MenuTextureSample iconAlert = new MenuTextureSample(new Vector2i(32, 48), iconDimensions);
+    public static final MenuTextureSample iconSoundFile = new MenuTextureSample(new Vector2i(48, 48), iconDimensions);
+    public static final MenuTextureSample iconDisk = new MenuTextureSample(new Vector2i(64, 48), iconDimensions);
+    public static final MenuTextureSample iconRestrict = new MenuTextureSample(new Vector2i(80, 48), iconDimensions);
+    public static final MenuTextureSample iconInformation = new MenuTextureSample(new Vector2i(96, 48), iconDimensions);
+    public static final MenuTextureSample iconMouse = new MenuTextureSample(new Vector2i(112, 48), iconDimensions);
+    public static final MenuTextureSample iconHelp = new MenuTextureSample(new Vector2i(128, 48), iconDimensions);
+    public static final MenuTextureSample iconResourcePack = new MenuTextureSample(new Vector2i(144, 48), iconDimensions);
+    public static final MenuTextureSample iconClean = new MenuTextureSample(new Vector2i(160, 48), iconDimensions);
+    public static final MenuTextureSample iconPermit = new MenuTextureSample(new Vector2i(176, 48), iconDimensions);
+    public static final MenuTextureSample iconFile = new MenuTextureSample(new Vector2i(192, 48), iconDimensions);
+    public static final MenuTextureSample iconGlobe = new MenuTextureSample(new Vector2i(208, 48), iconDimensions);
+    public static final MenuTextureSample iconComputer = new MenuTextureSample(new Vector2i(224, 48), iconDimensions);
+    public static final MenuTextureSample iconEdit = new MenuTextureSample(new Vector2i(240, 224), iconDimensions);
+
+    public static final MenuTextureSample iconKeys = new MenuTextureSample(new Vector2i(0, 64), iconDimensions);
+    public static final MenuTextureSample iconCable = new MenuTextureSample(new Vector2i(16, 64), iconDimensions);
+    public static final MenuTextureSample iconFolder = new MenuTextureSample(new Vector2i(32, 64), iconDimensions);
+    public static final MenuTextureSample iconDish = new MenuTextureSample(new Vector2i(48, 64), iconDimensions);
+    public static final MenuTextureSample iconExecutable = new MenuTextureSample(new Vector2i(64, 64), iconDimensions);
+    public static final MenuTextureSample iconFileStack = new MenuTextureSample(new Vector2i(80, 64), iconDimensions);
+    public static final MenuTextureSample iconSettings = new MenuTextureSample(new Vector2i(96, 64), iconDimensions);
+    public static final MenuTextureSample iconMessage = new MenuTextureSample(new Vector2i(112, 64), iconDimensions);
+    public static final MenuTextureSample iconSearch = new MenuTextureSample(new Vector2i(128, 64), iconDimensions);
+
+    public static final MenuTextureSample symSpace = new MenuTextureSample(new Vector2i(0, 80), glyphDimensions);
+    public static final MenuTextureSample symExclamation = new MenuTextureSample(new Vector2i(8, 80), glyphDimensions);
+    public static final MenuTextureSample symDoubleQuotes = new MenuTextureSample(new Vector2i(16, 80), glyphDimensions);
+    public static final MenuTextureSample symHash = new MenuTextureSample(new Vector2i(24, 80), glyphDimensions);
+    public static final MenuTextureSample symDollar = new MenuTextureSample(new Vector2i(32, 80), glyphDimensions);
+    public static final MenuTextureSample symPercent = new MenuTextureSample(new Vector2i(40, 80), glyphDimensions);
+    public static final MenuTextureSample symAmpersand = new MenuTextureSample(new Vector2i(48, 80), glyphDimensions);
+    public static final MenuTextureSample symSingleQuote = new MenuTextureSample(new Vector2i(56, 80), glyphDimensions);
+    public static final MenuTextureSample symOpenParenthesis = new MenuTextureSample(new Vector2i(64, 80), glyphDimensions);
+    public static final MenuTextureSample symCloseParenthesis = new MenuTextureSample(new Vector2i(72, 80), glyphDimensions);
+    public static final MenuTextureSample symAsterisk = new MenuTextureSample(new Vector2i(80, 80), glyphDimensions);
+    public static final MenuTextureSample symPlus = new MenuTextureSample(new Vector2i(88, 80), glyphDimensions);
+    public static final MenuTextureSample symComma = new MenuTextureSample(new Vector2i(96, 80), glyphDimensions);
+    public static final MenuTextureSample symMinus = new MenuTextureSample(new Vector2i(104, 80), glyphDimensions);
+    public static final MenuTextureSample symPeriod = new MenuTextureSample(new Vector2i(112, 80), glyphDimensions);
+    public static final MenuTextureSample symSlash = new MenuTextureSample(new Vector2i(120, 80), glyphDimensions);
+    public static final MenuTextureSample digit0 = new MenuTextureSample(new Vector2i(128, 80), glyphDimensions);
+    public static final MenuTextureSample digit1 = new MenuTextureSample(new Vector2i(136, 80), glyphDimensions);
+    public static final MenuTextureSample digit2 = new MenuTextureSample(new Vector2i(144, 80), glyphDimensions);
+    public static final MenuTextureSample digit3 = new MenuTextureSample(new Vector2i(152, 80), glyphDimensions);
+    public static final MenuTextureSample digit4 = new MenuTextureSample(new Vector2i(160, 80), glyphDimensions);
+    public static final MenuTextureSample digit5 = new MenuTextureSample(new Vector2i(168, 80), glyphDimensions);
+    public static final MenuTextureSample digit6 = new MenuTextureSample(new Vector2i(176, 80), glyphDimensions);
+    public static final MenuTextureSample digit7 = new MenuTextureSample(new Vector2i(184, 80), glyphDimensions);
+    public static final MenuTextureSample digit8 = new MenuTextureSample(new Vector2i(192, 80), glyphDimensions);
+    public static final MenuTextureSample digit9 = new MenuTextureSample(new Vector2i(200, 80), glyphDimensions);
+    public static final MenuTextureSample symColon = new MenuTextureSample(new Vector2i(208, 80), glyphDimensions);
+    public static final MenuTextureSample symSemicolon = new MenuTextureSample(new Vector2i(216, 80), glyphDimensions);
+    public static final MenuTextureSample symLessThan = new MenuTextureSample(new Vector2i(224, 80), glyphDimensions);
+    public static final MenuTextureSample symEquals = new MenuTextureSample(new Vector2i(232, 80), glyphDimensions);
+    public static final MenuTextureSample symGreaterThan = new MenuTextureSample(new Vector2i(240, 80), glyphDimensions);
+    public static final MenuTextureSample symQuestion = new MenuTextureSample(new Vector2i(248, 80), glyphDimensions);
+    public static final MenuTextureSample symAt = new MenuTextureSample(new Vector2i(0, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseA = new MenuTextureSample(new Vector2i(8, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseB = new MenuTextureSample(new Vector2i(16, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseC = new MenuTextureSample(new Vector2i(24, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseD = new MenuTextureSample(new Vector2i(32, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseE = new MenuTextureSample(new Vector2i(40, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseF = new MenuTextureSample(new Vector2i(48, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseG = new MenuTextureSample(new Vector2i(56, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseH = new MenuTextureSample(new Vector2i(64, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseI = new MenuTextureSample(new Vector2i(72, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseJ = new MenuTextureSample(new Vector2i(80, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseK = new MenuTextureSample(new Vector2i(88, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseL = new MenuTextureSample(new Vector2i(96, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseM = new MenuTextureSample(new Vector2i(104, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseN = new MenuTextureSample(new Vector2i(112, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseO = new MenuTextureSample(new Vector2i(120, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseP = new MenuTextureSample(new Vector2i(128, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseQ = new MenuTextureSample(new Vector2i(136, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseR = new MenuTextureSample(new Vector2i(144, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseS = new MenuTextureSample(new Vector2i(152, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseT = new MenuTextureSample(new Vector2i(160, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseU = new MenuTextureSample(new Vector2i(168, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseV = new MenuTextureSample(new Vector2i(176, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseW = new MenuTextureSample(new Vector2i(184, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseX = new MenuTextureSample(new Vector2i(192, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseY = new MenuTextureSample(new Vector2i(200, 96), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseZ = new MenuTextureSample(new Vector2i(208, 96), glyphDimensions);
+    public static final MenuTextureSample symOpenBracket = new MenuTextureSample(new Vector2i(216, 96), glyphDimensions);
+    public static final MenuTextureSample symBackslash = new MenuTextureSample(new Vector2i(224, 96), glyphDimensions);
+    public static final MenuTextureSample symCloseBracket = new MenuTextureSample(new Vector2i(232, 96), glyphDimensions);
+    public static final MenuTextureSample symCaret = new MenuTextureSample(new Vector2i(240, 96), glyphDimensions);
+    public static final MenuTextureSample symUnderscore = new MenuTextureSample(new Vector2i(248, 96), glyphDimensions);
+    public static final MenuTextureSample symBacktick = new MenuTextureSample(new Vector2i(0, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseA = new MenuTextureSample(new Vector2i(8, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseB = new MenuTextureSample(new Vector2i(16, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseC = new MenuTextureSample(new Vector2i(24, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseD = new MenuTextureSample(new Vector2i(32, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseE = new MenuTextureSample(new Vector2i(40, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseF = new MenuTextureSample(new Vector2i(48, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseG = new MenuTextureSample(new Vector2i(56, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseH = new MenuTextureSample(new Vector2i(64, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseI = new MenuTextureSample(new Vector2i(72, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseJ = new MenuTextureSample(new Vector2i(80, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseK = new MenuTextureSample(new Vector2i(88, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseL = new MenuTextureSample(new Vector2i(96, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseM = new MenuTextureSample(new Vector2i(104, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseN = new MenuTextureSample(new Vector2i(112, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseO = new MenuTextureSample(new Vector2i(120, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseP = new MenuTextureSample(new Vector2i(128, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseQ = new MenuTextureSample(new Vector2i(136, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseR = new MenuTextureSample(new Vector2i(144, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseS = new MenuTextureSample(new Vector2i(152, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseT = new MenuTextureSample(new Vector2i(160, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseU = new MenuTextureSample(new Vector2i(168, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseV = new MenuTextureSample(new Vector2i(176, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseW = new MenuTextureSample(new Vector2i(184, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseX = new MenuTextureSample(new Vector2i(192, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseY = new MenuTextureSample(new Vector2i(200, 112), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseZ = new MenuTextureSample(new Vector2i(208, 112), glyphDimensions);
+    public static final MenuTextureSample symOpenBrace = new MenuTextureSample(new Vector2i(216, 112), glyphDimensions);
+    public static final MenuTextureSample symPipe = new MenuTextureSample(new Vector2i(224, 112), glyphDimensions);
+    public static final MenuTextureSample symCloseBrace = new MenuTextureSample(new Vector2i(232, 112), glyphDimensions);
+    public static final MenuTextureSample symTilde = new MenuTextureSample(new Vector2i(240, 112), glyphDimensions);
+
+    public static final MenuTextureSample symSpaceUnderline = new MenuTextureSample(new Vector2i(0, 128), glyphDimensions);
+    public static final MenuTextureSample symExclamationUnderline = new MenuTextureSample(new Vector2i(8, 128), glyphDimensions);
+    public static final MenuTextureSample symDoubleQuotesUnderline = new MenuTextureSample(new Vector2i(16, 128), glyphDimensions);
+    public static final MenuTextureSample symHashUnderline = new MenuTextureSample(new Vector2i(24, 128), glyphDimensions);
+    public static final MenuTextureSample symDollarUnderline = new MenuTextureSample(new Vector2i(32, 128), glyphDimensions);
+    public static final MenuTextureSample symPercentUnderline = new MenuTextureSample(new Vector2i(40, 128), glyphDimensions);
+    public static final MenuTextureSample symAmpersandUnderline = new MenuTextureSample(new Vector2i(48, 128), glyphDimensions);
+    public static final MenuTextureSample symSingleQuoteUnderline = new MenuTextureSample(new Vector2i(56, 128), glyphDimensions);
+    public static final MenuTextureSample symOpenParenthesisUnderline = new MenuTextureSample(new Vector2i(64, 128), glyphDimensions);
+    public static final MenuTextureSample symCloseParenthesisUnderline = new MenuTextureSample(new Vector2i(72, 128), glyphDimensions);
+    public static final MenuTextureSample symAsteriskUnderline = new MenuTextureSample(new Vector2i(80, 128), glyphDimensions);
+    public static final MenuTextureSample symPlusUnderline = new MenuTextureSample(new Vector2i(88, 128), glyphDimensions);
+    public static final MenuTextureSample symCommaUnderline = new MenuTextureSample(new Vector2i(96, 128), glyphDimensions);
+    public static final MenuTextureSample symMinusUnderline = new MenuTextureSample(new Vector2i(104, 128), glyphDimensions);
+    public static final MenuTextureSample symPeriodUnderline = new MenuTextureSample(new Vector2i(112, 128), glyphDimensions);
+    public static final MenuTextureSample symSlashUnderline = new MenuTextureSample(new Vector2i(120, 128), glyphDimensions);
+    public static final MenuTextureSample digit0Underline = new MenuTextureSample(new Vector2i(128, 128), glyphDimensions);
+    public static final MenuTextureSample digit1Underline = new MenuTextureSample(new Vector2i(136, 128), glyphDimensions);
+    public static final MenuTextureSample digit2Underline = new MenuTextureSample(new Vector2i(144, 128), glyphDimensions);
+    public static final MenuTextureSample digit3Underline = new MenuTextureSample(new Vector2i(152, 128), glyphDimensions);
+    public static final MenuTextureSample digit4Underline = new MenuTextureSample(new Vector2i(160, 128), glyphDimensions);
+    public static final MenuTextureSample digit5Underline = new MenuTextureSample(new Vector2i(168, 128), glyphDimensions);
+    public static final MenuTextureSample digit6Underline = new MenuTextureSample(new Vector2i(176, 128), glyphDimensions);
+    public static final MenuTextureSample digit7Underline = new MenuTextureSample(new Vector2i(184, 128), glyphDimensions);
+    public static final MenuTextureSample digit8Underline = new MenuTextureSample(new Vector2i(192, 128), glyphDimensions);
+    public static final MenuTextureSample digit9Underline = new MenuTextureSample(new Vector2i(200, 128), glyphDimensions);
+    public static final MenuTextureSample symColonUnderline = new MenuTextureSample(new Vector2i(208, 128), glyphDimensions);
+    public static final MenuTextureSample symSemicolonUnderline = new MenuTextureSample(new Vector2i(216, 128), glyphDimensions);
+    public static final MenuTextureSample symLessThanUnderline = new MenuTextureSample(new Vector2i(224, 128), glyphDimensions);
+    public static final MenuTextureSample symEqualsUnderline = new MenuTextureSample(new Vector2i(232, 128), glyphDimensions);
+    public static final MenuTextureSample symGreaterThanUnderline = new MenuTextureSample(new Vector2i(240, 128), glyphDimensions);
+    public static final MenuTextureSample symQuestionUnderline = new MenuTextureSample(new Vector2i(248, 128), glyphDimensions);
+    public static final MenuTextureSample symAtUnderline = new MenuTextureSample(new Vector2i(0, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseAUnderline = new MenuTextureSample(new Vector2i(8, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseBUnderline = new MenuTextureSample(new Vector2i(16, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseCUnderline = new MenuTextureSample(new Vector2i(24, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseDUnderline = new MenuTextureSample(new Vector2i(32, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseEUnderline = new MenuTextureSample(new Vector2i(40, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseFUnderline = new MenuTextureSample(new Vector2i(48, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseGUnderline = new MenuTextureSample(new Vector2i(56, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseHUnderline = new MenuTextureSample(new Vector2i(64, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseIUnderline = new MenuTextureSample(new Vector2i(72, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseJUnderline = new MenuTextureSample(new Vector2i(80, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseKUnderline = new MenuTextureSample(new Vector2i(88, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseLUnderline = new MenuTextureSample(new Vector2i(96, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseMUnderline = new MenuTextureSample(new Vector2i(104, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseNUnderline = new MenuTextureSample(new Vector2i(112, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseOUnderline = new MenuTextureSample(new Vector2i(120, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCasePUnderline = new MenuTextureSample(new Vector2i(128, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseQUnderline = new MenuTextureSample(new Vector2i(136, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseRUnderline = new MenuTextureSample(new Vector2i(144, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseSUnderline = new MenuTextureSample(new Vector2i(152, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseTUnderline = new MenuTextureSample(new Vector2i(160, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseUUnderline = new MenuTextureSample(new Vector2i(168, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseVUnderline = new MenuTextureSample(new Vector2i(176, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseWUnderline = new MenuTextureSample(new Vector2i(184, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseXUnderline = new MenuTextureSample(new Vector2i(192, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseYUnderline = new MenuTextureSample(new Vector2i(200, 144), glyphDimensions);
+    public static final MenuTextureSample letterUpperCaseZUnderline = new MenuTextureSample(new Vector2i(208, 144), glyphDimensions);
+    public static final MenuTextureSample symOpenBracketUnderline = new MenuTextureSample(new Vector2i(216, 144), glyphDimensions);
+    public static final MenuTextureSample symBackslashUnderline = new MenuTextureSample(new Vector2i(224, 144), glyphDimensions);
+    public static final MenuTextureSample symCloseBracketUnderline = new MenuTextureSample(new Vector2i(232, 144), glyphDimensions);
+    public static final MenuTextureSample symCaretUnderline = new MenuTextureSample(new Vector2i(240, 144), glyphDimensions);
+    public static final MenuTextureSample symUnderscoreUnderline = new MenuTextureSample(new Vector2i(248, 144), glyphDimensions);
+    public static final MenuTextureSample symBacktickUnderline = new MenuTextureSample(new Vector2i(0, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseAUnderline = new MenuTextureSample(new Vector2i(8, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseBUnderline = new MenuTextureSample(new Vector2i(16, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseCUnderline = new MenuTextureSample(new Vector2i(24, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseDUnderline = new MenuTextureSample(new Vector2i(32, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseEUnderline = new MenuTextureSample(new Vector2i(40, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseFUnderline = new MenuTextureSample(new Vector2i(48, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseGUnderline = new MenuTextureSample(new Vector2i(56, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseHUnderline = new MenuTextureSample(new Vector2i(64, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseIUnderline = new MenuTextureSample(new Vector2i(72, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseJUnderline = new MenuTextureSample(new Vector2i(80, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseKUnderline = new MenuTextureSample(new Vector2i(88, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseLUnderline = new MenuTextureSample(new Vector2i(96, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseMUnderline = new MenuTextureSample(new Vector2i(104, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseNUnderline = new MenuTextureSample(new Vector2i(112, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseOUnderline = new MenuTextureSample(new Vector2i(120, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCasePUnderline = new MenuTextureSample(new Vector2i(128, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseQUnderline = new MenuTextureSample(new Vector2i(136, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseRUnderline = new MenuTextureSample(new Vector2i(144, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseSUnderline = new MenuTextureSample(new Vector2i(152, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseTUnderline = new MenuTextureSample(new Vector2i(160, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseUUnderline = new MenuTextureSample(new Vector2i(168, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseVUnderline = new MenuTextureSample(new Vector2i(176, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseWUnderline = new MenuTextureSample(new Vector2i(184, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseXUnderline = new MenuTextureSample(new Vector2i(192, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseYUnderline = new MenuTextureSample(new Vector2i(200, 160), glyphDimensions);
+    public static final MenuTextureSample letterLowerCaseZUnderline = new MenuTextureSample(new Vector2i(208, 160), glyphDimensions);
+    public static final MenuTextureSample symOpenBraceUnderline = new MenuTextureSample(new Vector2i(216, 160), glyphDimensions);
+    public static final MenuTextureSample symPipeUnderline = new MenuTextureSample(new Vector2i(224, 160), glyphDimensions);
+    public static final MenuTextureSample symCloseBraceUnderline = new MenuTextureSample(new Vector2i(232, 160), glyphDimensions);
+    public static final MenuTextureSample symTildeUnderline = new MenuTextureSample(new Vector2i(240, 160), glyphDimensions);
+
+    public static final MenuTextureSample creditsAvatarTimmy = new MenuTextureSample(new Vector2i(0, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarHan = new MenuTextureSample(new Vector2i(32, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarCoco = new MenuTextureSample(new Vector2i(64, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarMum = new MenuTextureSample(new Vector2i(96, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarDad = new MenuTextureSample(new Vector2i(128, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarDan = new MenuTextureSample(new Vector2i(160, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarEd = new MenuTextureSample(new Vector2i(192, 176), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarDara = new MenuTextureSample(new Vector2i(0, 208), avatarDimensions);
+    public static final MenuTextureSample creditsAvatarTeddy = new MenuTextureSample(new Vector2i(224, 176), avatarDimensions);
+
+    public MenuTextureSample(Vector2ic position, Vector2ic dimensions) {
+        super(
+            TextureUnit.menu,
+            MenuTextureSample.atlasDimensions,
+            position,
+            dimensions
+        );
+    }
+
+}
