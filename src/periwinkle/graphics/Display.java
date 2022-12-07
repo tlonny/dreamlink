@@ -109,8 +109,10 @@ public class Display {
         GL15.glClearColor(colors.x, colors.y, colors.z, 1f);
         GL15.glClear( GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
 
-        GLFW.glfwGetCursorPos( this.windowID, this.xBuffer, this.yBuffer );
-        GLFW.glfwSetCursorPos(this.windowID, WIDTH / 2f, HEIGHT / 2f);
+        if (GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1) {
+            GLFW.glfwGetCursorPos( this.windowID, this.xBuffer, this.yBuffer );
+            GLFW.glfwSetCursorPos(this.windowID, WIDTH / 2f, HEIGHT / 2f);
+        }
     }
 
 

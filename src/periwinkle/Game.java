@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Game {
 
-    private static final int STEP_MS = 20;
+    private static final int STEP_MS = 10;
 
     public Game() {
         Player.PLAYER.position.set(10, 230, 10);

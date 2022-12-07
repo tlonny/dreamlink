@@ -10,7 +10,7 @@ public class Command {
     public static Map<String, Command> COMMAND_LOOKUP = new HashMap<>();
 
     public static Command[] COMMANDS = new Command[] {
-            SET_SKY_TYPE,
+        SET_SKY_TYPE,
         SET_BLOCK_TYPE,
     };
 
