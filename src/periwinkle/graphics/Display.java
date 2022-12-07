@@ -1,7 +1,5 @@
 package periwinkle.graphics;
 
-import java.nio.IntBuffer;
-
 import periwinkle.environment.Sky;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
@@ -12,8 +10,6 @@ import org.lwjgl.system.MemoryUtil;
 
 public class Display {
 
-    public static int WIDTH = 1280;
-    public static int HEIGHT = 720;
     public static String TITLE = "Aberrance";
 
     public static Display DISPLAY = new Display();
@@ -22,13 +18,19 @@ public class Display {
     }
 
     private long windowID;
-    private final boolean[] keys = new boolean[500];
     private final double[] xBuffer = new double[1];
     private final double[] yBuffer = new double[2];
 
     public float screenR;
     public float screenG;
     public float screenB;
+
+    public int width = 720;
+    public int height = 480;
+
+    private boolean isFocused() {
+        return GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1;
+    }
 
     public void setKeyCallback(GLFWKeyCallbackI callback) {
         GLFW.glfwSetKeyCallback(this.windowID, callback);
@@ -53,16 +55,23 @@ public class Display {
     public void setup() {
         GLFWErrorCallback.createPrint(System.err).set();
         GLFW.glfwInit();
+
+        var currentMonitorID = GLFW.glfwGetPrimaryMonitor();
+        var monitorData = GLFW.glfwGetVideoMode(currentMonitorID);
+
+        this.width = monitorData.width();
+        this.height = monitorData.height();
+
         GLFW.glfwWindowHint( GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE );
         GLFW.glfwWindowHint( GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE );
 
-        this.windowID = GLFW.glfwCreateWindow(WIDTH, HEIGHT, TITLE, MemoryUtil.NULL, MemoryUtil.NULL );
+        this.windowID = GLFW.glfwCreateWindow(this.width, this.height, TITLE, MemoryUtil.NULL, MemoryUtil.NULL);
 
-        try ( MemoryStack stack = MemoryStack.stackPush() ) {
-            IntBuffer width  = stack.mallocInt(1);
-            IntBuffer height = stack.mallocInt(1);
+        try (var stack = MemoryStack.stackPush() ) {
+            var width  = stack.mallocInt(1);
+            var height = stack.mallocInt(1);
             GLFW.glfwGetWindowSize( this.windowID, width, height);
-            GLFWVidMode vidMode = GLFW.glfwGetVideoMode( GLFW.glfwGetPrimaryMonitor() );
+            var vidMode = GLFW.glfwGetVideoMode( GLFW.glfwGetPrimaryMonitor() );
             if(vidMode == null)
                 throw new RuntimeException("Unable to construct display");
             GLFW.glfwSetWindowPos(
@@ -81,9 +90,6 @@ public class Display {
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        //GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        //GL11.glEnable(GL30.GL_FRAMEBUFFER_SRGB);
-
     }
 
     public float getMouseX() {
@@ -95,11 +101,11 @@ public class Display {
     }
 
     public float getDeltaMouseX() {
-        return this.getMouseX() - WIDTH/2f;
+        return this.isFocused() ? this.getMouseX() - this.width/2f : 0f;
     }
 
     public float getDeltaMouseY() {
-        return this.getMouseY() - HEIGHT/2f;
+        return this.isFocused() ? this.getMouseY() - this.height/2f : 0f;
     }
 
     public void refresh() {
@@ -109,10 +115,8 @@ public class Display {
         GL15.glClearColor(colors.x, colors.y, colors.z, 1f);
         GL15.glClear( GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
 
-        if (GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1) {
-            GLFW.glfwGetCursorPos( this.windowID, this.xBuffer, this.yBuffer );
-            GLFW.glfwSetCursorPos(this.windowID, WIDTH / 2f, HEIGHT / 2f);
-        }
+        GLFW.glfwGetCursorPos(this.windowID, this.xBuffer, this.yBuffer );
+        GLFW.glfwSetCursorPos(this.windowID, this.width / 2f, this.height / 2f);
     }
 
 
