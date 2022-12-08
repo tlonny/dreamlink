@@ -13,15 +13,17 @@ import java.lang.Math;
 
 public class Player {
 
-    private static float SPEED = 0.1f;
+    private static float SPEED = 0.4f;
     private static float JUMP_SPEED = 0.5f;
-    private static float GRAVITY = 0.02f;
+    private static float GRAVITY = 0.08f;
     private static float EPSILON = 0.001f;
     private static float TERMINAL_FALL_SPEED = 1f;
 
     public static Player PLAYER = new Player();
 
     public Vector3f position = new Vector3f();
+    public Vector3f previousPosition = new Vector3f();
+
     public Vector3f velocity = new Vector3f();
     public Vector3f dimensions = new Vector3f(0.9f, 1.8f, 0.9f);
     public BlockType blockType = BlockType.MAGMA;
@@ -109,6 +111,8 @@ public class Player {
     }
 
     public void update() {
+        this.previousPosition.set(this.position);
+
         this.updateVelocity();
         this.modifyBlocks();
         this.updatePosition();

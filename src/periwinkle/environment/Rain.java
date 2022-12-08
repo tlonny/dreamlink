@@ -15,6 +15,7 @@ public class Rain extends Entity {
     public static float DE_SPAWN_RANGE = SPAWN_RANGE * 1.5f;
 
     public Vector3f position;
+    public Vector3f previousPosition = new Vector3f();
     public float width;
 
     public Rain() {
@@ -52,6 +53,7 @@ public class Rain extends Entity {
     }
 
     public void update() {
+        this.previousPosition.set(position);
         this.position.y -= RAIN_SPEED;
         if(!this.inBounds())
             this.destroy();

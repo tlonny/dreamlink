@@ -20,15 +20,16 @@ public class Camera {
     public Vector3f position = new Vector3f();
     public Vector3f rotation = new Vector3f();
 
-    public void update() {
+    public void reposition(float stepFactor) {
         this.rotation.x -= Display.DISPLAY.getDeltaMouseX() * MOUSE_SENSITIVITY;
         this.rotation.y -= Display.DISPLAY.getDeltaMouseY() * MOUSE_SENSITIVITY;
         this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
-        Camera.CAMERA.position.set(
-            Player.PLAYER.position.x + Player.PLAYER.dimensions.x / 2,
-            Player.PLAYER.position.y + Player.PLAYER.dimensions.y / 2 + 1.5,
-            Player.PLAYER.position.z + Player.PLAYER.dimensions.z / 2
-        );
+
+        this.position.set(Player.PLAYER.dimensions).mul(0.5f);
+        this.position.y += 1.5f;
+
+        var playerPosition = new Vector3f(Player.PLAYER.previousPosition).lerp(Player.PLAYER.position, stepFactor);
+        this.position.add(playerPosition);
     }
 
     public Vector3f getDirectionVector() {

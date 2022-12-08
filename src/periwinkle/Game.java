@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Game {
 
-    private static final int STEP_MS = 10;
+    private static final int STEP_MS = 50;
 
     public Game() {
         Player.PLAYER.position.set(10, 230, 10);
@@ -33,46 +33,41 @@ public class Game {
     }
 
     private void run() {
-        this.runTimer.resetStartTime();
+        this.stepTimer.resetStartTime();
         while(!Display.DISPLAY.shouldClose()) {
             if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_ESCAPE))
                 Display.DISPLAY.setShouldClose();
 
-            var elapsed = this.runTimer.millisElapsed();
-            if(elapsed <= STEP_MS) {
-                try {
-                    Thread.sleep(STEP_MS - elapsed);
-                    continue;
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Sleep failed.");
-                }
+            while(this.stepTimer.millisElapsed() > STEP_MS) {
+                this.update();
+                this.stepTimer.incrementStartTime(STEP_MS);
             }
 
-            this.runTimer.incrementStartTime(STEP_MS);
-            this.update();
-            this.render();
+            var stepFactor = (float)this.stepTimer.millisElapsed()/STEP_MS;
+            this.render(stepFactor);
         }
     }
 
-    private final Timer runTimer = new Timer();
+    private final Timer stepTimer = new Timer();
+
     private void update() {
         Entity.transition();
         DebugConsole.DEBUG_CONSOLE.update();
         Player.PLAYER.update();
-        Camera.CAMERA.update();
         World.WORLD.update();
         Sky.SKY.update();
         Input.INPUT.update();
     }
 
-    private void renderWorld() {
+    private void renderWorld(float stepFactor) {
         Shader.SHADER.setGlobalColor(Sky.SKY.skyType.skyColor);
+        Camera.CAMERA.reposition(stepFactor);
         Shader.SHADER.setViewRotationMatrix(Camera.CAMERA.getViewRotationMatrix());
         Shader.SHADER.setViewTranslationMatrix(Camera.CAMERA.getViewTranslationMatrix());
         Shader.SHADER.setProjectionMatrix(Camera.CAMERA.getProjectionMatrix());
 
         World.WORLD.render();
-        Sky.SKY.render();
+        Sky.SKY.render(stepFactor);
     }
 
     private void renderGUI() {
@@ -83,10 +78,10 @@ public class Game {
         DebugConsole.DEBUG_CONSOLE.render();
     }
 
-    private void render() {
+    private void render(float stepFactor) {
         Shader.SHADER.useProgram();
         Shader.SHADER.setTextureSampler();
-        this.renderWorld();
+        this.renderWorld(stepFactor);
         this.renderGUI();
         Display.DISPLAY.refresh();
     }

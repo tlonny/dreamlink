@@ -88,13 +88,15 @@ public class Sky {
         this.skyBoxMesh.render(position, this.skyType.starColor, 0f);
     }
 
-    private void renderRain() {
+    private void renderRain(float stepFactor) {
         this.rainMeshBuffer.clear();
         var billboardMatrix = Camera.CAMERA.getBillboardMatrix();
+        var rainInterpolatedPosition = new Vector3f();
         for(var rain : this.rainSet) {
             if(rain.position.distance(Camera.CAMERA.position) >= Rain.SPAWN_RANGE)
                 continue;
-            this.rainMeshBuffer.pushParticle(rain.position, rain.width, ParticleType.RAIN, billboardMatrix);
+            rainInterpolatedPosition.set(rain.previousPosition).lerp(rain.position, stepFactor);
+            this.rainMeshBuffer.pushParticle(rainInterpolatedPosition, rain.width, ParticleType.RAIN, billboardMatrix);
         }
 
         this.rainMeshBuffer.flip();
@@ -104,9 +106,9 @@ public class Sky {
         this.rainMesh.render(new Vector3f(), this.skyType.rainColor, 0f);
     }
 
-    public void render() {
+    public void render(float stepFactor) {
         this.renderSkyBox();
-        this.renderRain();
+        this.renderRain(stepFactor);
     }
 
 }
