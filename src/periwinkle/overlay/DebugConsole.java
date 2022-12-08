@@ -33,6 +33,7 @@ public class DebugConsole {
     private String input = "";
 
     public boolean active;
+    private boolean blinkCursor;
 
     public DebugConsole() {
         for(var ix = 0; ix < this.history.length; ix += 1)
@@ -66,7 +67,7 @@ public class DebugConsole {
         this.input = this.inputBuilder.toString();
     }
 
-    public void update() {
+    public void update(long stepCount) {
 
         if(Input.INPUT.isKeyPressed(GLFW.GLFW_KEY_HOME)) {
             this.active = !this.active;
@@ -91,6 +92,8 @@ public class DebugConsole {
             if(command != null)
                 command.behaviour.run(split);
         }
+
+        this.blinkCursor = (stepCount % 10) < 5;
     }
 
     private void renderLine(String text, Vector2f position) {
@@ -111,7 +114,8 @@ public class DebugConsole {
             var line = this.history[lineIx];
             this.renderLine(line, new Vector2f(0, CONSOLE_HEIGHT - y - 1).mul(GLYPH_DIMENSIONS).add(10, 10));
         }
-        this.renderLine(this.input, new Vector2f(0, CONSOLE_HEIGHT).mul(GLYPH_DIMENSIONS).add(10, 15));
+        var blinkingInput = this.blinkCursor ? this.input + "_" : this.input;
+        this.renderLine(blinkingInput, new Vector2f(0, CONSOLE_HEIGHT).mul(GLYPH_DIMENSIONS).add(10, 15));
         this.spriteBuffer.flip();
         this.consoleMesh.loadMesh(this.spriteBuffer);
         Shader.SHADER.setModelMatrix(new Matrix4f().identity());

@@ -39,8 +39,9 @@ public class Game {
                 Display.DISPLAY.setShouldClose();
 
             while(this.stepTimer.millisElapsed() > STEP_MS) {
-                this.update();
+                this.update(this.stepCount);
                 this.stepTimer.incrementStartTime(STEP_MS);
+                this.stepCount += 1;
             }
 
             var stepFactor = (float)this.stepTimer.millisElapsed()/STEP_MS;
@@ -49,10 +50,11 @@ public class Game {
     }
 
     private final Timer stepTimer = new Timer();
+    private long stepCount = 0;
 
-    private void update() {
+    private void update(long stepCount) {
         Entity.transition();
-        DebugConsole.DEBUG_CONSOLE.update();
+        DebugConsole.DEBUG_CONSOLE.update(stepCount);
         Player.PLAYER.update();
         World.WORLD.update();
         Sky.SKY.update();
