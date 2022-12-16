@@ -189,6 +189,45 @@
         "SYM_RIGHT_BRACE":
             [104, 90, 8, 18],
         "SYM_TILDE":
-            [112, 90, 8, 18]
+            [112, 90, 8, 18],
+
+        "OUTER_UI_TOP_LEFT":
+            [0, 144, 16, 16],
+        "OUTER_UI_TOP":
+            [16, 144, 16, 16],
+        "OUTER_UI_TOP_RIGHT":
+            [32, 144, 16, 16],
+        "OUTER_UI_LEFT":
+            [0, 160, 16, 16],
+        "OUTER_UI_SOLID":
+            [16, 160, 16, 16],
+        "OUTER_UI_RIGHT":
+            [32, 160, 16, 16],
+        "OUTER_UI_BOTTOM_LEFT":
+            [0, 176, 16, 16],
+        "OUTER_UI_BOTTOM":
+            [16, 176, 16, 16],
+        "OUTER_UI_BOTTOM_RIGHT":
+            [32, 176, 16, 16],
+        "INNER_UI_TOP_LEFT":
+            [32, 192, 16, 16],
+        "INNER_UI_TOP":
+            [16, 192, 16, 16],
+        "INNER_UI_TOP_RIGHT":
+            [32, 192, 16, 16],
+        "INNER_UI_LEFT":
+            [0, 208, 16, 16],
+        "INNER_UI_SOLID":
+            [16, 208, 16, 16],
+        "INNER_UI_RIGHT":
+            [32, 208, 16, 16],
+        "INNER_UI_BOTTOM_LEFT":
+            [0, 224, 16, 16],
+        "INNER_UI_BOTTOM":
+            [16, 224, 16, 16],
+        "INNER_UI_BOTTOM_RIGHT":
+            [32, 224, 16, 16],
+        "RETICULE":
+            [48, 144, 16, 16]
     }
 }

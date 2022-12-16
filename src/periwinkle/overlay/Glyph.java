@@ -308,7 +308,7 @@ public class Glyph {
     }
 
     public Glyph(char character, String spriteKey) {
-        this.sprite = Atlas.GLYPH_ATLAS.getSprite(spriteKey);
+        this.sprite = Atlas.UI_ATLAS.getSprite(spriteKey);
         this.character = character;
     }
 }

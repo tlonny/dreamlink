@@ -3,5 +3,6 @@
 
 .idea/
 .settings/
+.log
 
 target/

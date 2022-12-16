@@ -66,4 +66,5 @@ public class Camera {
             .perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
     }
 
+
 }

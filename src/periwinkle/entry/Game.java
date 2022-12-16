@@ -4,6 +4,7 @@ import periwinkle.component.Entity;
 import periwinkle.Camera;
 import periwinkle.Input;
 import periwinkle.Player;
+import periwinkle.Reticule;
 import periwinkle.environment.Sky;
 import periwinkle.environment.SkyType;
 import periwinkle.graphics.Atlas;
@@ -69,6 +70,7 @@ public class Game {
         Shader.SHADER.setViewRotationMatrix(identity);
         Shader.SHADER.setViewTranslationMatrix(identity);
         Shader.SHADER.setProjectionMatrix(identity);
+        Reticule.RETICULE.render();
         DebugConsole.DEBUG_CONSOLE.render();
     }
 
@@ -92,6 +94,7 @@ public class Game {
         Sky.init();
         SkyType.init();
         DebugConsole.init();
+        Reticule.init();
 
         Player.PLAYER.position.set(10, 230, 10);
         for(var x = 0; x < World.WORLD_BLOCK_DIMENSIONS.x; x += 1) {

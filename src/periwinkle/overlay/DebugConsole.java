@@ -27,7 +27,7 @@ public class DebugConsole {
     private long lineCount = CONSOLE_HEIGHT;
 
     private MeshBuffer spriteBuffer = new MeshBuffer(NUM_GLYPHS);
-    private Mesh consoleMesh = new Mesh(Atlas.GLYPH_ATLAS);
+    private Mesh consoleMesh = new Mesh(Atlas.UI_ATLAS);
 
     private StringBuilder inputBuilder = new StringBuilder();
     private String input = "";

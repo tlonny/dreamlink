@@ -17,7 +17,7 @@ public class Atlas {
 
     public static Atlas TERRAIN_ATLAS = new Atlas("src/texture/terrain");
 
-    public static Atlas GLYPH_ATLAS = new Atlas("src/texture/glyph");
+    public static Atlas UI_ATLAS = new Atlas("src/texture/ui");
 
     public static Atlas SKYBOX_ATLAS = new Atlas("src/texture/skybox");
 
@@ -25,7 +25,7 @@ public class Atlas {
 
     public static void init() {
         TERRAIN_ATLAS.setup();
-        GLYPH_ATLAS.setup();
+        UI_ATLAS.setup();
         SKYBOX_ATLAS.setup();
         PARTICLE_ATLAS.setup();
     }
