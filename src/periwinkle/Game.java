@@ -1,10 +1,6 @@
-package periwinkle.entry;
+package periwinkle;
 
 import periwinkle.component.Entity;
-import periwinkle.Camera;
-import periwinkle.Input;
-import periwinkle.Player;
-import periwinkle.Reticule;
 import periwinkle.environment.ParticleType;
 import periwinkle.environment.Sky;
 import periwinkle.environment.SkyType;

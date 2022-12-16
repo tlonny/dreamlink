@@ -15,6 +15,7 @@
         <pngdecoder.version>1.0</pngdecoder.version>
         <sponge.version>2.0.0-SNAPSHOT</sponge.version>
         <json.version>20220924</json.version>
+        <exec.mainClass>periwinkle.Game</exec.mainClass>
     </properties>
 
     <build>
