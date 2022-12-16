@@ -6,10 +6,9 @@ import periwinkle.graphics.Atlas;
 import periwinkle.graphics.Mesh;
 import periwinkle.graphics.MeshBuffer;
 import periwinkle.graphics.Shader;
+import periwinkle.graphics.Sprite;
 import periwinkle.utility.CubeFace;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.HashSet;
@@ -26,15 +25,16 @@ public class Sky {
         SKY_BOX_LENGTH
     ).mul(-0.5f);
 
-    private Mesh skyBoxMesh = new Mesh(Atlas.SKY_ATLAS);
-    private Mesh rainMesh = new Mesh(Atlas.PARTICLE_ATLAS);
-
-    private MeshBuffer rainMeshBuffer = new MeshBuffer(MAX_RAIN * 2);
-    public Set<Rain> rainSet = new HashSet<>();
-
     public SkyType skyType = SkyType.RAIN_DAY;
 
-    private static Vector2f[] TEXTURE_OFFSETS = Atlas.SKY_ATLAS.buildTextureOffsets(new Vector2i(0, 0), new Vector2i(512, 512));
+    private final Mesh skyBoxMesh = new Mesh(Atlas.SKYBOX_ATLAS);
+    private final Mesh rainMesh = new Mesh(Atlas.PARTICLE_ATLAS);
+    private final MeshBuffer rainMeshBuffer = new MeshBuffer(MAX_RAIN * 2);
+
+    // TODO: Move into RainManager...
+    public final Set<Rain> rainSet = new HashSet<>();
+
+    private Sprite skySprite;
 
     public static Sky SKY = new Sky();
     public static void init() {
@@ -50,11 +50,11 @@ public class Sky {
                 var vertex = cubeFace.vertices[ix];
                 var inverseNormal = new Vector3f(cubeFace.normal).mul(-1f);
                 this.skyBoxMeshBuffer.pushVertex(
-                        new Vector3f(vertex).add(inverseNormal).mul(SKY_BOX_LENGTH),
-                        new Vector3f(cubeFace.normal),
-                        TEXTURE_OFFSETS[ix],
-                        0f,
-                        1f
+                    new Vector3f(vertex).add(inverseNormal).mul(SKY_BOX_LENGTH),
+                    new Vector3f(cubeFace.normal),
+                    this.skySprite.vertices[ix],
+                    0f,
+                    1f
                 );
             }
             this.skyBoxMeshBuffer.indexQuad();
@@ -65,6 +65,7 @@ public class Sky {
     }
 
     public void setup() {
+        this.skySprite = Atlas.SKYBOX_ATLAS.getSprite("skybox");
         this.rainMesh.setup();
         this.skyBoxMesh.setup();
         this.skyBoxMeshBuffer.clear();
@@ -96,7 +97,7 @@ public class Sky {
             if(rain.position.distance(Camera.CAMERA.position) >= Rain.SPAWN_RANGE)
                 continue;
             rainInterpolatedPosition.set(rain.previousPosition).lerp(rain.position, stepFactor);
-            this.rainMeshBuffer.pushParticle(rainInterpolatedPosition, rain.width, ParticleType.RAIN, billboardMatrix);
+            this.rainMeshBuffer.pushParticle(rainInterpolatedPosition, rain.width, ParticleType.RAIN_DROP.sprite, billboardMatrix);
         }
 
         this.rainMeshBuffer.flip();

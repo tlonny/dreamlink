@@ -1,10 +1,15 @@
-package periwinkle;
+package periwinkle.entry;
 
 import periwinkle.component.Entity;
+import periwinkle.Camera;
+import periwinkle.Input;
+import periwinkle.Player;
 import periwinkle.environment.Sky;
 import periwinkle.environment.SkyType;
+import periwinkle.graphics.Atlas;
+import periwinkle.graphics.Shader;
+import periwinkle.graphics.Display;
 import periwinkle.overlay.Command;
-import periwinkle.graphics.*;
 import periwinkle.overlay.DebugConsole;
 import periwinkle.overlay.Glyph;
 import periwinkle.terrain.BlockType;
@@ -19,20 +24,7 @@ public class Game {
 
     private static final int STEP_MS = 50;
 
-    public Game() {
-        Player.PLAYER.position.set(10, 230, 10);
-        for(var x = 0; x < World.WORLD_BLOCK_DIMENSIONS.x; x += 1) {
-            for(var z = 0; z < World.WORLD_BLOCK_DIMENSIONS.z; z += 1) {
-                World.WORLD.setBlock(new Vector3i(x, 0, z), BlockType.GRASS);
-                World.WORLD.setBlock(new Vector3i(x, 1, z), BlockType.RED_FLOWER);
-            }
-        }
-        Generator.GENERATOR.generate();
-        World.WORLD.enableLighting();
-        World.WORLD.enableHeightMap();
-    }
-
-    private void run() {
+    public void run() {
         this.stepTimer.resetStartTime();
         while(!Display.DISPLAY.shouldClose()) {
             if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_ESCAPE))
@@ -90,20 +82,29 @@ public class Game {
 
     public static void main(String[] args) {
         Display.init();
+        Atlas.init();
         Input.init();
         Command.init();
         BlockType.init();
         Glyph.init();
-        Atlas.init();
         World.init();
         Shader.init();
         Sky.init();
         SkyType.init();
         DebugConsole.init();
 
+        Player.PLAYER.position.set(10, 230, 10);
+        for(var x = 0; x < World.WORLD_BLOCK_DIMENSIONS.x; x += 1) {
+            for(var z = 0; z < World.WORLD_BLOCK_DIMENSIONS.z; z += 1) {
+                World.WORLD.setBlock(new Vector3i(x, 0, z), BlockType.GRASS);
+                World.WORLD.setBlock(new Vector3i(x, 1, z), BlockType.RED_FLOWERS);
+            }
+        }
+        Generator.GENERATOR.generate();
+        World.WORLD.enableLighting();
+        World.WORLD.enableHeightMap();
+
         new Game().run();
     }
-
-
 
 }

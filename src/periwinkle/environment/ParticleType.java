@@ -1,23 +1,17 @@
 package periwinkle.environment;
 
 import periwinkle.graphics.Atlas;
-import periwinkle.graphics.ITextureLookup;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
+import periwinkle.graphics.Sprite;
 
-public class ParticleType implements ITextureLookup {
+public class ParticleType {
 
-    private static Vector2i PARTICLE_DIMENSIONS = new Vector2i(16, 16);
-    private final Vector2f[] textureOffsets;
+    public final Sprite sprite;
 
-    public ParticleType(Vector2f[] textureOffsets) {
-        this.textureOffsets = textureOffsets;
+    public ParticleType(String spriteKey) {
+        this.sprite = Atlas.PARTICLE_ATLAS.getSprite(spriteKey);
     }
 
-    public static ParticleType RAIN = new ParticleType(Atlas.PARTICLE_ATLAS.buildTextureOffsets(new Vector2i(0 ,0), PARTICLE_DIMENSIONS));
+    public static ParticleType RAIN_DROP = new ParticleType("RAIN_DROP");
+    public static ParticleType SNOW_FLAKE = new ParticleType("SNOW_FLAKE");
 
-    @Override
-    public Vector2f[] getTextureOffsets() {
-        return this.textureOffsets;
-    }
 }

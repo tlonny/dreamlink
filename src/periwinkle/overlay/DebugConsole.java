@@ -101,7 +101,7 @@ public class DebugConsole {
             var character = x < text.length() ? text.charAt(x) : DEFAULT;
             var glyph = Glyph.GLYPH_CHARACTER_LOOKUP.getOrDefault(character, Glyph.SYM_SPACE);
             var glyphPosition = new Vector2f(x, 0).mul(GLYPH_DIMENSIONS).add(position);
-            this.spriteBuffer.pushSprite(glyphPosition, GLYPH_DIMENSIONS, glyph);
+            this.spriteBuffer.pushSprite(glyphPosition, GLYPH_DIMENSIONS, glyph.sprite);
         }
     }
 

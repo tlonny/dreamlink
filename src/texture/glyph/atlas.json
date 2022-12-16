@@ -1,0 +1,194 @@
+{
+    "sprites" : {
+        "SYM_SPACE": 
+            [0, 0, 8, 18],
+        "SYM_BANG": 
+            [8, 0, 8, 18],
+        "SYM_DOUBLE_QUOTES":
+            [16, 0, 8, 18],
+        "SYM_HASH":
+            [24, 0, 8, 18],
+        "SYM_DOLLAR":
+            [32, 0, 8, 18],
+        "SYM_PERCENT":
+            [40, 0, 8, 18],
+        "SYM_AMPERSAND":
+            [48, 0, 8, 18],
+        "SYM_APOSTROPHE":
+            [56, 0, 8, 18],
+        "SYM_LEFT_PARENS":
+            [64, 0, 8, 18],
+        "SYM_RIGHT_PARENS":
+            [72, 0, 8, 18],
+        "SYM_ASTERISK":
+            [80, 0, 8, 18],
+        "SYM_PLUS":
+            [88, 0, 8, 18],
+        "SYM_COMMA":
+            [96, 0, 8, 18],
+        "SYM_MINUS":
+            [104, 0, 8, 18],
+        "SYM_PERIOD":
+            [112, 0, 8, 18],
+        "SYM_SLASH":
+            [120, 0, 8, 18],
+        "NUM_0":
+            [0, 18, 8, 18],
+        "NUM_1":
+            [8, 18, 8, 18],
+        "NUM_2":
+            [16, 18, 8, 18],
+        "NUM_3":
+            [24, 18, 8, 18],
+        "NUM_4":
+            [32, 18, 8, 18],
+        "NUM_5":
+            [40, 18, 8, 18],
+        "NUM_6":
+            [48, 18, 8, 18],
+        "NUM_7":
+            [56, 18, 8, 18],
+        "NUM_8":
+            [64, 18, 8, 18],
+        "NUM_9":
+            [72, 18, 8, 18],
+        "SYM_COLON":
+            [80, 18, 8, 18],
+        "SYM_SEMICOLON":
+            [88, 18, 8, 18],
+        "SYM_LESS_THAN":
+            [96, 18, 8, 18],
+        "SYM_EQUAL":
+            [104, 18, 8, 18],
+        "SYM_GREATER_THAN":
+            [112, 18, 8, 18],
+        "SYM_QUESTION":
+            [120, 18, 8, 18],
+        "SYM_AT":
+            [0, 36, 8, 18],
+        "CHAR_UPPER_A":
+            [8, 36, 8, 18],
+        "CHAR_UPPER_B":
+            [16, 36, 8, 18],
+        "CHAR_UPPER_C":
+            [24, 36, 8, 18],
+        "CHAR_UPPER_D":
+            [32, 36, 8, 18],
+        "CHAR_UPPER_E":
+            [40, 36, 8, 18],
+        "CHAR_UPPER_F":
+            [48, 36, 8, 18],
+        "CHAR_UPPER_G":
+            [56, 36, 8, 18],
+        "CHAR_UPPER_H":
+            [64, 36, 8, 18],
+        "CHAR_UPPER_I":
+            [72, 36, 8, 18],
+        "CHAR_UPPER_J":
+            [80, 36, 8, 18],
+        "CHAR_UPPER_K":
+            [88, 36, 8, 18],
+        "CHAR_UPPER_L":
+            [96, 36, 8, 18],
+        "CHAR_UPPER_M":
+            [104, 36, 8, 18],
+        "CHAR_UPPER_N":
+            [112, 36, 8, 18],
+        "CHAR_UPPER_O":
+            [120, 36, 8, 18],
+        "CHAR_UPPER_P":
+            [0, 54, 8, 18],
+        "CHAR_UPPER_Q":
+            [8, 54, 8, 18],
+        "CHAR_UPPER_R":
+            [16, 54, 8, 18],
+        "CHAR_UPPER_S":
+            [24, 54, 8, 18],
+        "CHAR_UPPER_T":
+            [32, 54, 8, 18],
+        "CHAR_UPPER_U":
+            [40, 54, 8, 18],
+        "CHAR_UPPER_V":
+            [48, 54, 8, 18],
+        "CHAR_UPPER_W":
+            [56, 54, 8, 18],
+        "CHAR_UPPER_X":
+            [64, 54, 8, 18],
+        "CHAR_UPPER_Y":
+            [72, 54, 8, 18],
+        "CHAR_UPPER_Z":
+            [80, 54, 8, 18],
+        "SYM_LEFT_SQUARE_BRACKET":
+            [88, 54, 8, 18],
+        "SYM_BACKSLASH":
+            [96, 54, 8, 18],
+        "SYM_RIGHT_SQUARE_BRACKET":
+            [104, 54, 8, 18],
+        "SYM_CARET":
+            [112, 54, 8, 18],
+        "SYM_UNDERSCORE":
+            [120, 54, 8, 18],
+        "SYM_BACKTICK":
+            [0, 72, 8, 18],
+        "CHAR_LOWER_A":
+            [8, 72, 8, 18],
+        "CHAR_LOWER_B":
+            [16, 72, 8, 18],
+        "CHAR_LOWER_C":
+            [24, 72, 8, 18],
+        "CHAR_LOWER_D":
+            [32, 72, 8, 18],
+        "CHAR_LOWER_E":
+            [40, 72, 8, 18],
+        "CHAR_LOWER_F":
+            [48, 72, 8, 18],
+        "CHAR_LOWER_G":
+            [56, 72, 8, 18],
+        "CHAR_LOWER_H":
+            [64, 72, 8, 18],
+        "CHAR_LOWER_I":
+            [72, 72, 8, 18],
+        "CHAR_LOWER_J":
+            [80, 72, 8, 18],
+        "CHAR_LOWER_K":
+            [88, 72, 8, 18],
+        "CHAR_LOWER_L":
+            [96, 72, 8, 18],
+        "CHAR_LOWER_M":
+            [104, 72, 8, 18],
+        "CHAR_LOWER_N":
+            [112, 72, 8, 18],
+        "CHAR_LOWER_O":
+            [120, 72, 8, 18],
+        "CHAR_LOWER_P":
+            [0, 90, 8, 18],
+        "CHAR_LOWER_Q":
+            [8, 90, 8, 18],
+        "CHAR_LOWER_R":
+            [16, 90, 8, 18],
+        "CHAR_LOWER_S":
+            [24, 90, 8, 18],
+        "CHAR_LOWER_T":
+            [32, 90, 8, 18],
+        "CHAR_LOWER_U":
+            [40, 90, 8, 18],
+        "CHAR_LOWER_V":
+            [48, 90, 8, 18],
+        "CHAR_LOWER_W":
+            [56, 90, 8, 18],
+        "CHAR_LOWER_X":
+            [64, 90, 8, 18],
+        "CHAR_LOWER_Y":
+            [72, 90, 8, 18],
+        "CHAR_LOWER_Z":
+            [80, 90, 8, 18],
+        "SYM_LEFT_BRACE":
+            [88, 90, 8, 18],
+        "SYM_PIPE":
+            [96, 90, 8, 18],
+        "SYM_RIGHT_BRACE":
+            [104, 90, 8, 18],
+        "SYM_TILDE":
+            [112, 90, 8, 18]
+    }
+}

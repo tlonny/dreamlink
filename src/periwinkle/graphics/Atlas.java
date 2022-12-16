@@ -1,79 +1,93 @@
 package periwinkle.graphics;
 
 import periwinkle.utility.File;
+import periwinkle.utility.ImageData;
+
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.joml.Vector2f;
-import org.joml.Vector2i;
+import org.json.JSONObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.ByteBuffer;
 
 public class Atlas {
 
-    public static Atlas TERRAIN_ATLAS = new Atlas(
-        "src/texture/terrain.png", 256
-    );
+    public static Atlas TERRAIN_ATLAS = new Atlas("src/texture/terrain");
 
-    public static Atlas GLYPH_ATLAS = new Atlas(
-        "src/texture/glyph.png", 128
-    );
+    public static Atlas GLYPH_ATLAS = new Atlas("src/texture/glyph");
 
-    public static Atlas SKY_ATLAS = new Atlas(
-        "src/texture/skybox.png", 512
-    );
+    public static Atlas SKYBOX_ATLAS = new Atlas("src/texture/skybox");
 
-    public static Atlas PARTICLE_ATLAS = new Atlas(
-        "src/texture/particle.png", 512
-    );
+    public static Atlas PARTICLE_ATLAS = new Atlas("src/texture/particle");
 
     public static void init() {
         TERRAIN_ATLAS.setup();
         GLYPH_ATLAS.setup();
-        SKY_ATLAS.setup();
+        SKYBOX_ATLAS.setup();
         PARTICLE_ATLAS.setup();
     }
 
-    private static final int MAX_TEXTURE_WIDTH = 1024;
-    private static final int MAX_TEXTURE_BYTES = 4 * MAX_TEXTURE_WIDTH * MAX_TEXTURE_WIDTH;
-
     private int atlasID;
-    private final String textureSrc;
-    private final int textureLength;
-    private final ByteBuffer setupByteBuffer = MemoryUtil.memAlloc(MAX_TEXTURE_BYTES);
+    private final String textureRoot;
+    private final Map<String, Sprite> spriteMap;
 
-    public Atlas(String textureSrc, int textureLength) {
-        this.textureSrc = textureSrc;
-        this.textureLength = textureLength;
+    public Atlas(String textureRoot) {
+        this.textureRoot = textureRoot;
+        this.spriteMap = new HashMap<String, Sprite>();
+    }
+
+    public Sprite getSprite(String spriteKey) {
+        return this.spriteMap.get(spriteKey);
     }
 
     public void setup() {
+
+        var textureSrc = Paths.get(this.textureRoot, "texture.png").toString();
+        var atlasSrc = Paths.get(this.textureRoot, "atlas.json").toString();
+
+        var textureData = new ImageData(textureSrc);
+        textureData.load();
+
+        var atlasConfig = new JSONObject(File.FILE.readStringFromFile(atlasSrc));
+
+        var atlasSprites = atlasConfig.getJSONObject("sprites");
+        var atlasIterator = atlasSprites.keys();
+
+        System.out.println(textureData.width);
+        System.out.println(textureData.height);
+
+        while(atlasIterator.hasNext()) {
+            var atlasKey = atlasIterator.next();
+            var atlasEntry = atlasSprites.getJSONArray(atlasKey);
+
+            var x = atlasEntry.optInt(0);
+            var y = atlasEntry.optInt(1);
+            var w = atlasEntry.optInt(2);
+            var h = atlasEntry.optInt(3);
+
+            this.spriteMap.put(atlasKey, new Sprite(
+                new Vector2f((float)x/textureData.width, (float)y/textureData.height),
+                new Vector2f((float)x/textureData.width, (float)(y+h)/textureData.height),
+                new Vector2f((float)(x+w)/textureData.width, (float)(y+h)/textureData.height),
+                new Vector2f((float)(x+w)/textureData.width, (float)y/textureData.height)
+            ));
+        }
+
+
         this.atlasID = GL20.glGenTextures();
-        var buffer = File.FILE.loadPNGFromFile(this.textureSrc, this.setupByteBuffer.clear());
-        buffer.flip();
         GL20.glBindTexture(GL11.GL_TEXTURE_2D, this.atlasID);
         GL20.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-        GL20.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, this.textureLength, this.textureLength, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL20.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, textureData.width, textureData.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, textureData.buffer);
         GL20.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
         GL20.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-    }
-
-    public Vector2f[] buildTextureOffsets(Vector2i position, Vector2i dimensions) {
-        return new Vector2f[] {
-            new Vector2f(position.x, position.y).mul(1f / this.textureLength),
-            new Vector2f(position.x, position.y + dimensions.y).mul(1f / this.textureLength),
-            new Vector2f(position.x + dimensions.x, position.y + dimensions.y).mul(1f / this.textureLength),
-            new Vector2f(position.x + dimensions.x, position.y).mul(1f / this.textureLength),
-        };
     }
 
     public void bind() {
         GL20.glActiveTexture(GL13.GL_TEXTURE0);
         GL20.glBindTexture(GL11.GL_TEXTURE_2D, this.atlasID);
     }
-
-
-
 
 }

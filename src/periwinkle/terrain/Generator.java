@@ -6,9 +6,6 @@ import org.joml.Vector3i;
 
 public class Generator {
 
-    private final NoiseGenerator highFrequencyTerrainNoise = new NoiseGenerator(5);
-    private final NoiseGenerator lowFrequencyTerrainNoise = new NoiseGenerator(30, 30);
-
     private final NoiseGenerator[] terrainGenerators = new NoiseGenerator[] {
         new NoiseGenerator(1, 40),
             new NoiseGenerator(5, 30),
@@ -38,7 +35,7 @@ public class Generator {
                 var totalHeight = World.WORLD_BLOCK_DIMENSIONS.y - 2 - 20
                         + sum * 20f / this.terrainGenerators.length;
                 for(var y = 1; y < totalHeight; y += 1) {
-                    World.WORLD.setBlock(new Vector3i(x, y, z), BlockType.STONE);
+                    World.WORLD.setBlock(new Vector3i(x, y, z), BlockType.STONY_SAND);
                 }
             }
         }

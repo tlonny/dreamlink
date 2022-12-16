@@ -78,11 +78,10 @@ public class MeshBuffer {
         this.globalLightBuffer.put(globalLight);
     }
 
-    public void pushSprite(Vector2f position, Vector2f dimensions, ITextureLookup lookup) {
-        var offsets = lookup.getTextureOffsets();
+    public void pushSprite(Vector2f position, Vector2f dimensions, Sprite sprite) {
         for(var vertIx = 0; vertIx < CubeFace.FRONT.vertices.length; vertIx += 1) {
             var vertex = CubeFace.FRONT.vertices[vertIx];
-            var vertOffset = offsets[vertIx];
+            var vertOffset = sprite.vertices[vertIx];
             var vertPosition = new Vector3f(
                 (vertex.x * dimensions.x + position.x)/Display.DISPLAY.width * 2f - 1,
                 (vertex.y * dimensions.y + Display.DISPLAY.height - position.y - dimensions.y)/Display.DISPLAY.height * 2f - 1,
@@ -93,12 +92,11 @@ public class MeshBuffer {
         this.indexQuad();
     }
 
-    public void pushParticle(Vector3f position, float width, ITextureLookup lookup, Matrix3f billboardMatrix) {
-        var offsets = lookup.getTextureOffsets();
+    public void pushParticle(Vector3f position, float width, Sprite sprite, Matrix3f billboardMatrix) {
         for(var cubeFace : CubeFace.FRONT_AND_BACK_CUBE_FACES) {
             for (var vertIx = 0; vertIx < cubeFace.vertices.length; vertIx += 1) {
                 var vertex = cubeFace.vertices[vertIx];
-                var vertOffset = offsets[vertIx];
+                var vertOffset = sprite.vertices[vertIx];
                 var vertPosition = new Vector3f(vertex).mul(width).mul(billboardMatrix).add(position);
                 this.pushVertex(vertPosition, new Vector3f(CubeFace.FRONT.normal), vertOffset, 0f, 1f);
             }

@@ -171,7 +171,7 @@ public class World {
                 this.chunkMeshBuffer.pushVertex(
                     new Vector3f(localPosition).add(vertex),
                     new Vector3f(cubeFace.normal),
-                    blockBuffer.blockType.getTextureOffsets()[ix],
+                    blockBuffer.blockType.sprite.vertices[ix],
                     adjacentBlock.localLight / 15f,
                     Math.max(adjacentBlock.globalLight / 15f, 0.1f)
                 );
@@ -196,7 +196,7 @@ public class World {
                 this.chunkMeshBuffer.pushVertex(
                     new Vector3f(localPosition).add(vertex),
                     new Vector3f(cubeFace.normal).rotateY(45),
-                    blockBuffer.blockType.getTextureOffsets()[ix],
+                    blockBuffer.blockType.sprite.vertices[ix],
                     blockBuffer.localLight / 15f,
                     Math.max(blockBuffer.globalLight / 15f, 0.1f)
                 );
