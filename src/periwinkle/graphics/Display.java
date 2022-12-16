@@ -1,6 +1,8 @@
 package periwinkle.graphics;
 
 import periwinkle.environment.Sky;
+
+import org.joml.Vector2i;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -25,8 +27,7 @@ public class Display {
     public float screenG;
     public float screenB;
 
-    public int width = 720;
-    public int height = 480;
+    public Vector2i dimensions = new Vector2i(720, 480);
 
     private boolean isFocused() {
         return GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1;
@@ -59,13 +60,13 @@ public class Display {
         var currentMonitorID = GLFW.glfwGetPrimaryMonitor();
         var monitorData = GLFW.glfwGetVideoMode(currentMonitorID);
 
-        this.width = monitorData.width();
-        this.height = monitorData.height();
+        this.dimensions.x = monitorData.width();
+        this.dimensions.y = monitorData.height();
 
         GLFW.glfwWindowHint( GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE );
         GLFW.glfwWindowHint( GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE );
 
-        this.windowID = GLFW.glfwCreateWindow(this.width, this.height, TITLE, MemoryUtil.NULL, MemoryUtil.NULL);
+        this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, MemoryUtil.NULL, MemoryUtil.NULL);
 
         try (var stack = MemoryStack.stackPush() ) {
             var width  = stack.mallocInt(1);
@@ -101,11 +102,11 @@ public class Display {
     }
 
     public float getDeltaMouseX() {
-        return this.isFocused() ? this.getMouseX() - this.width/2f : 0f;
+        return this.isFocused() ? this.getMouseX() - this.dimensions.x/2f : 0f;
     }
 
     public float getDeltaMouseY() {
-        return this.isFocused() ? this.getMouseY() - this.height/2f : 0f;
+        return this.isFocused() ? this.getMouseY() - this.dimensions.y/2f : 0f;
     }
 
     public void refresh() {
@@ -116,7 +117,7 @@ public class Display {
         GL15.glClear( GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
 
         GLFW.glfwGetCursorPos(this.windowID, this.xBuffer, this.yBuffer );
-        GLFW.glfwSetCursorPos(this.windowID, this.width / 2f, this.height / 2f);
+        GLFW.glfwSetCursorPos(this.windowID, this.dimensions.x / 2f, this.dimensions.y / 2f);
     }
 
 

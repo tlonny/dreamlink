@@ -19,8 +19,6 @@ public class Input {
 
     private long leftPressed;
     private long rightPressed;
-    private long leftReleased;
-    private long rightReleased;
 
     public final List<Character> inputCapture = new ArrayList<>();
     private long captureCount = 1;
@@ -31,11 +29,6 @@ public class Input {
                 this.leftPressed = this.captureCount;
             else if(button == GLFW.GLFW_MOUSE_BUTTON_2)
                 this.rightPressed = this.captureCount;
-        } else if(action == GLFW.GLFW_RELEASE) {
-            if(button == GLFW.GLFW_MOUSE_BUTTON_1)
-                this.leftReleased = this.captureCount;
-            else if(button == GLFW.GLFW_MOUSE_BUTTON_2)
-                this.rightReleased = this.captureCount;
         }
     }
 
@@ -48,15 +41,15 @@ public class Input {
             this.repeatedKeys[key] = this.captureCount;
     }
 
-    private void onCharEvent( long window, int codePoint) {
+    private void onCharEvent(long window, int codePoint) {
         if(codePoint > 127)
             return;
         this.inputCapture.add((char)codePoint);
     }
 
     public boolean isKeyDown(int key) {
-        var pressCount  = this.pressedKeys[key];
-        var releaseCount  = this.releasedKeys[key];
+        var pressCount = this.pressedKeys[key];
+        var releaseCount = this.releasedKeys[key];
         return pressCount > releaseCount;
     }
 
@@ -83,6 +76,9 @@ public class Input {
 
     public void update() {
         this.captureCount += 1;
+    }
+
+    public void render() {
         this.inputCapture.clear();
     }
 

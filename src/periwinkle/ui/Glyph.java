@@ -1,4 +1,4 @@
-package periwinkle.overlay;
+package periwinkle.ui;
 
 import periwinkle.graphics.Atlas;
 import periwinkle.graphics.Sprite;
@@ -38,7 +38,7 @@ public class Glyph {
 
     public static Glyph SYM_MINUS = new Glyph('-', "SYM_MINUS");
 
-    public static Glyph SYM_DOT = new Glyph('.', "SYM_DOT");
+    public static Glyph SYM_PERIOD = new Glyph('.', "SYM_PERIOD");
 
     public static Glyph SYM_SLASH = new Glyph('/', "SYM_SLASH");
 
@@ -200,9 +200,6 @@ public class Glyph {
 
     public static Glyph SYM_TILDE = new Glyph('~', "SYM_TILDE");
 
-    public static Glyph[] GLYPHS = new Glyph[] {
-    };
-
     public static void init() {
         SYM_SPACE.setup();
         SYM_BANG.setup();
@@ -218,7 +215,7 @@ public class Glyph {
         SYM_PLUS.setup();
         SYM_COMMA.setup();
         SYM_MINUS.setup();
-        SYM_DOT.setup();
+        SYM_PERIOD.setup();
         SYM_SLASH.setup();
         NUM_0.setup();
         NUM_1.setup();

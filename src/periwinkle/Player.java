@@ -1,6 +1,6 @@
 package periwinkle;
 
-import periwinkle.overlay.DebugConsole;
+import periwinkle.ui.DebugConsole;
 import periwinkle.terrain.BlockType;
 import periwinkle.terrain.BlockFormat;
 import periwinkle.terrain.World;
@@ -51,10 +51,10 @@ public class Player {
         this.velocity.x = newVelocity.x;
         this.velocity.z = newVelocity.z;
 
-        if(!this.isOnGround)
-            this.velocity.y -= GRAVITY;
-        else if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_SPACE))
+        this.velocity.y -= GRAVITY;
+        if(this.isOnGround && Input.INPUT.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
             this.velocity.y = JUMP_SPEED;
+        }
         this.velocity.y = Math.max(this.velocity.y, -TERMINAL_FALL_SPEED);
     }
 
@@ -66,7 +66,7 @@ public class Player {
         if(Input.INPUT.isRightMousePressed()) {
             for(var ix =0; ix < 40; ix += 1) {
                 caster.advance();
-                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat == BlockFormat.SOLID) {
+                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
                     World.WORLD.setBlock(caster.cursor, BlockType.AIR);
                     break;
                 }
@@ -78,7 +78,7 @@ public class Player {
             Vector3i previous = new Vector3i(caster.cursor);
             for(var ix =0; ix < 40; ix += 1) {
                 caster.advance();
-                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat == BlockFormat.SOLID) {
+                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
                     World.WORLD.setBlock(previous, this.blockType);
                     break;
                 }
@@ -114,7 +114,7 @@ public class Player {
         this.previousPosition.set(this.position);
 
         this.updateVelocity();
-        this.modifyBlocks();
         this.updatePosition();
+        this.modifyBlocks();
     }
 }

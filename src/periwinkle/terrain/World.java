@@ -12,7 +12,7 @@ import java.util.Queue;
 
 public class World {
 
-    public static Vector3i WORLD_CHUNK_DIMENSIONS = new Vector3i(12, 8, 12);
+    public static Vector3i WORLD_CHUNK_DIMENSIONS = new Vector3i(8, 8, 8);
     public static Vector3i WORLD_BLOCK_DIMENSIONS = new Vector3i(WORLD_CHUNK_DIMENSIONS).mul(Chunk.BLOCK_LENGTH);
     public static int NUM_CHUNKS_PER_WORLD = WORLD_CHUNK_DIMENSIONS.x * WORLD_CHUNK_DIMENSIONS.y * WORLD_CHUNK_DIMENSIONS.z;
     public static int NUM_BLOCKS_PER_HORIZONTAL_SLICE = WORLD_BLOCK_DIMENSIONS.x * WORLD_BLOCK_DIMENSIONS.z;

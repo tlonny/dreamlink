@@ -47,7 +47,7 @@ public class Generator {
                 for (var y = 1; y < World.WORLD_BLOCK_DIMENSIONS.y - 2; y += 1) {
                     var position = new Vector3i(x, y, z);
                     var noise = this.cavernNoise.getNoise(position);
-                    if(noise > 0.35f)
+                    if(noise > 0.38f)
                         World.WORLD.setBlock(position, BlockType.AIR);
                 }
             }

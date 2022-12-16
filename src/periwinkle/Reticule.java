@@ -24,8 +24,8 @@ public class Reticule {
     public void setup() {
         this.reticuleBuffer.pushSprite(
             new Vector2f(
-                Display.DISPLAY.width/2f - RETICULE_SIZE.x/2, 
-                Display.DISPLAY.height/2f - RETICULE_SIZE.y/2
+                Display.DISPLAY.dimensions.x/2f - RETICULE_SIZE.x/2, 
+                Display.DISPLAY.dimensions.y/2f - RETICULE_SIZE.y/2
             ),
             RETICULE_SIZE,
             Atlas.UI_ATLAS.getSprite("RETICULE")

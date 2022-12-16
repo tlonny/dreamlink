@@ -1,4 +1,4 @@
-package periwinkle.overlay;
+package periwinkle.ui;
 
 import periwinkle.environment.Sky;
 import periwinkle.environment.SkyType;

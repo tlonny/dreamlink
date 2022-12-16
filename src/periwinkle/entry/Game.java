@@ -5,21 +5,25 @@ import periwinkle.Camera;
 import periwinkle.Input;
 import periwinkle.Player;
 import periwinkle.Reticule;
+import periwinkle.environment.ParticleType;
 import periwinkle.environment.Sky;
 import periwinkle.environment.SkyType;
 import periwinkle.graphics.Atlas;
 import periwinkle.graphics.Shader;
 import periwinkle.graphics.Display;
-import periwinkle.overlay.Command;
-import periwinkle.overlay.DebugConsole;
-import periwinkle.overlay.Glyph;
+import periwinkle.ui.Command;
+import periwinkle.ui.DebugConsole;
+import periwinkle.ui.Glyph;
+import periwinkle.ui.UI;
 import periwinkle.terrain.BlockType;
 import periwinkle.terrain.Generator;
 import periwinkle.terrain.World;
 import periwinkle.utility.Timer;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL15;
 
 public class Game {
 
@@ -55,6 +59,7 @@ public class Game {
     }
 
     private void renderWorld(float stepFactor) {
+        GL15.glEnable(GL15.GL_DEPTH_TEST);
         Shader.SHADER.setGlobalColor(Sky.SKY.skyType.skyColor);
         Camera.CAMERA.reposition(stepFactor);
         Shader.SHADER.setViewRotationMatrix(Camera.CAMERA.getViewRotationMatrix());
@@ -66,18 +71,23 @@ public class Game {
     }
 
     private void renderGUI() {
+        GL15.glDisable(GL15.GL_DEPTH_TEST);
         var identity = new Matrix4f();
         Shader.SHADER.setViewRotationMatrix(identity);
         Shader.SHADER.setViewTranslationMatrix(identity);
         Shader.SHADER.setProjectionMatrix(identity);
         Reticule.RETICULE.render();
         DebugConsole.DEBUG_CONSOLE.render();
+        UI.UI.drawText(new Vector2i(20,20), "periwinkle V0.1");
+        UI.UI.render();
+        Input.INPUT.render();
     }
 
     private void render(float stepFactor) {
         Shader.SHADER.useProgram();
         Shader.SHADER.setTextureSampler();
         this.renderWorld(stepFactor);
+
         this.renderGUI();
         Display.DISPLAY.refresh();
     }
@@ -93,10 +103,11 @@ public class Game {
         Shader.init();
         Sky.init();
         SkyType.init();
-        DebugConsole.init();
+        UI.init();
+        ParticleType.init();
         Reticule.init();
 
-        Player.PLAYER.position.set(10, 230, 10);
+        Player.PLAYER.position.set(10, 400, 10);
         for(var x = 0; x < World.WORLD_BLOCK_DIMENSIONS.x; x += 1) {
             for(var z = 0; z < World.WORLD_BLOCK_DIMENSIONS.z; z += 1) {
                 World.WORLD.setBlock(new Vector3i(x, 0, z), BlockType.GRASS);

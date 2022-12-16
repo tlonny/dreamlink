@@ -1,4 +1,4 @@
-package periwinkle.overlay;
+package periwinkle.ui;
 
 import periwinkle.Player;
 import periwinkle.terrain.BlockType;

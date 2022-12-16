@@ -5,9 +5,19 @@ import periwinkle.graphics.Sprite;
 
 public class ParticleType {
 
-    public final Sprite sprite;
+    public Sprite sprite;
+    private final String spriteKey;
+
+    public static void init() {
+        RAIN_DROP.setup();
+        SNOW_FLAKE.setup();
+    }
 
     public ParticleType(String spriteKey) {
+        this.spriteKey = spriteKey;
+    }
+
+    public void setup() {
         this.sprite = Atlas.PARTICLE_ATLAS.getSprite(spriteKey);
     }
 

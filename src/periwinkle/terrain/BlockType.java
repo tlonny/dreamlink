@@ -115,7 +115,7 @@ public class BlockType {
 
     public static BlockType LIGHT_GRAY_CLOTH = new BlockType("LIGHT_GRAY_CLOTH", 0, BlockFormat.SOLID);
 
-    public static BlockType MAGMA = new BlockType("MAGMA", 10, BlockFormat.SOLID);
+    public static BlockType MAGMA = new BlockType("MAGMA", 15, BlockFormat.SOLID);
 
     public static BlockType TORCH = new BlockType("TORCH", 15, BlockFormat.CROSS);
 

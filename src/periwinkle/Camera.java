@@ -60,7 +60,7 @@ public class Camera {
     }
 
     public Matrix4f getProjectionMatrix() {
-        var aspectRatio = (float) Display.DISPLAY.width / Display.DISPLAY.height;
+        var aspectRatio = (float) Display.DISPLAY.dimensions.x / Display.DISPLAY.dimensions.y;
         return new Matrix4f()
             .identity()
             .perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);

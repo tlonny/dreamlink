@@ -56,9 +56,6 @@ public class Atlas {
         var atlasSprites = atlasConfig.getJSONObject("sprites");
         var atlasIterator = atlasSprites.keys();
 
-        System.out.println(textureData.width);
-        System.out.println(textureData.height);
-
         while(atlasIterator.hasNext()) {
             var atlasKey = atlasIterator.next();
             var atlasEntry = atlasSprites.getJSONArray(atlasKey);

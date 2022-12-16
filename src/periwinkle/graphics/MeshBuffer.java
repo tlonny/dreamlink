@@ -83,8 +83,8 @@ public class MeshBuffer {
             var vertex = CubeFace.FRONT.vertices[vertIx];
             var vertOffset = sprite.vertices[vertIx];
             var vertPosition = new Vector3f(
-                (vertex.x * dimensions.x + position.x)/Display.DISPLAY.width * 2f - 1,
-                (vertex.y * dimensions.y + Display.DISPLAY.height - position.y - dimensions.y)/Display.DISPLAY.height * 2f - 1,
+                (vertex.x * dimensions.x + position.x)/Display.DISPLAY.dimensions.x * 2f - 1,
+                (vertex.y * dimensions.y + Display.DISPLAY.dimensions.y - position.y - dimensions.y)/Display.DISPLAY.dimensions.y * 2f - 1,
                 -1f
             );
             this.pushVertex(vertPosition, new Vector3f(CubeFace.FRONT.normal), vertOffset, 0f, 1f);
