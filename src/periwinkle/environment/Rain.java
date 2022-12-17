@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Rain extends Entity {
 
-    private static float RAIN_SPEED = 1f;
+    private static float RAIN_SPEED = 2f;
     public static float SPAWN_RANGE = 32;
     public static float DE_SPAWN_RANGE = SPAWN_RANGE * 1.5f;
 

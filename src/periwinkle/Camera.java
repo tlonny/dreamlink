@@ -25,8 +25,11 @@ public class Camera {
         this.rotation.y -= Display.DISPLAY.getDeltaMouseY() * MOUSE_SENSITIVITY;
         this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
 
-        this.position.set(Player.PLAYER.dimensions).mul(0.5f);
-        this.position.y += 1.5f;
+        this.position.set(
+            Player.PLAYER.dimensions.x * 0.5f,
+            Player.PLAYER.dimensions.y * 0.95f,
+            Player.PLAYER.dimensions.z * 0.5f
+        );
 
         var playerPosition = new Vector3f(Player.PLAYER.previousPosition).lerp(Player.PLAYER.position, stepFactor);
         this.position.add(playerPosition);

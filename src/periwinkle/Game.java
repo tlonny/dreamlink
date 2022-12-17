@@ -72,19 +72,21 @@ public class Game {
         Shader.SHADER.setViewRotationMatrix(identity);
         Shader.SHADER.setViewTranslationMatrix(identity);
         Shader.SHADER.setProjectionMatrix(identity);
+
         Reticule.RETICULE.render();
         DebugConsole.DEBUG_CONSOLE.render();
         UI.UI.drawText(new Vector2i(20,20), "periwinkle V0.1");
+
         UI.UI.render();
-        Input.INPUT.render();
     }
 
     private void render(float stepFactor) {
         Shader.SHADER.useProgram();
         Shader.SHADER.setTextureSampler();
-        this.renderWorld(stepFactor);
 
+        this.renderWorld(stepFactor);
         this.renderGUI();
+
         Display.DISPLAY.refresh();
     }
 

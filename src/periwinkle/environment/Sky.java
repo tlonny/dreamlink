@@ -17,7 +17,7 @@ import java.util.Set;
 public class Sky {
 
     private static int MAX_RAIN = 5000;
-    private static int MAX_RAIN_PER_TICK = 10;
+    private static int MAX_RAIN_PER_TICK = 100;
     private static int SKY_BOX_LENGTH = 8196;
     private static Vector3f SKY_BOX_OFFSET = new Vector3f(
         SKY_BOX_LENGTH,

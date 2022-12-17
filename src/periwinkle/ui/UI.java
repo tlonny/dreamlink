@@ -18,7 +18,7 @@ public class UI {
 
     private static Vector3f ZERO = new Vector3f();
     private static Vector3f WHITE = new Vector3f(1f, 1f, 1f);
-    private static Vector2i GLYPH_SIZE = new Vector2i(8,18);
+    private static Vector2i GLYPH_SIZE = new Vector2i(8,16);
 
     public static UI UI = new UI();
     public static void init() {

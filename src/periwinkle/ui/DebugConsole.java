@@ -11,7 +11,7 @@ public class DebugConsole {
     private static int CONSOLE_WIDTH = 80;
     private static int CONSOLE_HEIGHT = 24;
 
-    private static Vector2i GLYPH_DIMENSIONS = new Vector2i(8, 18);
+    private static Vector2i GLYPH_DIMENSIONS = new Vector2i(8, 16);
     private static Vector2i PADDING = new Vector2i(10);
 
     private static Vector2i DIMENSIONS = new Vector2i(
@@ -68,15 +68,19 @@ public class DebugConsole {
     }
 
     public void update(long stepCount) {
+        if(Input.INPUT.isKeyPressed(GLFW.GLFW_KEY_HOME)) {
+            this.active = !this.active;
+        }
+
+        if(!this.active)
+            return;
+
+        for(var character : Input.INPUT.inputCapture)
+            this.addNewCharacterToInput(character);
 
         this.blinkCursor = (stepCount % 10) < 5;
 
-        if(Input.INPUT.isKeyPressed(GLFW.GLFW_KEY_HOME)) {
-            this.active = !this.active;
-            this.consumeInput();
-        }
-
-        if(Input.INPUT.isKeyPressed(GLFW.GLFW_KEY_ENTER)) {
+        if(Input.INPUT.isKeyRepeated(GLFW.GLFW_KEY_ENTER)) {
             var line = this.consumeInput();
             this.addLineToHistory(line);
             var split = line.split(" ");
@@ -90,13 +94,8 @@ public class DebugConsole {
     }
 
     public void render() {
-
         if(!this.active)
             return;
-
-        for(var character : Input.INPUT.inputCapture)
-            this.addNewCharacterToInput(character);
-
 
         UI.UI.drawBox(
             new Vector2i(POSITION).sub(PADDING),

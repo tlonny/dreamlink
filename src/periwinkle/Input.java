@@ -56,8 +56,8 @@ public class Input {
     public boolean isKeyRepeated(int key) {
         if(this.isKeyPressed(key))
             return true;
-        var repeatCount  = this.repeatedKeys[key];
-        var releaseCount  = this.releasedKeys[key];
+        var repeatCount = this.repeatedKeys[key];
+        var releaseCount = this.releasedKeys[key];
         return repeatCount > releaseCount;
     }
 
@@ -76,9 +76,6 @@ public class Input {
 
     public void update() {
         this.captureCount += 1;
-    }
-
-    public void render() {
         this.inputCapture.clear();
     }
 
