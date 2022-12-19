@@ -14,7 +14,6 @@
         <joml.version>1.9.22</joml.version>
         <pngdecoder.version>1.0</pngdecoder.version>
         <sponge.version>2.0.0-SNAPSHOT</sponge.version>
-        <json.version>20220924</json.version>
         <exec.mainClass>periwinkle.Game</exec.mainClass>
     </properties>
 
@@ -34,11 +33,6 @@
             <groupId>org.spongepowered</groupId>
             <artifactId>noise</artifactId>
             <version>${sponge.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
