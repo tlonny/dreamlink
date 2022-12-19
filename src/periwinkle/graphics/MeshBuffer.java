@@ -1,7 +1,5 @@
 package periwinkle.graphics;
 
-import periwinkle.utility.CubeFace;
-import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
@@ -15,92 +13,97 @@ public class MeshBuffer {
 
     public FloatBuffer positionBuffer;
     public FloatBuffer normalBuffer;
-    public FloatBuffer textureBuffer;
-    public FloatBuffer localLightBuffer;
-    public FloatBuffer globalLightBuffer;
+    public FloatBuffer textureOffsetBuffer;
+    public IntBuffer lightBuffer;
+    public IntBuffer colorBuffer;
     public IntBuffer indexBuffer;
     public int indexCount;
+    public int vertexCount;
+
+    public Vector3f position = new Vector3f();
+    public Vector3f normal = new Vector3f();
+    public Vector2f textureOffset = new Vector2f();
+    public float localLight;
+    public float globalLight;
+    public Vector3f color = new Vector3f();
 
     public MeshBuffer(int quadCapacity) {
         this.positionBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
         this.normalBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
-        this.textureBuffer = MemoryUtil.memAllocFloat(quadCapacity * 8);
-        this.localLightBuffer = MemoryUtil.memAllocFloat(quadCapacity * 4);
-        this.globalLightBuffer = MemoryUtil.memAllocFloat(quadCapacity * 4);
+        this.textureOffsetBuffer = MemoryUtil.memAllocFloat(quadCapacity * 8);
+        this.lightBuffer = MemoryUtil.memAllocInt(quadCapacity * 4);
+        this.colorBuffer = MemoryUtil.memAllocInt(quadCapacity * 4);
         this.indexBuffer = MemoryUtil.memAllocInt(quadCapacity * 6);
     }
 
     public void tearDown() {
         MemoryUtil.memFree(this.positionBuffer);
         MemoryUtil.memFree(this.normalBuffer);
-        MemoryUtil.memFree(this.textureBuffer);
-        MemoryUtil.memFree(this.localLightBuffer);
-        MemoryUtil.memFree(this.globalLightBuffer);
+        MemoryUtil.memFree(this.textureOffsetBuffer);
+        MemoryUtil.memFree(this.lightBuffer);
+        MemoryUtil.memFree(this.colorBuffer);
         MemoryUtil.memFree(this.indexBuffer);
     }
 
     public void flip() {
         this.positionBuffer.flip();
         this.normalBuffer.flip();
-        this.localLightBuffer.flip();
-        this.globalLightBuffer.flip();
-        this.textureBuffer.flip();
+        this.lightBuffer.flip();
+        this.textureOffsetBuffer.flip();
+        this.colorBuffer.flip();
         this.indexBuffer.flip();
     }
 
     public void clear() {
         this.positionBuffer.clear();
         this.normalBuffer.clear();
-        this.textureBuffer.clear();
-        this.localLightBuffer.clear();
-        this.globalLightBuffer.clear();
+        this.textureOffsetBuffer.clear();
+        this.lightBuffer.clear();
+        this.colorBuffer.clear();
         this.indexBuffer.clear();
         this.indexCount = 0;
+        this.vertexCount = 0;
     }
 
-    public void indexQuad() {
-        var vertexCount = this.indexCount * 4 / 6;
+    private void indexQuad() {
         for(var index : QUAD_INDICES)
-            this.indexBuffer.put(index + vertexCount);
+            this.indexBuffer.put(index + this.vertexCount - 4);
         this.indexCount += 6;
     }
 
-    public void pushVertex(Vector3f position, Vector3f normal, Vector2f texture, float localLight, float globalLight) {
-        this.positionBuffer.put(position.x);
-        this.positionBuffer.put(position.y);
-        this.positionBuffer.put(position.z);
-        this.normalBuffer.put(normal.x);
-        this.normalBuffer.put(normal.y);
-        this.normalBuffer.put(normal.z);
-        this.textureBuffer.put(texture.x);
-        this.textureBuffer.put(texture.y);
-        this.localLightBuffer.put(localLight);
-        this.globalLightBuffer.put(globalLight);
+    private int packColor() {
+        var color = 0;
+        color += (int)(this.color.x * 0xFF);
+        color *= 0x100;
+        color += (int)(this.color.y * 0xFF);
+        color *= 0x100;
+        color += (int)(this.color.z * 0xFF);
+        return color;
     }
 
-    public void pushSprite(Vector2f position, Vector2f dimensions, Sprite sprite) {
-        for(var vertIx = 0; vertIx < CubeFace.FRONT.vertices.length; vertIx += 1) {
-            var vertex = CubeFace.FRONT.vertices[vertIx];
-            var vertOffset = sprite.vertices[vertIx];
-            var vertPosition = new Vector3f(
-                (vertex.x * dimensions.x + position.x)/Display.DISPLAY.dimensions.x * 2f - 1,
-                (vertex.y * dimensions.y + Display.DISPLAY.dimensions.y - position.y - dimensions.y)/Display.DISPLAY.dimensions.y * 2f - 1,
-                -1f
-            );
-            this.pushVertex(vertPosition, new Vector3f(CubeFace.FRONT.normal), vertOffset, 0f, 1f);
-        }
-        this.indexQuad();
+    private int packLight() {
+        var light = 0;
+        light += (int)(this.localLight * 0xFF);
+        light *= 0x100;
+        light += (int)(this.globalLight * 0xFF);
+        return light;
     }
 
-    public void pushParticle(Vector3f position, float width, Sprite sprite, Matrix3f billboardMatrix) {
-        for(var cubeFace : CubeFace.FRONT_AND_BACK_CUBE_FACES) {
-            for (var vertIx = 0; vertIx < cubeFace.vertices.length; vertIx += 1) {
-                var vertex = cubeFace.vertices[vertIx];
-                var vertOffset = sprite.vertices[vertIx];
-                var vertPosition = new Vector3f(vertex).mul(width).mul(billboardMatrix).add(position);
-                this.pushVertex(vertPosition, new Vector3f(CubeFace.FRONT.normal), vertOffset, 0f, 1f);
-            }
+    public void push() {
+        this.positionBuffer.put(this.position.x);
+        this.positionBuffer.put(this.position.y);
+        this.positionBuffer.put(this.position.z);
+        this.normalBuffer.put(this.normal.x);
+        this.normalBuffer.put(this.normal.y);
+        this.normalBuffer.put(this.normal.z);
+        this.textureOffsetBuffer.put(this.textureOffset.x);
+        this.textureOffsetBuffer.put(this.textureOffset.y);
+        this.lightBuffer.put(this.packLight());
+        this.colorBuffer.put(this.packColor());
+        this.vertexCount += 1;
+        if(this.vertexCount % 4 == 0) {
             this.indexQuad();
         }
     }
+
 }

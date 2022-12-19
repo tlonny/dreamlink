@@ -1,6 +1,6 @@
 package periwinkle.terrain;
 
-import periwinkle.graphics.Atlas;
+import periwinkle.Game;
 import periwinkle.graphics.Mesh;
 import org.joml.Vector3i;
 
@@ -10,7 +10,7 @@ public class Chunk {
     public static int NUM_BLOCKS = BLOCK_LENGTH * BLOCK_LENGTH * BLOCK_LENGTH;
 
     private final int[] blockData = new int[NUM_BLOCKS];
-    public Mesh mesh = new Mesh(Atlas.TERRAIN_ATLAS);
+    public Mesh mesh = new Mesh(Game.TERRAIN_ATLAS);
     public boolean isDirty;
 
     private int getIndex(Vector3i v) {

@@ -10,14 +10,8 @@ import java.nio.FloatBuffer;
 
 public class Shader {
 
-    public static Shader SHADER = new Shader(
-        "src/glsl/vertex.glsl",
-        "src/glsl/fragment.glsl"
-    );
-
-    public static void init() {
-        SHADER.setup();
-    }
+    private static String VERTEX_SRC = "src/glsl/vertex.glsl";
+    private static String FRAGMENT_SRC = "src/glsl/fragment.glsl";
 
     private int programID;
     private int viewRotationMatrixUniformID;
@@ -28,28 +22,23 @@ public class Shader {
     private int globalColorUniformID;
     private int globalLightDirectionFactorUniformID;
 
-    private final String vertexSrc;
-    private final String fragmentSrc;
-
-    public Shader(String vertexSrc, String fragmentSrc) {
-        this.vertexSrc = vertexSrc;
-        this.fragmentSrc = fragmentSrc;
-    }
-
     public void setup() {
         this.programID = GL20.glCreateProgram();
-        this.createShader(File.FILE.readStringFromFile(this.vertexSrc), GL20.GL_VERTEX_SHADER);
-        this.createShader(File.FILE.readStringFromFile(this.fragmentSrc), GL20.GL_FRAGMENT_SHADER);
+        this.createShader(File.FILE.readStringFromFile(VERTEX_SRC), GL20.GL_VERTEX_SHADER);
+        this.createShader(File.FILE.readStringFromFile(FRAGMENT_SRC), GL20.GL_FRAGMENT_SHADER);
         GL20.glLinkProgram(this.programID);
         GL20.glValidateProgram(this.programID);
 
-        this.projectionMatrixUniformID = this.createUniform("projection_Matrix");
-        this.viewRotationMatrixUniformID = this.createUniform("view_Rotation_Matrix");
-        this.viewTranslationMatrixUniformID = this.createUniform("view_Translation_Matrix");
-        this.modelMatrixUniformID = this.createUniform("model_Matrix");
-        this.textureSamplerUniformID = this.createUniform("texture_Sampler");
-        this.globalColorUniformID = this.createUniform("global_Color");
-        this.globalLightDirectionFactorUniformID = this.createUniform("global_Light_Direction_Factor");
+        this.projectionMatrixUniformID = this.createUniform("projection_matrix");
+        this.viewRotationMatrixUniformID = this.createUniform("view_rotation_matrix");
+        this.viewTranslationMatrixUniformID = this.createUniform("view_translation_matrix");
+        this.modelMatrixUniformID = this.createUniform("model_matrix");
+        this.textureSamplerUniformID = this.createUniform("texture_sampler");
+        this.globalColorUniformID = this.createUniform("global_color");
+        this.globalLightDirectionFactorUniformID = this.createUniform("global_light_direction_factor");
+
+        GL20.glUseProgram(this.programID);
+        this.setUniform(this.textureSamplerUniformID, 0);
     }
 
     private int createUniform(String uniformName) {
@@ -86,11 +75,6 @@ public class Shader {
         GL20.glAttachShader(this.programID, shaderID);
     }
 
-    public void setTextureSampler() {
-        // We are sampling TEX0.
-        this.setUniform(this.textureSamplerUniformID, 0);
-    }
-
     public void setGlobalColor(Vector3f colors) {
         this.setUniform(this.globalColorUniformID, colors);
     }
@@ -114,9 +98,4 @@ public class Shader {
     public void setModelMatrix(Matrix4f matrix) {
         this.setUniform(this.modelMatrixUniformID, matrix);
     }
-
-    public void useProgram() {
-        GL20.glUseProgram(this.programID);
-    }
-
 }

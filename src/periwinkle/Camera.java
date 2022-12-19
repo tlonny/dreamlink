@@ -1,14 +1,11 @@
 package periwinkle;
 
-import periwinkle.graphics.Display;
 import periwinkle.utility.CubeFace;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
-
-    public static Camera CAMERA = new Camera();
 
     private static float FOV = (float)Math.toRadians(70f);
     private static float NEAR_PLANE = 0.1f;
@@ -20,53 +17,61 @@ public class Camera {
     public Vector3f position = new Vector3f();
     public Vector3f rotation = new Vector3f();
 
-    public void reposition(float stepFactor) {
-        this.rotation.x -= Display.DISPLAY.getDeltaMouseX() * MOUSE_SENSITIVITY;
-        this.rotation.y -= Display.DISPLAY.getDeltaMouseY() * MOUSE_SENSITIVITY;
-        this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
+    public Vector3f directionVector = new Vector3f();
+    public Matrix3f billboardMatrix = new Matrix3f();
+    public Matrix4f viewTranslationMatrix = new Matrix4f();
+    public Matrix4f viewRotationMatrix = new Matrix4f();
+    public Matrix4f projectionMatrix = new Matrix4f();
+
+    public void prepare(float simFactor) {
+        if(!Game.DEBUG_CONSOLE.active) {
+            this.rotation.x -= (Game.MOUSE.position.x - Game.DISPLAY.dimensions.x /2f) * MOUSE_SENSITIVITY;
+            this.rotation.y -= (Game.MOUSE.position.y - Game.DISPLAY.dimensions.y /2f) * MOUSE_SENSITIVITY;
+            this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
+        }
 
         this.position.set(
-            Player.PLAYER.dimensions.x * 0.5f,
-            Player.PLAYER.dimensions.y * 0.95f,
-            Player.PLAYER.dimensions.z * 0.5f
+            Game.PLAYER.dimensions.x * 0.5f,
+            Game.PLAYER.dimensions.y * 0.95f,
+            Game.PLAYER.dimensions.z * 0.5f
         );
 
-        var playerPosition = new Vector3f(Player.PLAYER.previousPosition).lerp(Player.PLAYER.position, stepFactor);
+        var playerPosition = new Vector3f(Game.PLAYER.previousPosition).lerp(Game.PLAYER.position, simFactor);
         this.position.add(playerPosition);
+
+        this.updateDirectionVector();
+        this.updateBillboardMatrix();
+        this.updateViewTranslationMatrix();
+        this.updateViewRotationMatrix();
+        this.updateProjectionMatrix();
     }
 
-    public Vector3f getDirectionVector() {
-        var normal = new Vector3f(CubeFace.BACK.normal);
-        normal.rotateX(this.rotation.y);
-        normal.rotateY(this.rotation.x);
-        return normal;
+    private void updateDirectionVector() {
+        this.directionVector.set(CubeFace.BACK.normal);
+        this.directionVector.rotateX(this.rotation.y);
+        this.directionVector.rotateY(this.rotation.x);
     }
 
-    public Matrix3f getBillboardMatrix() {
-        return new Matrix3f()
-            .identity()
-            .rotateY(this.rotation.x);
+    private void updateBillboardMatrix() {
+        this.billboardMatrix.identity().rotateY(this.rotation.x);
     }
 
-    public Matrix4f getViewTranslationMatrix() {
+    private void updateViewTranslationMatrix() {
         var position = new Vector3f(this.position).mul(-1f);
-        return new Matrix4f()
-            .identity()
-            .translate(position);
+        this.viewTranslationMatrix.identity();
+        this.viewTranslationMatrix.translate(position);
     }
 
-    public Matrix4f getViewRotationMatrix() {
-        return new Matrix4f()
-            .identity()
-            .rotateX(-this.rotation.y)
-            .rotateY(-this.rotation.x);
+    private void updateViewRotationMatrix() {
+        this.viewRotationMatrix.identity();
+        this.viewRotationMatrix.rotateX(-this.rotation.y);
+        this.viewRotationMatrix.rotateY(-this.rotation.x);
     }
 
-    public Matrix4f getProjectionMatrix() {
-        var aspectRatio = (float) Display.DISPLAY.dimensions.x / Display.DISPLAY.dimensions.y;
-        return new Matrix4f()
-            .identity()
-            .perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
+    private void updateProjectionMatrix() {
+        var aspectRatio = (float) Game.DISPLAY.dimensions.x / Game.DISPLAY.dimensions.y;
+        this.projectionMatrix.identity();
+        this.projectionMatrix.perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
     }
 
 

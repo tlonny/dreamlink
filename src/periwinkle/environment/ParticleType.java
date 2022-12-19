@@ -1,27 +1,18 @@
 package periwinkle.environment;
 
-import periwinkle.graphics.Atlas;
-import periwinkle.graphics.Sprite;
+import periwinkle.Game;
+import periwinkle.graphics.Texture;
 
 public class ParticleType {
 
-    public Sprite sprite;
-    private final String spriteKey;
+    public Texture texture;
+    public String name;
 
-    public static void init() {
-        RAIN_DROP.setup();
-        SNOW_FLAKE.setup();
+    public ParticleType(String name, Texture texture) {
+        this.name = name;
+        this.texture = texture;
     }
 
-    public ParticleType(String spriteKey) {
-        this.spriteKey = spriteKey;
-    }
-
-    public void setup() {
-        this.sprite = Atlas.PARTICLE_ATLAS.getSprite(spriteKey);
-    }
-
-    public static ParticleType RAIN_DROP = new ParticleType("RAIN_DROP");
-    public static ParticleType SNOW_FLAKE = new ParticleType("SNOW_FLAKE");
+    public static ParticleType RAIN_DROP = new ParticleType("rain", Game.PARTICLE_ATLAS.rain);
 
 }

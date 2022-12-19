@@ -1,21 +1,16 @@
 package periwinkle.utility;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Maths {
 
-    public static Maths MATHS = new Maths();
+    public static Matrix4f IDENTITY = new Matrix4f().identity();
 
-    public Vector3f interpolate(Vector3f start, Vector3f end, float factor) {
-        return new Vector3f(
-            this.interpolate(start.x, end.x, factor),
-            this.interpolate(start.y, end.y, factor),
-            this.interpolate(start.z, end.z, factor)
-        );
+    public static Vector3f ZERO = new Vector3f();
+    public static Vector3f COLOR_WHITE = getColor(255, 255, 255);
+
+    public static Vector3f getColor(int red, int green, int blue) {
+        return new Vector3f(red/255f, green/255f, blue/255f);
     }
-
-    public float interpolate(float start, float end, float factor) {
-        return end * factor + start * (1 - factor);
-    }
-
 }

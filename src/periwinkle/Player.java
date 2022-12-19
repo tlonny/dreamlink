@@ -1,9 +1,8 @@
 package periwinkle;
 
-import periwinkle.ui.DebugConsole;
 import periwinkle.terrain.BlockType;
+import periwinkle.io.ButtonLatch;
 import periwinkle.terrain.BlockFormat;
-import periwinkle.terrain.World;
 import periwinkle.utility.CubeFace;
 import periwinkle.utility.VoxelCaster;
 import org.joml.*;
@@ -19,8 +18,6 @@ public class Player {
     private static float EPSILON = 0.001f;
     private static float TERMINAL_FALL_SPEED = 1f;
 
-    public static Player PLAYER = new Player();
-
     public Vector3f position = new Vector3f();
     public Vector3f previousPosition = new Vector3f();
 
@@ -29,57 +26,62 @@ public class Player {
     public BlockType blockType = BlockType.MAGMA;
     public boolean isOnGround;
 
-    private void updateVelocity() {
-        if(DebugConsole.DEBUG_CONSOLE.active)
-            return;
+    private ButtonLatch leftMouseLatch = new ButtonLatch();
+    private ButtonLatch rightMouseLatch = new ButtonLatch();
 
+    private void updateVelocity() {
         var newVelocity = new Vector3f();
 
-        if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_S))
-            newVelocity.z += SPEED;
+        if(!Game.DEBUG_CONSOLE.active) {
+            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
+                newVelocity.z += SPEED;
 
-        if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_W))
-            newVelocity.z -= SPEED;
+            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_W))
+                newVelocity.z -= SPEED;
 
-        if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_A))
-            newVelocity.x -= SPEED;
+            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_A))
+                newVelocity.x -= SPEED;
 
-        if(Input.INPUT.isKeyDown(GLFW.GLFW_KEY_D))
-            newVelocity.x += SPEED;
+            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
+                newVelocity.x += SPEED;
+        }
 
-        newVelocity.rotateY(Camera.CAMERA.rotation.x);
+        newVelocity.rotateY(Game.CAMERA.rotation.x);
         this.velocity.x = newVelocity.x;
         this.velocity.z = newVelocity.z;
-
         this.velocity.y -= GRAVITY;
-        if(this.isOnGround && Input.INPUT.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-            this.velocity.y = JUMP_SPEED;
+
+        if(!Game.DEBUG_CONSOLE.active) {
+            if(this.isOnGround && Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+                this.velocity.y = JUMP_SPEED;
+            }
         }
+
         this.velocity.y = Math.max(this.velocity.y, -TERMINAL_FALL_SPEED);
     }
 
     private void modifyBlocks() {
-        var direction = Camera.CAMERA.getDirectionVector();
+        var direction = Game.CAMERA.directionVector;
         var caster = new VoxelCaster();
-        caster.castRay(Camera.CAMERA.position, direction);
+        caster.castRay(Game.CAMERA.position, direction);
 
-        if(Input.INPUT.isRightMousePressed()) {
+        if(Game.MOUSE.isRightMouseButtonPressed(this.rightMouseLatch)) {
             for(var ix =0; ix < 40; ix += 1) {
                 caster.advance();
-                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
-                    World.WORLD.setBlock(caster.cursor, BlockType.AIR);
+                if(Game.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
+                    Game.WORLD.setBlock(caster.cursor, BlockType.AIR);
                     break;
                 }
             }
             return;
         }
 
-        if(Input.INPUT.isLeftMousePressed()) {
+        if(Game.MOUSE.isLeftMouseButtonPressed(this.leftMouseLatch)) {
             Vector3i previous = new Vector3i(caster.cursor);
             for(var ix =0; ix < 40; ix += 1) {
                 caster.advance();
-                if(World.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
-                    World.WORLD.setBlock(previous, this.blockType);
+                if(Game.WORLD.getBlock(caster.cursor).blockType.blockFormat != BlockFormat.VOID) {
+                    Game.WORLD.setBlock(previous, this.blockType);
                     break;
                 }
                 previous.set(caster.cursor);
@@ -99,7 +101,7 @@ public class Player {
             var step = new Vector3f(cubeFace.normal).mul(EPSILON);
             for(var amt = 0f; amt <= projection; amt += EPSILON) {
                 var trial = new Vector3f(this.position).add(step);
-                if(World.WORLD.terrainCollision(trial, this.dimensions)) {
+                if(Game.WORLD.terrainCollision(trial, this.dimensions)) {
                     this.velocity.sub(new Vector3f(cubeFace.normal).mul(projection));
                     if(cubeFace == CubeFace.BOTTOM)
                         this.isOnGround = true;
@@ -110,7 +112,7 @@ public class Player {
         }
     }
 
-    public void update() {
+    public void simulate() {
         this.previousPosition.set(this.position);
 
         this.updateVelocity();

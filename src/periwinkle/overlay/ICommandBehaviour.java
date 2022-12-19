@@ -1,4 +1,4 @@
-package periwinkle.ui;
+package periwinkle.overlay;
 
 public interface ICommandBehaviour {
 

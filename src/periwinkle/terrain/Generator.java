@@ -1,5 +1,6 @@
 package periwinkle.terrain;
 
+import periwinkle.Game;
 import periwinkle.utility.NoiseGenerator;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
@@ -35,7 +36,7 @@ public class Generator {
                 var totalHeight = World.WORLD_BLOCK_DIMENSIONS.y - 2 - 20
                         + sum * 20f / this.terrainGenerators.length;
                 for(var y = 1; y < totalHeight; y += 1) {
-                    World.WORLD.setBlock(new Vector3i(x, y, z), BlockType.STONY_SAND);
+                    Game.WORLD.setBlock(new Vector3i(x, y, z), BlockType.STONY_SAND);
                 }
             }
         }
@@ -48,7 +49,7 @@ public class Generator {
                     var position = new Vector3i(x, y, z);
                     var noise = this.cavernNoise.getNoise(position);
                     if(noise > 0.38f)
-                        World.WORLD.setBlock(position, BlockType.AIR);
+                        Game.WORLD.setBlock(position, BlockType.AIR);
                 }
             }
         }

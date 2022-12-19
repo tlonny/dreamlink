@@ -4,23 +4,26 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
 
+import periwinkle.Game;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Mesh {
 
-    private final static int POSITION_LOCATION = 0;
-    private final static int NORMAL_LOCATION = 1;
-    private final static int LOCAL_LIGHT_LOCATION = 2;
-    private final static int GLOBAL_LIGHT_LOCATION = 3;
-    private final static int TEXTURE_LOCATION = 4;
+    private static Vector3f COLOR_WHITE = new Vector3f(1f, 1f, 1f);
+    private static int POSITION_LOCATION = 0;
+    private static int NORMAL_LOCATION = 1;
+    private static int LIGHT_LOCATION = 2;
+    private static int COLOR_LOCATION = 3;
+    private static int TEXTURE_LOCATION = 4;
 
     private int vertexArrayID;
     private int indexVertexBufferID;
     private int positionVertexBufferID;
     private int normalVertexBufferID;
-    private int localLightVertexBufferID;
-    private int globalLightVertexBufferID;
+    private int lightVertexBufferID;
+    private int colorVertexBufferID;
     private int textureVertexBufferID;
     private int numIndices;
 
@@ -35,10 +38,10 @@ public class Mesh {
         this.vertexArrayID = GL30.glGenVertexArrays();
         this.bindVAO();
         this.indexVertexBufferID = GL30.glGenBuffers();
-        this.localLightVertexBufferID = GL30.glGenBuffers();
-        this.globalLightVertexBufferID = GL30.glGenBuffers();
         this.positionVertexBufferID = GL30.glGenBuffers();
         this.normalVertexBufferID = GL30.glGenBuffers();
+        this.lightVertexBufferID = GL30.glGenBuffers();
+        this.colorVertexBufferID = GL30.glGenBuffers();
         this.textureVertexBufferID = GL30.glGenBuffers();
     }
 
@@ -54,18 +57,25 @@ public class Mesh {
     private void pushFloatData(int location, int size, int vertexBufferID, FloatBuffer buffer) {
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
         GL30.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
-        GL30.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, 0, 0);;
+        GL30.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, 0, 0);
         GL30.glEnableVertexAttribArray(location);
     }
 
-    public void loadMesh(MeshBuffer buffer) {
+    private void pushIntData(int location, int size, int vertexBufferID, IntBuffer buffer) {
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
+        GL30.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+        GL30.glVertexAttribIPointer(location, size, GL11.GL_INT, 0, 0);
+        GL30.glEnableVertexAttribArray(location);
+    }
+
+    public void loadFromBuffer(MeshBuffer buffer) {
         this.bindVAO();
         this.pushIndexData(buffer.indexBuffer);
         this.pushFloatData(POSITION_LOCATION, 3, this.positionVertexBufferID, buffer.positionBuffer);
         this.pushFloatData(NORMAL_LOCATION, 3, this.normalVertexBufferID, buffer.normalBuffer);
-        this.pushFloatData(LOCAL_LIGHT_LOCATION, 1, this.localLightVertexBufferID, buffer.localLightBuffer);
-        this.pushFloatData(GLOBAL_LIGHT_LOCATION, 1, this.globalLightVertexBufferID, buffer.globalLightBuffer);
-        this.pushFloatData(TEXTURE_LOCATION, 2, this.textureVertexBufferID, buffer.textureBuffer);
+        this.pushIntData(LIGHT_LOCATION, 1, this.lightVertexBufferID, buffer.lightBuffer);
+        this.pushIntData(COLOR_LOCATION, 1, this.colorVertexBufferID, buffer.colorBuffer);
+        this.pushFloatData(TEXTURE_LOCATION, 2, this.textureVertexBufferID, buffer.textureOffsetBuffer);
         this.numIndices = buffer.indexCount;
     }
 
@@ -73,24 +83,28 @@ public class Mesh {
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL30.glDeleteBuffers(this.indexVertexBufferID);
         GL30.glDeleteBuffers(this.positionVertexBufferID);
+        GL30.glDeleteBuffers(this.lightVertexBufferID);
+        GL30.glDeleteBuffers(this.colorVertexBufferID);
         GL30.glDeleteBuffers(this.textureVertexBufferID);
-        GL30.glDeleteBuffers(this.localLightVertexBufferID);
-        GL30.glDeleteBuffers(this.globalLightVertexBufferID);
         GL30.glBindVertexArray(0);
         GL30.glDeleteVertexArrays(this.vertexArrayID);
     }
 
     private Matrix4f modelMatrix = new Matrix4f();
-    public void render(Vector3f position, Vector3f color, float globalLightDirectionFactor) {
+    public void render(Vector3f position, Vector3f globalColor, float globalLightDirectionFactor) {
         if(this.numIndices == 0)
             return;
         this.bindVAO();
         this.atlas.bind();
         this.modelMatrix.identity().translate(position);
-        Shader.SHADER.setModelMatrix(this.modelMatrix);
-        Shader.SHADER.setGlobalColor(color);
-        Shader.SHADER.setGlobalLightDirectionFactor(globalLightDirectionFactor);
+        Game.SHADER.setModelMatrix(this.modelMatrix);
+        Game.SHADER.setGlobalColor(globalColor);
+        Game.SHADER.setGlobalLightDirectionFactor(globalLightDirectionFactor);
         GL30.glDrawElements(GL11.GL_TRIANGLES, this.numIndices, GL11.GL_UNSIGNED_INT, 0);
+    }
+
+    public void render(Vector3f position) {
+        this.render(position, COLOR_WHITE, 0f);
     }
 
 }

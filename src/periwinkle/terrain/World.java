@@ -1,8 +1,7 @@
 package periwinkle.terrain;
 
-import periwinkle.environment.Sky;
+import periwinkle.Game;
 import periwinkle.graphics.MeshBuffer;
-import periwinkle.graphics.Shader;
 import periwinkle.utility.CubeFace;
 import org.joml.*;
 
@@ -18,10 +17,8 @@ public class World {
     public static int NUM_BLOCKS_PER_HORIZONTAL_SLICE = WORLD_BLOCK_DIMENSIONS.x * WORLD_BLOCK_DIMENSIONS.z;
     public static int MAX_QUADS = Chunk.NUM_BLOCKS * 6;
 
-    public static World WORLD = new World();
-    public static void init() {
-        WORLD.setup();
-    }
+    private static float MIN_GLOBAL_LIGHT = 0.1f;
+    private static Vector3f COLOR_WHITE = new Vector3f(1f, 1f, 1f);
 
     private final Chunk[] chunks = new Chunk[NUM_CHUNKS_PER_WORLD];
     private final MeshBuffer chunkMeshBuffer = new MeshBuffer(MAX_QUADS);
@@ -168,15 +165,15 @@ public class World {
 
             for (var ix = 0; ix < cubeFace.vertices.length; ix += 1) {
                 var vertex = cubeFace.vertices[ix];
-                this.chunkMeshBuffer.pushVertex(
-                    new Vector3f(localPosition).add(vertex),
-                    new Vector3f(cubeFace.normal),
-                    blockBuffer.blockType.sprite.vertices[ix],
-                    adjacentBlock.localLight / 15f,
-                    Math.max(adjacentBlock.globalLight / 15f, 0.1f)
-                );
+                this.chunkMeshBuffer.position.set(localPosition).add(vertex);
+                this.chunkMeshBuffer.normal.set(cubeFace.normal);
+                this.chunkMeshBuffer.textureOffset.set(blockBuffer.blockType.texture.vertices[ix]);
+                this.chunkMeshBuffer.localLight = adjacentBlock.localLight / 15f;
+                var globalLight = Math.max(adjacentBlock.globalLight / 15f, MIN_GLOBAL_LIGHT);
+                this.chunkMeshBuffer.globalLight = globalLight;
+                this.chunkMeshBuffer.color = COLOR_WHITE;
+                this.chunkMeshBuffer.push();
             }
-            this.chunkMeshBuffer.indexQuad();
         }
 
     }
@@ -193,15 +190,16 @@ public class World {
                         .mul(0.5f)
                         .add(0.5f, 0.5f, 0.5f);
 
-                this.chunkMeshBuffer.pushVertex(
-                    new Vector3f(localPosition).add(vertex),
-                    new Vector3f(cubeFace.normal).rotateY(45),
-                    blockBuffer.blockType.sprite.vertices[ix],
-                    blockBuffer.localLight / 15f,
-                    Math.max(blockBuffer.globalLight / 15f, 0.1f)
-                );
+                this.chunkMeshBuffer.position.set(localPosition).add(vertex);
+                this.chunkMeshBuffer.normal.set(cubeFace.normal).rotateY(45);
+                this.chunkMeshBuffer.textureOffset.set(blockBuffer.blockType.texture.vertices[ix]);
+                this.chunkMeshBuffer.localLight = blockBuffer.localLight / 15f;
+
+                var globalLight = Math.max(blockBuffer.globalLight / 15f, MIN_GLOBAL_LIGHT);
+                this.chunkMeshBuffer.globalLight = globalLight;
+                this.chunkMeshBuffer.color = COLOR_WHITE;
+                this.chunkMeshBuffer.push();
             }
-            this.chunkMeshBuffer.indexQuad();
         }
     }
 
@@ -224,12 +222,12 @@ public class World {
             }
         }
         this.chunkMeshBuffer.flip();
-        chunk.mesh.loadMesh(this.chunkMeshBuffer);
+        chunk.mesh.loadFromBuffer(this.chunkMeshBuffer);
         chunk.isDirty = false;
     }
 
 
-    public void update() {
+    public void simulate() {
         while(!this.localResectionQueue.isEmpty()) {
             var sourceData = this.localResectionQueue.remove();
             var sourcePosition = new Vector3i(sourceData.x, sourceData.y, sourceData.z);
@@ -260,14 +258,14 @@ public class World {
     }
 
     public void render() {
-        Shader.SHADER.setGlobalColor(Sky.SKY.skyType.skyColor);
+        Game.SHADER.setGlobalColor(Game.SKY_TYPE.skyColor);
         for(var x = 0; x < WORLD_CHUNK_DIMENSIONS.x; x += 1) {
             for(var y = 0; y < WORLD_CHUNK_DIMENSIONS.y; y += 1) {
                 for(var z = 0; z < WORLD_CHUNK_DIMENSIONS.z; z += 1 ) {
                     var chunkPosition = new Vector3i(x,y,z);
                     var globalPosition = new Vector3f(chunkPosition).mul(Chunk.BLOCK_LENGTH);
                     var chunk = this.getChunk(chunkPosition);
-                    chunk.mesh.render(globalPosition, Sky.SKY.skyType.skyColor, 0.1f);
+                    chunk.mesh.render(globalPosition, Game.SKY_TYPE.skyColor, 0.1f);
                 }
             }
         }
