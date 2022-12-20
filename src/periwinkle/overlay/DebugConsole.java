@@ -70,8 +70,10 @@ public class DebugConsole {
 
     public void simulate() {
         if(Game.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_HOME, this.toggleLatch)) {
-            this.active = !this.active;
+            this.active ^= true;
         }
+
+        Game.PLAYER.playerControlSystem.active = !this.active;
 
         if(!this.active) {
             this.submitLatch.reset();

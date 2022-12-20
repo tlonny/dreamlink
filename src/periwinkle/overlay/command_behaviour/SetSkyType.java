@@ -1,4 +1,4 @@
-package periwinkle.overlay;
+package periwinkle.overlay.command_behaviour;
 
 import periwinkle.Game;
 import periwinkle.environment.SkyType;

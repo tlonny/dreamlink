@@ -72,9 +72,9 @@ public class SkyBox {
 
     public void render() {
         var position = new Vector3f();
-        position.set(SKY_BOX_OFFSET).mul(STAR_FIELD_FACTOR).add(Game.PLAYER.position);
+        position.set(SKY_BOX_OFFSET).mul(STAR_FIELD_FACTOR).add(Game.PLAYER.spatialComponent.position);
         this.starFieldMesh.render(position, Game.SKY_TYPE.starColor, 0f);
-        position.set(SKY_BOX_OFFSET).add(Game.PLAYER.position);
+        position.set(SKY_BOX_OFFSET).add(Game.PLAYER.spatialComponent.position);
         this.solidSkyMesh.render(position, Game.SKY_TYPE.skyColor, 0f);
     }
 

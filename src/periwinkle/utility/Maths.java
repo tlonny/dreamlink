@@ -13,4 +13,8 @@ public class Maths {
     public static Vector3f getColor(int red, int green, int blue) {
         return new Vector3f(red/255f, green/255f, blue/255f);
     }
+
+    public static float min(Vector3f v) {
+        return Math.min(v.x, Math.min(v.y, v.z));
+    }
 }

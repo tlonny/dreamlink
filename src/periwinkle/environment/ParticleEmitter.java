@@ -2,7 +2,6 @@ package periwinkle.environment;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.joml.Vector3f;
 
 import periwinkle.Game;
 import periwinkle.graphics.Mesh;

@@ -11,13 +11,14 @@ import java.util.Queue;
 
 public class World {
 
-    public static Vector3i WORLD_CHUNK_DIMENSIONS = new Vector3i(8, 4, 8);
+    public static Vector3i WORLD_CHUNK_DIMENSIONS = new Vector3i(12, 12, 12);
     public static Vector3i WORLD_BLOCK_DIMENSIONS = new Vector3i(WORLD_CHUNK_DIMENSIONS).mul(Chunk.BLOCK_LENGTH);
     public static int NUM_CHUNKS_PER_WORLD = WORLD_CHUNK_DIMENSIONS.x * WORLD_CHUNK_DIMENSIONS.y * WORLD_CHUNK_DIMENSIONS.z;
     public static int NUM_BLOCKS_PER_HORIZONTAL_SLICE = WORLD_BLOCK_DIMENSIONS.x * WORLD_BLOCK_DIMENSIONS.z;
     public static int MAX_QUADS = Chunk.NUM_BLOCKS * 6;
 
     private static float MIN_GLOBAL_LIGHT = 0.1f;
+    private static float MIN_LOCAL_LIGHT = 0.1f;
     private static Vector3f COLOR_WHITE = new Vector3f(1f, 1f, 1f);
 
     private final Chunk[] chunks = new Chunk[NUM_CHUNKS_PER_WORLD];
@@ -168,7 +169,8 @@ public class World {
                 this.chunkMeshBuffer.position.set(localPosition).add(vertex);
                 this.chunkMeshBuffer.normal.set(cubeFace.normal);
                 this.chunkMeshBuffer.textureOffset.set(blockBuffer.blockType.texture.vertices[ix]);
-                this.chunkMeshBuffer.localLight = adjacentBlock.localLight / 15f;
+                var localLight = Math.max(adjacentBlock.localLight / 15f, MIN_LOCAL_LIGHT);
+                this.chunkMeshBuffer.localLight = localLight;
                 var globalLight = Math.max(adjacentBlock.globalLight / 15f, MIN_GLOBAL_LIGHT);
                 this.chunkMeshBuffer.globalLight = globalLight;
                 this.chunkMeshBuffer.color = COLOR_WHITE;
@@ -193,7 +195,9 @@ public class World {
                 this.chunkMeshBuffer.position.set(localPosition).add(vertex);
                 this.chunkMeshBuffer.normal.set(cubeFace.normal).rotateY(45);
                 this.chunkMeshBuffer.textureOffset.set(blockBuffer.blockType.texture.vertices[ix]);
-                this.chunkMeshBuffer.localLight = blockBuffer.localLight / 15f;
+
+                var localLight = Math.max(blockBuffer.localLight / 15f, MIN_LOCAL_LIGHT);
+                this.chunkMeshBuffer.localLight = localLight;
 
                 var globalLight = Math.max(blockBuffer.globalLight / 15f, MIN_GLOBAL_LIGHT);
                 this.chunkMeshBuffer.globalLight = globalLight;

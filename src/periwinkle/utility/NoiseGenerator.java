@@ -1,6 +1,5 @@
 package periwinkle.utility;
 
-import org.joml.Vector2i;
 import org.joml.Vector3i;
 import org.spongepowered.noise.Noise;
 import org.spongepowered.noise.NoiseQuality;
@@ -19,10 +18,6 @@ public class NoiseGenerator {
 
     public NoiseGenerator(int scale) {
         this(new Random().nextInt(), scale);
-    }
-
-    public float getNoise(Vector2i position) {
-        return this.getNoise(new Vector3i(position, 0));
     }
 
     public float getNoise(Vector3i position) {

@@ -1,6 +1,5 @@
 package periwinkle;
 
-import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL15;
 
@@ -18,7 +17,7 @@ import periwinkle.terrain.TerrainAtlas;
 import periwinkle.terrain.World;
 import periwinkle.utility.Maths;
 import periwinkle.utility.Timer;
-import periwinkle.terrain.BlockType;
+import periwinkle.terrain.Generator;
 import periwinkle.overlay.DebugConsole;
 import periwinkle.overlay.OverlayAtlas;
 import periwinkle.overlay.PerformanceTracker;
@@ -45,8 +44,9 @@ public class Game {
     public static RainEmitter RAIN_EMITTER = new RainEmitter();
     public static DebugConsole DEBUG_CONSOLE = new DebugConsole();
     public static PerformanceTracker PERFORMANCE_TRACKER = new PerformanceTracker();
+    public static Generator GENERATOR = new Generator();
 
-    public static SkyType SKY_TYPE = SkyType.STORM_NIGHT;
+    public static SkyType SKY_TYPE = SkyType.CLEAR_DAY;
 
     private static int WORLD_SIM_MS = 50;
 
@@ -104,12 +104,13 @@ public class Game {
     }
 
     private static void scratch() {
-        PLAYER.position.set(10, 40, 10);
-        for(var x = 0; x < World.WORLD_BLOCK_DIMENSIONS.x; x += 1) {
-            for(var z = 0; z < World.WORLD_BLOCK_DIMENSIONS.z; z += 1) {
-                WORLD.setBlock(new Vector3i(x, 0, z), BlockType.WHITE_CLOTH);
-            }
-        }
+        PLAYER.spatialComponent.position.set(
+            World.WORLD_BLOCK_DIMENSIONS.x / 2,
+            World.WORLD_BLOCK_DIMENSIONS.y + 20,
+            World.WORLD_BLOCK_DIMENSIONS.z / 2
+        );
+
+        GENERATOR.generate();
         WORLD.enableLighting();
         WORLD.enableHeightMap();
     }
@@ -119,7 +120,6 @@ public class Game {
         while(!DISPLAY.shouldClose()) {
             TYPED_CHARACTER_STREAM.refresh();
             DISPLAY.refresh();
-
             MOUSE.loadMousePosition();
             MOUSE.resetMousePosition();
 

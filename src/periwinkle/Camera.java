@@ -31,12 +31,12 @@ public class Camera {
         }
 
         this.position.set(
-            Game.PLAYER.dimensions.x * 0.5f,
-            Game.PLAYER.dimensions.y * 0.95f,
-            Game.PLAYER.dimensions.z * 0.5f
+            Game.PLAYER.spatialComponent.dimensions.x * 0.5f,
+            Game.PLAYER.spatialComponent.dimensions.y * 0.95f,
+            Game.PLAYER.spatialComponent.dimensions.z * 0.5f
         );
 
-        var playerPosition = new Vector3f(Game.PLAYER.previousPosition).lerp(Game.PLAYER.position, simFactor);
+        var playerPosition = Game.PLAYER.spatialComponent.getInterpolatedPosition(simFactor);
         this.position.add(playerPosition);
 
         this.updateDirectionVector();
@@ -45,7 +45,7 @@ public class Camera {
         this.updateViewRotationMatrix();
         this.updateProjectionMatrix();
     }
-
+    
     private void updateDirectionVector() {
         this.directionVector.set(CubeFace.BACK.normal);
         this.directionVector.rotateX(this.rotation.y);

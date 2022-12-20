@@ -1,12 +1,14 @@
 package periwinkle.graphics;
 
-import periwinkle.utility.File;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Shader {
 
@@ -24,8 +26,8 @@ public class Shader {
 
     public void setup() {
         this.programID = GL20.glCreateProgram();
-        this.createShader(File.FILE.readStringFromFile(VERTEX_SRC), GL20.GL_VERTEX_SHADER);
-        this.createShader(File.FILE.readStringFromFile(FRAGMENT_SRC), GL20.GL_FRAGMENT_SHADER);
+        this.createShader(this.readStringFromFile(VERTEX_SRC), GL20.GL_VERTEX_SHADER);
+        this.createShader(this.readStringFromFile(FRAGMENT_SRC), GL20.GL_FRAGMENT_SHADER);
         GL20.glLinkProgram(this.programID);
         GL20.glValidateProgram(this.programID);
 
@@ -39,6 +41,15 @@ public class Shader {
 
         GL20.glUseProgram(this.programID);
         this.setUniform(this.textureSamplerUniformID, 0);
+    }
+
+    private String readStringFromFile(String strPath) {
+        var path = Paths.get(strPath);
+        try {
+            return Files.readString(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private int createUniform(String uniformName) {
