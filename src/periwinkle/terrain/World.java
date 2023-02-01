@@ -5,6 +5,9 @@ import periwinkle.graphics.MeshBuffer;
 import periwinkle.utility.CubeFace;
 import org.joml.*;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.Math;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -33,12 +36,39 @@ public class World {
 
     private int[] heightMap = new int[NUM_BLOCKS_PER_HORIZONTAL_SLICE];
 
-    private boolean lightingEnabled;
-    private boolean heightMapEnabled;
+    private boolean isUpdatesEnabled;
 
     public World() {
         for(var ix = 0; ix < NUM_CHUNKS_PER_WORLD; ix += 1)
             this.chunks[ix] = new Chunk();
+    }
+
+    public void writeToStream(DataOutputStream stream) throws IOException {
+        var position = new Vector3i();
+        for(var x = 0; x < WORLD_BLOCK_DIMENSIONS.x; x += 1) {
+            for(var y = 0; y < WORLD_BLOCK_DIMENSIONS.y; y += 1) {
+                for(var z = 0; z < WORLD_BLOCK_DIMENSIONS.z; z += 1) {
+                    position.set(x,y,z);
+                    var buffer = this.getBlock(position);
+                    stream.writeInt(buffer.blockType.blockID);
+                }
+            }
+        }
+    }
+
+    public void readFromStream(DataInputStream stream) throws IOException {
+        var position = new Vector3i();
+        Game.WORLD.disableUpdates();
+        for(var x = 0; x < WORLD_BLOCK_DIMENSIONS.x; x += 1) {
+            for(var y = 0; y < WORLD_BLOCK_DIMENSIONS.y; y += 1) {
+                for(var z = 0; z < WORLD_BLOCK_DIMENSIONS.z; z += 1) {
+                    var blockID = stream.readInt();
+                    var blockType = BlockType.BLOCK_ID_LOOKUP.get(blockID);
+                    position.set(x,y,z);
+                    this.setBlock(position, blockType);
+                }
+            }
+        }
     }
 
     public void setup() {
@@ -104,9 +134,6 @@ public class World {
     }
 
     public void setBlock(Vector3i globalPosition, BlockBuffer buffer) {
-        if(!this.withinBounds(globalPosition))
-            return;
-
         var chunkPosition = this.getChunkPosition(globalPosition);
         var blockPosition = this.getBlockPosition(globalPosition);
         var chunk = this.getChunk(chunkPosition);
@@ -129,18 +156,19 @@ public class World {
     }
 
     public void setBlock(Vector3i globalPosition, BlockType blockType) {
+        if(!this.withinBounds(globalPosition))
+            return;
+
         var oldBlock = this.getBlock(globalPosition);
         var newBlock = new BlockBuffer(blockType);
 
         this.setBlock(globalPosition, newBlock);
 
-        if(this.lightingEnabled) {
+        if(this.isUpdatesEnabled) {
             this.localResectionQueue.add(new Vector4i(globalPosition, oldBlock.localLight));
             this.globalResectionQueue.add(new Vector4i(globalPosition, oldBlock.globalLight));
             this.localPropagationQueue.add(new Vector4i(globalPosition, blockType.localLight));
-        }
 
-        if(this.heightMapEnabled) {
             var coordinate = new Vector2i(globalPosition.x, globalPosition.z);
             var ix = this.getHeightMapIndex(coordinate);
             this.heightMap[ix] = this.calculateHeight(coordinate);
@@ -230,7 +258,6 @@ public class World {
         chunk.isDirty = false;
     }
 
-
     public void simulate() {
         while(!this.localResectionQueue.isEmpty()) {
             var sourceData = this.localResectionQueue.remove();
@@ -275,30 +302,34 @@ public class World {
         }
     }
 
-    public void enableLighting() {
-        this.lightingEnabled = true;
+    public void disableUpdates() {
+        this.isUpdatesEnabled = false;
+    }
+
+    public void enableUpdates() {
+        this.localPropagationQueue.clear();
+        this.localResectionQueue.clear();
+        this.globalPropagationQueue.clear();
+        this.globalResectionQueue.clear();
         for(var x = 0; x < WORLD_BLOCK_DIMENSIONS.x; x += 1) {
             for (var z = 0; z < WORLD_BLOCK_DIMENSIONS.z; z += 1) {
                 for(var y = 0; y < WORLD_BLOCK_DIMENSIONS.y; y += 1) {
                     var position = new Vector3i(x, y, z);
-                    var blockType = this.getBlock(position);
-                    this.localPropagationQueue.add(new Vector4i(position, blockType.localLight));
+                    var blockBuffer = this.getBlock(position);
+                    blockBuffer.localLight = 0;
+                    blockBuffer.globalLight = 0;
+                    this.setBlock(position, blockBuffer);
+                    this.localPropagationQueue.add(new Vector4i(position, blockBuffer.blockType.localLight));
                 }
+                var coordinate = new Vector2i(x, z);
+                var ix = this.getHeightMapIndex(coordinate);
+                this.heightMap[ix] = this.calculateHeight(coordinate);
+
                 var position = new Vector3i(x, WORLD_BLOCK_DIMENSIONS.y - 1, z);
                 this.globalPropagationQueue.add(new Vector4i(position, 15));
             }
         }
-    }
-
-    public void enableHeightMap() {
-        this.heightMapEnabled = true;
-        for(var x = 0; x < WORLD_BLOCK_DIMENSIONS.x; x += 1) {
-            for (var z = 0; z < WORLD_BLOCK_DIMENSIONS.z; z += 1) {
-                var coordinate = new Vector2i(x, z);
-                var ix = this.getHeightMapIndex(coordinate);
-                this.heightMap[ix] = this.calculateHeight(coordinate);
-            }
-        }
+        this.isUpdatesEnabled = true;
     }
 
     public boolean terrainCollision(Vector3f position, Vector3f dimensions) {

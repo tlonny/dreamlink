@@ -109,10 +109,6 @@ public class Game {
             World.WORLD_BLOCK_DIMENSIONS.y + 20,
             World.WORLD_BLOCK_DIMENSIONS.z / 2
         );
-
-        GENERATOR.generate();
-        WORLD.enableLighting();
-        WORLD.enableHeightMap();
     }
 
     private static void run() {

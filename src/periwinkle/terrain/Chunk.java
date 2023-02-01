@@ -9,7 +9,7 @@ public class Chunk {
     public static int BLOCK_LENGTH = 16;
     public static int NUM_BLOCKS = BLOCK_LENGTH * BLOCK_LENGTH * BLOCK_LENGTH;
 
-    private final int[] blockData = new int[NUM_BLOCKS];
+    public final int[] blockData = new int[NUM_BLOCKS];
     public Mesh mesh = new Mesh(Game.TERRAIN_ATLAS);
     public boolean isDirty;
 

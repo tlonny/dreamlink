@@ -110,6 +110,7 @@ public class Generator {
     }
 
     public void generate() {
+        this.random.setSeed(System.currentTimeMillis());
         var positionBuffer = new Vector3i();
         for(var x = 1; x < World.WORLD_BLOCK_DIMENSIONS.x - 1; x += 1) {
             for (var z = 1; z < World.WORLD_BLOCK_DIMENSIONS.z - 1; z += 1) {
