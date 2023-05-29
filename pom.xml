@@ -3,7 +3,7 @@
     <groupId>io.lonny</groupId>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Periwinkle</artifactId>
+    <artifactId>Doors</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -14,25 +14,18 @@
         <joml.version>1.9.22</joml.version>
         <pngdecoder.version>1.0</pngdecoder.version>
         <sponge.version>2.0.0-SNAPSHOT</sponge.version>
-        <exec.mainClass>periwinkle.Game</exec.mainClass>
+        <exec.mainClass>doors.Game</exec.mainClass>
     </properties>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
     </build>
 
-    <repositories>
-        <repository>
-            <id>sponge-repo</id>
-            <url>https://repo.spongepowered.org/maven</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>noise</artifactId>
-            <version>${sponge.version}</version>
+            <groupId>com.moandjiezana.toml</groupId>
+            <artifactId>toml4j</artifactId>
+            <version>0.7.2</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
