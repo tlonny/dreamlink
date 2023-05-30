@@ -13,15 +13,7 @@ public class Sprite {
     public Vector2i dimensions = new Vector2i();
     public Vector2i position = new Vector2i();
 
-    public Sprite(TextureSample textureSample) {
-        this.textureSample = textureSample;
-    }
-
-    public Sprite() {
-        this(null);
-    }
-
-    public void writeToMeshBuffer(MeshBuffer meshBuffer) {
+    public void write(MeshBuffer meshBuffer) {
         for(var ix = 0; ix < CubeFace.FRONT.vertices.length; ix +=1) {
             var vertex = CubeFace.FRONT.vertices[ix];
             meshBuffer.position.set(
@@ -31,7 +23,7 @@ public class Sprite {
             );
             meshBuffer.normal.set(CubeFace.FRONT.normal);
             meshBuffer.textureOffset.set(this.textureSample.textureOffsets[ix]);
-            meshBuffer.push();
+            meshBuffer.writeVertex();
         }
     }
 

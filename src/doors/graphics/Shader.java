@@ -81,7 +81,7 @@ public class Shader {
         GL20.glAttachShader(this.programID, shaderID);
     }
 
-    public void setGlobalColor(Vector3f colors) {
+    public void setAmbientLight(Vector3f colors) {
         this.setUniform(this.ambientLightUniformID, colors);
     }
 

@@ -83,7 +83,7 @@ public class PlayerControlSystem {
             var step = new Vector3f(cubeFace.normal).mul(EPSILON);
             for(var amt = 0f; amt <= projection; amt += EPSILON) {
                 var trial = new Vector3f(component.position).add(step);
-                if(Game.WORLD.terrainCollision(trial, component.dimensions)) {
+                if(component.terrain.isCollision(trial, component.dimensions)) {
                     component.velocity.sub(new Vector3f(cubeFace.normal).mul(projection));
                     if(cubeFace == CubeFace.BOTTOM)
                         this.isOnGround = true;

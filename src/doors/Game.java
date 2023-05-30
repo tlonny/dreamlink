@@ -11,7 +11,6 @@ import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
 import doors.utility.Maths;
 import doors.utility.Timer;
-import doors.overlay.DebugConsole;
 import doors.overlay.OverlayTexture;
 import doors.overlay.PerformanceTracker;
 import doors.overlay.Reticule;
@@ -30,52 +29,20 @@ public class Game {
     public static Reticule RETICULE = new Reticule();
     public static Player PLAYER = new Player();
     public static Camera CAMERA = new Camera();
-    public static DebugConsole DEBUG_CONSOLE = new DebugConsole();
     public static PerformanceTracker PERFORMANCE_TRACKER = new PerformanceTracker();
 
     private static int WORLD_SIM_MS = 50;
 
-    private static void init() {
+    public static void main(String[] args) {
         DISPLAY.setup();
         KEYBOARD.setup();
         MOUSE.setup();
         TYPED_CHARACTER_STREAM.setup();
         SHADER.setup();
         RETICULE.setup();
-        DEBUG_CONSOLE.setup();
         OVERLAY_TEXTURE.setup();
         PERFORMANCE_TRACKER.setup();
-    }
 
-    private static void simulateWorld() {
-        PLAYER.simulate();
-    }
-
-    private static void simulateOverlay() {
-        DEBUG_CONSOLE.simulate();
-        PERFORMANCE_TRACKER.simulate();
-    }
-
-    private static void renderWorld(float simFactor) {
-        GL15.glEnable(GL15.GL_DEPTH_TEST);
-        CAMERA.prepare(simFactor);
-        SHADER.setViewRotationMatrix(CAMERA.viewRotationMatrix);
-        SHADER.setViewTranslationMatrix(CAMERA.viewTranslationMatrix);
-        SHADER.setProjectionMatrix(CAMERA.projectionMatrix);
-    }
-
-    private static void renderOverlay() {
-        GL15.glDisable(GL15.GL_DEPTH_TEST);
-        SHADER.setViewRotationMatrix(Maths.IDENTITY);
-        SHADER.setViewTranslationMatrix(Maths.IDENTITY);
-        SHADER.setProjectionMatrix(Maths.IDENTITY);
-
-        RETICULE.render();
-        DEBUG_CONSOLE.render();
-        PERFORMANCE_TRACKER.render();
-    }
-
-    private static void run() {
         var simTimer = new Timer();
         while(!DISPLAY.shouldClose()) {
             TYPED_CHARACTER_STREAM.refresh();
@@ -88,20 +55,26 @@ public class Game {
 
             while(simTimer.millisElapsed() > WORLD_SIM_MS) {
                 ENTITY_TRANSITION_MANAGER.transition();
-                simulateWorld();
+                PLAYER.simulate();
                 simTimer.incrementStartTime(WORLD_SIM_MS);
             }
 
             var simFactor = (float)simTimer.millisElapsed()/WORLD_SIM_MS;
-            renderWorld(simFactor);
-            simulateOverlay();
-            renderOverlay();
-        }
-    }
 
-    public static void main(String[] args) {
-        init();
-        run();
+            GL15.glEnable(GL15.GL_DEPTH_TEST);
+            CAMERA.prepare(simFactor);
+            SHADER.setViewRotationMatrix(CAMERA.viewRotationMatrix);
+            SHADER.setViewTranslationMatrix(CAMERA.viewTranslationMatrix);
+            SHADER.setProjectionMatrix(CAMERA.projectionMatrix);
+
+            GL15.glDisable(GL15.GL_DEPTH_TEST);
+            SHADER.setViewRotationMatrix(Maths.IDENTITY);
+            SHADER.setViewTranslationMatrix(Maths.IDENTITY);
+            SHADER.setProjectionMatrix(Maths.IDENTITY);
+
+            RETICULE.render();
+            PERFORMANCE_TRACKER.render();
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import doors.utility.VectorSpace;
@@ -21,9 +22,11 @@ public class Terrain {
     public VectorSpace space;
     private VectorSpace chunkSpace;
     private MeshBuffer meshBuffer;
+    public Vector3i position = new Vector3i();
 
     private Chunk[] chunks;
     private Queue<Chunk> dirtyChunks = new LinkedList<>();
+    private BlockFace blockWriter = new BlockFace();
 
     public Terrain(Vector3i chunkDimensions) {
         this.blockMap = new HashMap<>();
@@ -55,6 +58,30 @@ public class Terrain {
                 stream.write(chunk.blockData[ix]);
             }
         }
+    }
+
+    public boolean isCollision(Vector3f position, Vector3f dimensions) {
+        var startX = (int)(position.x);
+        var startY = (int)(position.y);
+        var startZ = (int)(position.z);
+
+        var endX = (int)(position.x + dimensions.x);
+        var endY = (int)(position.y + dimensions.y);
+        var endZ = (int)(position.z + dimensions.z);
+
+        var cursor = new Vector3i();
+
+        for(var x = startX; x <= endX; x += 1) {
+            for(var y = startY; y <= endY; y += 1) {
+                for(var z = startZ; z <= endZ; z += 1) {
+                    cursor.set(x,y,z);
+                    if(this.getBlock(cursor) != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public Block getBlock(Vector3i position) {
@@ -116,14 +143,10 @@ public class Terrain {
                     continue;
                 }
 
-                for(var ix = 0; ix < cubeFace.vertices.length; ix += 1) {
-                    var vertex = cubeFace.vertices[ix];
-                    this.meshBuffer.position.set(localBlockPosition).add(vertex);
-                    this.meshBuffer.textureOffset.set(block.textureSample.textureOffsets[ix]);
-                    this.meshBuffer.normal.set(cubeFace.normal);
-                    this.meshBuffer.push();
-                }
-
+                this.blockWriter.block = block;
+                this.blockWriter.cubeFace = cubeFace;
+                this.blockWriter.position.set(localBlockPosition);
+                this.blockWriter.write(this.meshBuffer);
             }
         }
     }

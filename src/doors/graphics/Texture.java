@@ -1,5 +1,8 @@
 package doors.graphics;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.joml.Vector2f;
@@ -8,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 
-import doors.utility.Image;
+import de.matthiasmann.twl.utils.PNGDecoder;
 import doors.utility.VectorExtension;
 
 public class Texture {
@@ -26,7 +29,17 @@ public class Texture {
     }
 
     public void setup() {
-        Image.loadToBuffer(BYTE_BUFFER, this.filename);
+        try {
+            var stream = new FileInputStream(this.filename);
+            var decoder = new PNGDecoder(stream);
+            decoder.decode(BYTE_BUFFER, this.dimensions.x, PNGDecoder.Format.RGBA);
+        } catch (FileNotFoundException e) {
+            var msg = String.format("Unable to find PNG: %s", filename);
+            throw new RuntimeException(msg);
+        } catch (IOException e) {
+            var msg = String.format("Unable to load PNG: %s", filename);
+            throw new RuntimeException(msg);
+        }
 
         this.textureID = GL20.glGenTextures();
         GL20.glBindTexture(GL20.GL_TEXTURE_2D, this.textureID);

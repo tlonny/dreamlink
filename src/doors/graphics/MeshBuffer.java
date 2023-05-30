@@ -58,7 +58,7 @@ public class MeshBuffer {
         this.indexCount += 6;
     }
 
-    public void push() {
+    public void writeVertex() {
         this.positionBuffer.put(this.position.x);
         this.positionBuffer.put(this.position.y);
         this.positionBuffer.put(this.position.z);

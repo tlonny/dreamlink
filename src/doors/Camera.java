@@ -24,11 +24,9 @@ public class Camera {
     public Matrix4f projectionMatrix = new Matrix4f();
 
     public void prepare(float simFactor) {
-        if(!Game.DEBUG_CONSOLE.active) {
-            this.rotation.x -= (Game.MOUSE.position.x - Game.DISPLAY.dimensions.x /2f) * MOUSE_SENSITIVITY;
-            this.rotation.y -= (Game.MOUSE.position.y - Game.DISPLAY.dimensions.y /2f) * MOUSE_SENSITIVITY;
-            this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
-        }
+        this.rotation.x -= (Game.MOUSE.position.x - Game.DISPLAY.dimensions.x /2f) * MOUSE_SENSITIVITY;
+        this.rotation.y -= (Game.MOUSE.position.y - Game.DISPLAY.dimensions.y /2f) * MOUSE_SENSITIVITY;
+        this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
 
         this.position.set(
             Game.PLAYER.spatialComponent.dimensions.x * 0.5f,
