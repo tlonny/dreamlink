@@ -32,6 +32,7 @@ public class Reticule {
     }
 
     public void render() {
+        Game.OVERLAY_TEXTURE.bind();
         this.mesh.render();
     }
 

@@ -3,23 +3,20 @@ package doors.terrain;
 import org.joml.Vector3i;
 
 import doors.graphics.Mesh;
-import doors.utility.VectorSpace;
+import doors.utility.Maths;
 
 public class Chunk {
 
-    public static Vector3i CHUNK_DIMENSIONS = new Vector3i(16, 16, 16);
+    public static Vector3i DIMENSIONS = new Vector3i(16, 16, 16);
 
-    public int[] blockData;
-    public VectorSpace blockSpace;
-    public Mesh mesh;
+    public Mesh mesh = new Mesh();
     public Vector3i position;
     public boolean isDirty;
+    public int[] blockData;
 
-    public Chunk() {
-        this.blockSpace = new VectorSpace(CHUNK_DIMENSIONS);
-        this.mesh = new Mesh();
-        this.position = new Vector3i();
-        this.blockData = new int[this.blockSpace.getMaxIndex()];
+    public Chunk(Vector3i position) {
+        this.position = position;
+        this.blockData = new int[Maths.volume(DIMENSIONS)];
     }
 
     public void setup() {
@@ -27,7 +24,7 @@ public class Chunk {
     }
 
     public boolean setBlockID(Vector3i position, int blockID) {
-        var blockIndex = this.blockSpace.getIndex(position);        
+        var blockIndex = Maths.serialize(position, DIMENSIONS);
         var oldBlockID = this.blockData[blockIndex];
         var madeDirty = oldBlockID != blockID && !this.isDirty;
         this.blockData[blockIndex] = blockID;
@@ -37,7 +34,7 @@ public class Chunk {
     }
 
     public int getBlockID(Vector3i position) {
-        var blockIndex = this.blockSpace.getIndex(position);        
+        var blockIndex = Maths.serialize(position, DIMENSIONS);
         return this.blockData[blockIndex];
     }
 

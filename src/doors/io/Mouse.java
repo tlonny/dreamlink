@@ -54,16 +54,14 @@ public class Mouse {
         return result;
     }
 
-    public void loadMousePosition() {
+    public void refresh() {
         GLFW.glfwGetCursorPos(Game.DISPLAY.windowID, this.xBuffer, this.yBuffer);
 
         this.position.set(
             (float)this.xBuffer[0],
             (float)this.yBuffer[0]
         );
-    }
 
-    public void resetMousePosition() {
         GLFW.glfwSetCursorPos(
             Game.DISPLAY.windowID, 
             Game.DISPLAY.dimensions.x / 2f, 

@@ -19,11 +19,15 @@ public class PerformanceTracker {
     public long previousTime;
     public float framePeriod = 0f;
 
-    public int numParticles;
-
     public void setup() {
         this.mesh.setup();
         this.previousTime = System.currentTimeMillis();
+    }
+
+    private void write(String text) {
+        this.text.text = text;
+        this.text.write(this.meshBuffer);
+        this.text.position.y -= 32;
     }
 
     public void render() {
@@ -37,13 +41,19 @@ public class PerformanceTracker {
 
         this.meshBuffer.clear();
         this.text.position.set(basePosition);
-        this.text.text = String.format("frames per second: %.2f", fps);
-        this.text.write(this.meshBuffer);
-        this.text.position.y -= 32;
-        this.text.text = String.format("num particles: %s", this.numParticles);
-        this.text.write(this.meshBuffer);
+
+        this.write(String.format("frames per second: %.2f", fps));
+        this.write(String.format(
+                "player position: %.1f, %.1f, %.1f", 
+                Game.PLAYER.spatialComponent.position.x, 
+                Game.PLAYER.spatialComponent.position.y, 
+                Game.PLAYER.spatialComponent.position.z
+        ));
+
         this.meshBuffer.flip();
         this.mesh.loadFromMeshBuffer(this.meshBuffer);
+
+        Game.OVERLAY_TEXTURE.bind();
         this.mesh.render();
     }
 

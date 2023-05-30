@@ -5,15 +5,18 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
-import java.io.IOException;
+import doors.utility.IO;
+
 import java.nio.FloatBuffer;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Shader {
 
-    private static String VERTEX_SRC = "src/glsl/vertex.glsl";
-    private static String FRAGMENT_SRC = "src/glsl/fragment.glsl";
+    private static Path VERTEX_SHADER_SRC = Paths.get("src/glsl/vertex.glsl");
+    private static Path FRAGMENT_SHADER_SRC = Paths.get("src/glsl/fragment.glsl");
+
+    private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
 
     private int programID;
     private int viewRotationMatrixUniformID;
@@ -23,12 +26,21 @@ public class Shader {
     private int textureSamplerUniformID;
     private int ambientLightUniformID;
 
-    private FloatBuffer setUniformMatrixBuffer = MemoryUtil.memAllocFloat(16);
+    public Matrix4f viewRotationMatrix = new Matrix4f();
+    public Matrix4f viewTranslationMatrix = new Matrix4f();
+    public Matrix4f projectionMatrix = new Matrix4f();
+    public Matrix4f modelMatrix = new Matrix4f();
+    public Vector3f ambientLight = new Vector3f();
 
     public void setup() {
         this.programID = GL20.glCreateProgram();
-        this.createShader(this.readStringFromFile(VERTEX_SRC), GL20.GL_VERTEX_SHADER);
-        this.createShader(this.readStringFromFile(FRAGMENT_SRC), GL20.GL_FRAGMENT_SHADER);
+
+        var vertexID = this.createShader(GL20.GL_VERTEX_SHADER);
+        this.attachShader(vertexID, IO.loadText(VERTEX_SHADER_SRC));
+
+        var fragmentID = this.createShader(GL20.GL_FRAGMENT_SHADER);
+        this.attachShader(fragmentID, IO.loadText(FRAGMENT_SHADER_SRC));
+
         GL20.glLinkProgram(this.programID);
         GL20.glValidateProgram(this.programID);
 
@@ -36,20 +48,30 @@ public class Shader {
         this.viewRotationMatrixUniformID = this.createUniform("view_rotation_matrix");
         this.viewTranslationMatrixUniformID = this.createUniform("view_translation_matrix");
         this.modelMatrixUniformID = this.createUniform("model_matrix");
-        this.textureSamplerUniformID = this.createUniform("texture_sampler");
         this.ambientLightUniformID = this.createUniform("ambient_light");
+        this.textureSamplerUniformID = this.createUniform("texture_sampler");
 
-        GL20.glUseProgram(this.programID);
+        this.bind();
+
         this.setUniform(this.textureSamplerUniformID, 0);
     }
 
-    private String readStringFromFile(String strPath) {
-        var path = Paths.get(strPath);
-        try {
-            return Files.readString(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void bind() {
+        GL20.glUseProgram(this.programID);
+    }
+
+    private int createShader(int shaderType) {
+        return GL20.glCreateShader(shaderType);
+    }
+
+    private void attachShader(int shaderID, String shaderCode) {
+        GL20.glShaderSource(shaderID, shaderCode);
+        GL20.glCompileShader(shaderID);
+        if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0) {
+            System.err.println(GL20.glGetShaderInfoLog(shaderID));
+            throw new RuntimeException("Shader compilation failed");
         }
+        GL20.glAttachShader(this.programID, shaderID);
     }
 
     private int createUniform(String uniformName) {
@@ -65,40 +87,30 @@ public class Shader {
     }
 
     private void setUniform(int uniformID, Matrix4f value) {
-        this.setUniformMatrixBuffer.clear();
-        value.get(this.setUniformMatrixBuffer);
-        GL20.glUniformMatrix4fv(uniformID, false, this.setUniformMatrixBuffer);
+        this.matrixBuffer.clear();
+        value.get(this.matrixBuffer);
+        GL20.glUniformMatrix4fv(uniformID, false, this.matrixBuffer);
     }
 
-    private void createShader(String shaderCode, int shaderType) {
-        var shaderID = GL20.glCreateShader(shaderType);
-        GL20.glShaderSource(shaderID, shaderCode);
-        GL20.glCompileShader(shaderID);
-        if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0) {
-            System.err.println(GL20.glGetShaderInfoLog(shaderID));
-            throw new RuntimeException("Shader compilation failed");
-        }
-        GL20.glAttachShader(this.programID, shaderID);
+    public void writeAmbientLight() {
+        this.setUniform(this.ambientLightUniformID, this.ambientLight);
     }
 
-    public void setAmbientLight(Vector3f colors) {
-        this.setUniform(this.ambientLightUniformID, colors);
+    public void writeProjectionMatrix() {
+        this.setUniform(this.projectionMatrixUniformID, this.projectionMatrix);
     }
 
-    public void setProjectionMatrix(Matrix4f matrix) {
-        this.setUniform(this.projectionMatrixUniformID, matrix);
+    public void writeViewRotationMatrix() {
+        this.setUniform(this.viewRotationMatrixUniformID, this.viewRotationMatrix);
     }
 
-    public void setViewRotationMatrix(Matrix4f matrix) {
-        this.setUniform(this.viewRotationMatrixUniformID, matrix);
+    public void writeViewTranslationMatrix() {
+        this.setUniform(this.viewTranslationMatrixUniformID, this.viewTranslationMatrix);
     }
 
-    public void setViewTranslationMatrix(Matrix4f matrix) {
-        this.setUniform(this.viewTranslationMatrixUniformID, matrix);
+    public void writeModelMatrix() {
+        this.setUniform(this.modelMatrixUniformID, this.modelMatrix);
     }
 
-    public void setModelMatrix(Matrix4f matrix) {
-        this.setUniform(this.modelMatrixUniformID, matrix);
-    }
 }
 

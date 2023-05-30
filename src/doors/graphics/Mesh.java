@@ -20,14 +20,14 @@ public class Mesh {
 
     public void setup() {
         this.vertexArrayID = GL30.glGenVertexArrays();
-        this.bindVAO();
+        this.bind();
         this.indexVertexBufferID = GL30.glGenBuffers();
         this.positionVertexBufferID = GL30.glGenBuffers();
         this.normalVertexBufferID = GL30.glGenBuffers();
         this.textureVertexBufferID = GL30.glGenBuffers();
     }
 
-    private void bindVAO() {
+    private void bind() {
         GL30.glBindVertexArray(this.vertexArrayID);
     }
 
@@ -44,7 +44,7 @@ public class Mesh {
     }
 
     public void loadFromMeshBuffer(MeshBuffer buffer) {
-        this.bindVAO();
+        this.bind();
         this.pushIndexData(buffer.indexBuffer);
         this.pushFloatData(POSITION_LOCATION, 3, this.positionVertexBufferID, buffer.positionBuffer);
         this.pushFloatData(NORMAL_LOCATION, 3, this.normalVertexBufferID, buffer.normalBuffer);
@@ -64,7 +64,7 @@ public class Mesh {
     public void render() {
         if(this.numIndices == 0)
             return;
-        this.bindVAO();
+        this.bind();
         GL30.glDrawElements(GL11.GL_TRIANGLES, this.numIndices, GL11.GL_UNSIGNED_INT, 0);
     }
 

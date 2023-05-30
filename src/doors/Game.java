@@ -9,11 +9,11 @@ import doors.io.Display;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
-import doors.utility.Maths;
 import doors.utility.Timer;
 import doors.overlay.OverlayTexture;
 import doors.overlay.PerformanceTracker;
 import doors.overlay.Reticule;
+import doors.terrain.Terrain;
 
 public class Game {
 
@@ -30,10 +30,13 @@ public class Game {
     public static Player PLAYER = new Player();
     public static Camera CAMERA = new Camera();
     public static PerformanceTracker PERFORMANCE_TRACKER = new PerformanceTracker();
+    public static Terrain TERRAIN = new Terrain();
 
     private static int WORLD_SIM_MS = 50;
 
-    public static void main(String[] args) {
+    private Timer simTimer = new Timer();
+
+    private void initialize() {
         DISPLAY.setup();
         KEYBOARD.setup();
         MOUSE.setup();
@@ -42,39 +45,77 @@ public class Game {
         RETICULE.setup();
         OVERLAY_TEXTURE.setup();
         PERFORMANCE_TRACKER.setup();
+        TERRAIN.setup("scratch/test");
+    }
 
-        var simTimer = new Timer();
+    private void refresh() {
+        TYPED_CHARACTER_STREAM.refresh();
+        DISPLAY.refresh();
+        MOUSE.refresh();
+    }
+
+    private void simulate() {
+        ENTITY_TRANSITION_MANAGER.transition();
+        PLAYER.simulate();
+    }
+
+    private void renderWorld() {
+        var simFactor = (float)this.simTimer.millisElapsed()/WORLD_SIM_MS;
+        CAMERA.prepare(simFactor);
+        GL15.glEnable(GL15.GL_DEPTH_TEST);
+        SHADER.bind();
+        SHADER.writeAmbientLight();
+        SHADER.ambientLight.set(1f, 1f, 1f);
+        SHADER.viewRotationMatrix.set(CAMERA.viewRotationMatrix);
+        SHADER.writeViewRotationMatrix();
+        SHADER.viewTranslationMatrix.set(CAMERA.viewTranslationMatrix);
+        SHADER.writeViewTranslationMatrix();
+        SHADER.projectionMatrix.set(CAMERA.projectionMatrix);
+        SHADER.writeProjectionMatrix();
+
+        TERRAIN.render();
+    }
+
+    private void renderOverlay() {
+        GL15.glDisable(GL15.GL_DEPTH_TEST);
+        SHADER.bind();
+        SHADER.viewRotationMatrix.identity();
+        SHADER.writeViewRotationMatrix();
+        SHADER.viewTranslationMatrix.identity();
+        SHADER.writeViewTranslationMatrix();
+        SHADER.projectionMatrix.identity();
+        SHADER.writeProjectionMatrix();
+        SHADER.modelMatrix.identity();
+        SHADER.writeModelMatrix();
+
+
+        RETICULE.render();
+        PERFORMANCE_TRACKER.render();
+    }
+
+    private void run() {
+        this.initialize();
+
+        this.simTimer.resetStartTime();
         while(!DISPLAY.shouldClose()) {
-            TYPED_CHARACTER_STREAM.refresh();
-            DISPLAY.refresh();
-            MOUSE.loadMousePosition();
-            MOUSE.resetMousePosition();
+            refresh();
 
-            if(KEYBOARD.isKeyDown(GLFW.GLFW_KEY_ESCAPE))
+            if(KEYBOARD.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 DISPLAY.setShouldClose();
-
-            while(simTimer.millisElapsed() > WORLD_SIM_MS) {
-                ENTITY_TRANSITION_MANAGER.transition();
-                PLAYER.simulate();
-                simTimer.incrementStartTime(WORLD_SIM_MS);
             }
 
-            var simFactor = (float)simTimer.millisElapsed()/WORLD_SIM_MS;
+            while(simTimer.millisElapsed() > WORLD_SIM_MS) {
+                this.simTimer.incrementStartTime(WORLD_SIM_MS);
+                this.simulate();
+            }
 
-            GL15.glEnable(GL15.GL_DEPTH_TEST);
-            CAMERA.prepare(simFactor);
-            SHADER.setViewRotationMatrix(CAMERA.viewRotationMatrix);
-            SHADER.setViewTranslationMatrix(CAMERA.viewTranslationMatrix);
-            SHADER.setProjectionMatrix(CAMERA.projectionMatrix);
-
-            GL15.glDisable(GL15.GL_DEPTH_TEST);
-            SHADER.setViewRotationMatrix(Maths.IDENTITY);
-            SHADER.setViewTranslationMatrix(Maths.IDENTITY);
-            SHADER.setProjectionMatrix(Maths.IDENTITY);
-
-            RETICULE.render();
-            PERFORMANCE_TRACKER.render();
+            this.renderWorld();
+            this.renderOverlay();
         }
+    }
+
+    public static void main(String[] args) {
+        new Game().run();
     }
 
 }

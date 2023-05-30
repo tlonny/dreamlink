@@ -1,63 +1,89 @@
 package doors.terrain;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import doors.utility.VectorSpace;
+import com.moandjiezana.toml.Toml;
+
+import doors.Game;
 import doors.graphics.MeshBuffer;
+import doors.graphics.Texture;
 import doors.utility.CubeFace;
-import doors.utility.VectorExtension;
+import doors.utility.IO;
+import doors.utility.Maths;
 
 public class Terrain {
+    
+    private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
+    private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
+    private static Vector2i MAX_TEXTURE_DIMENSIONS = new Vector2i(512, 512);
 
     public Map<Integer, Block> blockMap;
-    public VectorSpace space;
-    private VectorSpace chunkSpace;
+    public Texture texture;
+    public Vector3f position;
+
     private MeshBuffer meshBuffer;
-    public Vector3i position = new Vector3i();
-
     private Chunk[] chunks;
-    private Queue<Chunk> dirtyChunks = new LinkedList<>();
-    private BlockFace blockWriter = new BlockFace();
+    private Queue<Chunk> dirtyChunks;
+    private BlockFace blockFace;
 
-    public Terrain(Vector3i chunkDimensions) {
+    public Terrain() {
         this.blockMap = new HashMap<>();
-        this.space = new VectorSpace(new Vector3i(chunkDimensions).mul(Chunk.CHUNK_DIMENSIONS));
-        this.chunkSpace = new VectorSpace(chunkDimensions);
-
-        this.chunks = new Chunk[this.chunkSpace.getMaxIndex()];
+        this.position = new Vector3f();
+        this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
+        this.dirtyChunks = new LinkedList<>();
+        this.blockFace = new BlockFace();
+        this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS));
+        this.texture = new Texture(MAX_TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
-            var chunk = new Chunk();
-            chunk.position = this.chunkSpace.fromIndex(ix).mul(Chunk.CHUNK_DIMENSIONS);
-            this.chunks[ix] = chunk;
-        }
-
-        var maxQuads = new VectorSpace(Chunk.CHUNK_DIMENSIONS).getMaxIndex();
-        this.meshBuffer = new MeshBuffer(maxQuads);
-    }
-
-    public void readBlocks(DataInputStream stream) throws IOException {
-        for(var chunk : this.chunks) {
-            for(var ix = 0; ix < chunk.blockData.length; ix += 1) {
-                chunk.blockData[ix] = stream.readInt();
-            }
+            var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
+            this.chunks[ix] = new Chunk(chunkPosition);
         }
     }
 
-    public void writeBlocks(DataOutputStream stream) throws IOException {
+    public void setup(String terrainDirectory) {
         for(var chunk : this.chunks) {
-            for(var ix = 0; ix < chunk.blockData.length; ix += 1) {
-                stream.write(chunk.blockData[ix]);
-            }
+            chunk.setup();
         }
+
+        var configPath = Paths.get(terrainDirectory, "config.toml");
+        var configString = IO.loadText(configPath);
+        var toml = new Toml().read(configString);
+
+        var textureTable = toml.getTable("texture");
+        var textureFilename = textureTable.getString("src");
+        var texturePath = Paths.get(terrainDirectory, textureFilename);
+        this.texture.setup(texturePath);
+
+        var index = 1;
+        for(var block : toml.getTables("block")) {
+            this.blockMap.put(index, new Block(
+                index,
+                block.getString("name"),
+                this.texture.createTextureSample(
+                    new Vector2i(
+                        block.getLong("texture_sample[0]").intValue(), 
+                        block.getLong("texture_sample[1]").intValue()
+                    ),
+                    new Vector2i(
+                        block.getLong("texture_sample[2]").intValue(), 
+                        block.getLong("texture_sample[3]").intValue()
+                    )
+                )
+            ));
+            index += 1;
+        }
+
+        this.setBlock(new Vector3i(2,2,2), this.blockMap.get(1));
+        this.setBlock(new Vector3i(3,3,3), this.blockMap.get(1));
+        this.processDirtyChunk();
     }
 
     public boolean isCollision(Vector3f position, Vector3f dimensions) {
@@ -81,37 +107,38 @@ public class Terrain {
                 }
             }
         }
+
         return false;
     }
 
     public Block getBlock(Vector3i position) {
-        if(!this.space.isWithinBounds(position)) {
+        if(!Maths.isWithinBounds(position, MAX_DIMENSIONS)) {
             return null;
         }
 
-        var chunkPosition = VectorExtension.div(new Vector3i(position), Chunk.CHUNK_DIMENSIONS);
-        var blockPosition = new Vector3i(chunkPosition).mul(Chunk.CHUNK_DIMENSIONS).mul(-1).add(position);
+        var chunkSpacePosition = Maths.div(new Vector3i(position), Chunk.DIMENSIONS);
+        var localBlockPosition = new Vector3i(chunkSpacePosition).mul(Chunk.DIMENSIONS).mul(-1).add(position);
 
-        var chunkIndex = this.chunkSpace.getIndex(chunkPosition);
+        var chunkIndex = Maths.serialize(chunkSpacePosition, MAX_CHUNK_SPACE_DIMENSIONS);
         var chunk = this.chunks[chunkIndex];
 
-        var blockID = chunk.getBlockID(blockPosition);
+        var blockID = chunk.getBlockID(localBlockPosition);
         return blockID == 0 ? null : this.blockMap.get(blockID);
     }
 
 
     public void setBlock(Vector3i position, Block block) {
-        if(!this.space.isWithinBounds(position)) {
+        if(!Maths.isWithinBounds(position, MAX_DIMENSIONS)) {
             return;
         }
 
-        var chunkPosition = VectorExtension.div(new Vector3i(position), Chunk.CHUNK_DIMENSIONS);
-        var blockPosition = new Vector3i(chunkPosition).mul(Chunk.CHUNK_DIMENSIONS).mul(-1).add(position);
+        var chunkSpacePosition = Maths.div(new Vector3i(position), Chunk.DIMENSIONS);
+        var localBlockPosition = new Vector3i(chunkSpacePosition).mul(Chunk.DIMENSIONS).mul(-1).add(position);
 
-        var chunkIndex = this.chunkSpace.getIndex(chunkPosition);
+        var chunkIndex = Maths.serialize(chunkSpacePosition, MAX_CHUNK_SPACE_DIMENSIONS);
         var chunk = this.chunks[chunkIndex];
 
-        var madeDirty = chunk.setBlockID(blockPosition, block == null ? 0 : block.blockID);
+        var madeDirty = chunk.setBlockID(localBlockPosition, block == null ? 0 : block.blockID);
         if(madeDirty) {
             this.dirtyChunks.add(chunk);
         }
@@ -125,9 +152,9 @@ public class Terrain {
         this.meshBuffer.clear();
 
         var chunk = this.dirtyChunks.remove();
-        var maxIndex = chunk.blockSpace.getMaxIndex();
+        var maxIndex = Maths.volume(Chunk.DIMENSIONS);
         for(var blockIndex = 0; blockIndex < maxIndex; blockIndex += 1) {
-            var localBlockPosition = chunk.blockSpace.fromIndex(blockIndex);
+            var localBlockPosition = Maths.deserialize(blockIndex, Chunk.DIMENSIONS);
             var globalBlockPosition = new Vector3i(localBlockPosition).add(chunk.position);
             var block = this.getBlock(globalBlockPosition);
 
@@ -143,11 +170,25 @@ public class Terrain {
                     continue;
                 }
 
-                this.blockWriter.block = block;
-                this.blockWriter.cubeFace = cubeFace;
-                this.blockWriter.position.set(localBlockPosition);
-                this.blockWriter.write(this.meshBuffer);
+                this.blockFace.block = block;
+                this.blockFace.cubeFace = cubeFace;
+                this.blockFace.position.set(localBlockPosition);
+                this.blockFace.write(this.meshBuffer);
             }
+        }
+
+        this.meshBuffer.flip();
+        chunk.mesh.loadFromMeshBuffer(this.meshBuffer);
+    }
+
+    public void render() {
+        for(var ix = 0; ix < this.chunks.length; ix += 1) {
+            var chunk = this.chunks[ix];
+            var chunkGlobalPosition = new Vector3f(chunk.position).add(this.position);
+            Game.SHADER.modelMatrix.identity().translate(chunkGlobalPosition);
+            Game.SHADER.writeModelMatrix();
+            this.texture.bind();
+            this.chunks[ix].mesh.render();
         }
     }
 
