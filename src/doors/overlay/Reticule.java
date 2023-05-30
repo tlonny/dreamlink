@@ -15,10 +15,10 @@ public class Reticule {
 
     private MeshBuffer meshBuffer = new MeshBuffer(NUM_QUADS);
     private Mesh mesh = new Mesh(Game.OVERLAY_TEXTURE);
-    private SpriteElement spriteBuffer = new SpriteElement(Game.OVERLAY_TEXTURE.reticule);
+    private Sprite spriteBuffer = new Sprite(Game.OVERLAY_TEXTURE.reticule);
 
     public Reticule() {
-        this.spriteBuffer = new SpriteElement(Game.OVERLAY_TEXTURE.reticule);
+        this.spriteBuffer = new Sprite(Game.OVERLAY_TEXTURE.reticule);
         this.spriteBuffer.dimensions.set(RETICULE_SIZE);
         this.spriteBuffer.position.set(
             Game.DISPLAY.dimensions.x/2 - RETICULE_SIZE.x/2,
@@ -28,7 +28,7 @@ public class Reticule {
 
     public void setup() {
         this.mesh.setup();
-        this.spriteBuffer.batch(this.meshBuffer);
+        this.spriteBuffer.writeToMeshBuffer(this.meshBuffer);
         this.meshBuffer.flip();
         this.mesh.loadFromBuffer(this.meshBuffer);
     }

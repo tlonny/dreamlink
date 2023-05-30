@@ -14,7 +14,7 @@ public class PerformanceTracker {
     private static float EXPONENTIAL_WEIGHTING = 0.01f;
 
     private MeshBuffer meshBuffer = new MeshBuffer(MAX_QUADS);
-    private Mesh mesh = new Mesh(Game.OVERLAY_TEXTURE);
+    private Mesh mesh = new Mesh();
     private TextElement textBuffer = new TextElement();
     private Vector2i basePosition = new Vector2i(20, Game.DISPLAY.dimensions.y - 52);
 
@@ -43,12 +43,12 @@ public class PerformanceTracker {
             this.textBuffer.position.set(basePosition);
             var fps = 1000f/(this.framePeriod);
             this.textBuffer.text = String.format("frames per second: %.2f", fps);
-            this.textBuffer.batch(this.meshBuffer);
+            this.textBuffer.writeToMeshBuffer(this.meshBuffer);
             this.textBuffer.position.y -= 32;
             this.textBuffer.text = String.format("num particles: %s", this.numParticles);
-            this.textBuffer.batch(this.meshBuffer);
+            this.textBuffer.writeToMeshBuffer(this.meshBuffer);
             this.meshBuffer.flip();
-            this.mesh.loadFromBuffer(this.meshBuffer);
+            this.mesh.loadFromMeshBuffer(this.meshBuffer);
         }
     }
 

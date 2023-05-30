@@ -1,30 +1,27 @@
 package doors.overlay;
 
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 import doors.Game;
 import doors.graphics.MeshBuffer;
-import doors.graphics.Texture;
+import doors.graphics.TextureSample;
 import doors.utility.CubeFace;
 
-public class SpriteElement {
+public class Sprite {
 
-
-    public Texture texture;
+    public TextureSample textureSample;
     public Vector2i dimensions = new Vector2i();
     public Vector2i position = new Vector2i();
-    public Vector3f color = new Vector3f(1f, 1f, 1f);
 
-    public SpriteElement(Texture texture) {
-        this.texture = texture;
+    public Sprite(TextureSample textureSample) {
+        this.textureSample = textureSample;
     }
 
-    public SpriteElement() {
+    public Sprite() {
         this(null);
     }
 
-    public void batch(MeshBuffer meshBuffer) {
+    public void writeToMeshBuffer(MeshBuffer meshBuffer) {
         for(var ix = 0; ix < CubeFace.FRONT.vertices.length; ix +=1) {
             var vertex = CubeFace.FRONT.vertices[ix];
             meshBuffer.position.set(
@@ -33,10 +30,7 @@ public class SpriteElement {
                 -1f
             );
             meshBuffer.normal.set(CubeFace.FRONT.normal);
-            meshBuffer.textureOffset.set(this.texture.vertices[ix]);
-            meshBuffer.color.set(this.color);
-            meshBuffer.localLight = 1f;
-            meshBuffer.globalLight = 0f;
+            meshBuffer.textureOffset.set(this.textureSample.textureOffsets[ix]);
             meshBuffer.push();
         }
     }

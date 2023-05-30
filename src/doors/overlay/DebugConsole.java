@@ -20,7 +20,6 @@ public class DebugConsole {
     private static Vector3f CONSOLE_COLOR = Maths.getColor(204, 191, 169);
     private static Vector3f TEXT_COLOR = Maths.getColor(102, 91, 73);
 
-    private static Vector3f POSITION_ZERO = new Vector3f();
     private static Vector2i GLYPH_DIMENSIONS = new Vector2i(16, 32);
     private static Vector2i PADDING = new Vector2i(10, 10);
 
@@ -45,9 +44,8 @@ public class DebugConsole {
     private boolean blinkCursor = true;
 
     private MeshBuffer meshBuffer = new MeshBuffer(MAX_QUADS);
-    private Mesh mesh = new Mesh(Game.OVERLAY_TEXTURE);
-    private SpriteElement spriteBuffer = new SpriteElement();
-    private BoxElement boxBuffer = new BoxElement();
+    private Mesh mesh = new Mesh();
+    private Sprite spriteBuffer = new Sprite();
     private TextElement textBuffer = new TextElement();
 
     private Vector2i basePosition = new Vector2i(
@@ -153,15 +151,15 @@ public class DebugConsole {
         this.textBuffer.color = TEXT_COLOR;
         this.textBuffer.position.set(this.basePosition);
         this.textBuffer.text = this.inputBuilder.toString();
-        this.textBuffer.batch(this.meshBuffer);
+        this.textBuffer.writeToMeshBuffer(this.meshBuffer);
 
         if(this.blinkCursor) {
             this.spriteBuffer.color = TEXT_COLOR;
-            this.spriteBuffer.texture = Game.OVERLAY_TEXTURE.solid;
+            this.spriteBuffer.textureSample = Game.OVERLAY_TEXTURE.solid;
             this.spriteBuffer.dimensions = GLYPH_DIMENSIONS;
             this.spriteBuffer.position.set(this.basePosition);
             this.spriteBuffer.position.x += GLYPH_DIMENSIONS.x * this.inputBuilder.length();
-            this.spriteBuffer.batch(this.meshBuffer);
+            this.spriteBuffer.writeToMeshBuffer(this.meshBuffer);
         }
 
         for(var y = 0; y < NUM_HISTORY; y += 1) {
@@ -169,17 +167,17 @@ public class DebugConsole {
             var lineIx = (int)((this.lineCount - y - 1) % NUM_HISTORY);
             var line = this.history[lineIx];
             this.textBuffer.text = line;
-            this.textBuffer.batch(this.meshBuffer);
+            this.textBuffer.writeToMeshBuffer(this.meshBuffer);
         }
     
         this.meshBuffer.flip();
-        this.mesh.loadFromBuffer(this.meshBuffer);
+        this.mesh.loadFromMeshBuffer(this.meshBuffer);
         this.isDirty = false;
     }
 
     public void render() {
         if(this.active) {
-            this.mesh.render(POSITION_ZERO);
+            this.mesh.render();
         }
     }
 

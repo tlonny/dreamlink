@@ -9,14 +9,12 @@ public class Mesh {
 
     private static int POSITION_LOCATION = 0;
     private static int NORMAL_LOCATION = 1;
-    private static int COLOR_LOCATION = 2;
-    private static int TEXTURE_LOCATION = 3;
+    private static int TEXTURE_LOCATION = 2;
 
     private int vertexArrayID;
     private int indexVertexBufferID;
     private int positionVertexBufferID;
     private int normalVertexBufferID;
-    private int colorVertexBufferID;
     private int textureVertexBufferID;
     private int numIndices;
 
@@ -26,7 +24,6 @@ public class Mesh {
         this.indexVertexBufferID = GL30.glGenBuffers();
         this.positionVertexBufferID = GL30.glGenBuffers();
         this.normalVertexBufferID = GL30.glGenBuffers();
-        this.colorVertexBufferID = GL30.glGenBuffers();
         this.textureVertexBufferID = GL30.glGenBuffers();
     }
 
@@ -46,19 +43,11 @@ public class Mesh {
         GL30.glEnableVertexAttribArray(location);
     }
 
-    private void pushIntData(int location, int size, int vertexBufferID, IntBuffer buffer) {
-        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
-        GL30.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
-        GL30.glVertexAttribIPointer(location, size, GL11.GL_INT, 0, 0);
-        GL30.glEnableVertexAttribArray(location);
-    }
-
-    public void load(MeshBuffer buffer) {
+    public void loadFromMeshBuffer(MeshBuffer buffer) {
         this.bindVAO();
         this.pushIndexData(buffer.indexBuffer);
         this.pushFloatData(POSITION_LOCATION, 3, this.positionVertexBufferID, buffer.positionBuffer);
         this.pushFloatData(NORMAL_LOCATION, 3, this.normalVertexBufferID, buffer.normalBuffer);
-        this.pushIntData(COLOR_LOCATION, 1, this.colorVertexBufferID, buffer.colorBuffer);
         this.pushFloatData(TEXTURE_LOCATION, 2, this.textureVertexBufferID, buffer.textureOffsetBuffer);
         this.numIndices = buffer.indexCount;
     }
@@ -67,7 +56,6 @@ public class Mesh {
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL30.glDeleteBuffers(this.indexVertexBufferID);
         GL30.glDeleteBuffers(this.positionVertexBufferID);
-        GL30.glDeleteBuffers(this.colorVertexBufferID);
         GL30.glDeleteBuffers(this.textureVertexBufferID);
         GL30.glBindVertexArray(0);
         GL30.glDeleteVertexArrays(this.vertexArrayID);

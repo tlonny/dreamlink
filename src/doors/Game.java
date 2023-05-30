@@ -12,13 +12,13 @@ import doors.io.TypedCharacterStream;
 import doors.utility.Maths;
 import doors.utility.Timer;
 import doors.overlay.DebugConsole;
-import doors.overlay.OverlayAtlas;
+import doors.overlay.OverlayTexture;
 import doors.overlay.PerformanceTracker;
 import doors.overlay.Reticule;
 
 public class Game {
 
-    public static OverlayAtlas OVERLAY_TEXTURE = new OverlayAtlas();
+    public static OverlayTexture OVERLAY_TEXTURE = new OverlayTexture();
 
     public static Display DISPLAY = new Display();
     public static Keyboard KEYBOARD = new Keyboard();
@@ -49,8 +49,6 @@ public class Game {
 
     private static void simulateWorld() {
         PLAYER.simulate();
-        WORLD.simulate();
-
     }
 
     private static void simulateOverlay() {
@@ -64,8 +62,6 @@ public class Game {
         SHADER.setViewRotationMatrix(CAMERA.viewRotationMatrix);
         SHADER.setViewTranslationMatrix(CAMERA.viewTranslationMatrix);
         SHADER.setProjectionMatrix(CAMERA.projectionMatrix);
-
-        WORLD.render();
     }
 
     private static void renderOverlay() {
@@ -77,14 +73,6 @@ public class Game {
         RETICULE.render();
         DEBUG_CONSOLE.render();
         PERFORMANCE_TRACKER.render();
-    }
-
-    private static void scratch() {
-        PLAYER.spatialComponent.position.set(
-            Level.WORLD_BLOCK_DIMENSIONS.x / 2,
-            Level.WORLD_BLOCK_DIMENSIONS.y + 20,
-            Level.WORLD_BLOCK_DIMENSIONS.z / 2
-        );
     }
 
     private static void run() {
@@ -113,7 +101,6 @@ public class Game {
 
     public static void main(String[] args) {
         init();
-        scratch();
         run();
     }
 
