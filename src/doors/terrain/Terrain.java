@@ -2,9 +2,7 @@ package doors.terrain;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -31,16 +29,14 @@ public class Terrain {
 
     private MeshBuffer meshBuffer;
     private Chunk[] chunks;
-    private Queue<Chunk> dirtyChunks;
     private BlockFace blockFace;
 
     public Terrain() {
         this.blockMap = new HashMap<>();
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
-        this.dirtyChunks = new LinkedList<>();
         this.blockFace = new BlockFace();
-        this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS));
+        this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
         this.texture = new Texture(MAX_TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
@@ -49,17 +45,20 @@ public class Terrain {
     }
 
     public void setup(String terrainDirectory) {
-        for(var chunk : this.chunks) {
+        for(var ix = 0; ix < this.chunks.length; ix += 1) {
+            var chunk = this.chunks[ix];
             chunk.setup();
+            var levelDataPath = Paths.get(terrainDirectory, String.format("level/chunk-%03d.blob", ix));
+            Game.GAME.workQueue.add(() -> chunk.loadFromFile(levelDataPath.toString()));
+            Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
         }
+
 
         var configPath = Paths.get(terrainDirectory, "config.toml");
         var configString = IO.loadText(configPath);
         var toml = new Toml().read(configString);
 
-        var textureTable = toml.getTable("texture");
-        var textureFilename = textureTable.getString("src");
-        var texturePath = Paths.get(terrainDirectory, textureFilename);
+        var texturePath = Paths.get(terrainDirectory, "atlas.png");
         this.texture.setup(texturePath);
 
         var index = 1;
@@ -80,10 +79,6 @@ public class Terrain {
             ));
             index += 1;
         }
-
-        this.setBlock(new Vector3i(2,2,2), this.blockMap.get(1));
-        this.setBlock(new Vector3i(3,3,3), this.blockMap.get(1));
-        this.processDirtyChunk();
     }
 
     public boolean isCollision(Vector3f position, Vector3f dimensions) {
@@ -140,18 +135,13 @@ public class Terrain {
 
         var madeDirty = chunk.setBlockID(localBlockPosition, block == null ? 0 : block.blockID);
         if(madeDirty) {
-            this.dirtyChunks.add(chunk);
+            Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
         }
     }
 
-    public boolean hasDirtyChunks() {
-        return this.dirtyChunks.size() > 0;
-    }
-
-    public void processDirtyChunk() {
+    private void processDirtyChunk(Chunk chunk) {
         this.meshBuffer.clear();
 
-        var chunk = this.dirtyChunks.remove();
         var maxIndex = Maths.volume(Chunk.DIMENSIONS);
         for(var blockIndex = 0; blockIndex < maxIndex; blockIndex += 1) {
             var localBlockPosition = Maths.deserialize(blockIndex, Chunk.DIMENSIONS);
@@ -179,6 +169,7 @@ public class Terrain {
 
         this.meshBuffer.flip();
         chunk.mesh.loadFromMeshBuffer(this.meshBuffer);
+        chunk.isDirty = false;
     }
 
     public void render() {

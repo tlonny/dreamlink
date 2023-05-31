@@ -1,5 +1,8 @@
 package doors.terrain;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import org.joml.Vector3i;
 
 import doors.graphics.Mesh;
@@ -36,6 +39,23 @@ public class Chunk {
     public int getBlockID(Vector3i position) {
         var blockIndex = Maths.serialize(position, DIMENSIONS);
         return this.blockData[blockIndex];
+    }
+
+    public void loadFromFile(String path) {
+
+        try(var fileInputStream = new FileInputStream(path)) {
+            for(var ix = 0; ix < this.blockData.length; ix += 1) {
+                var blockID = 0;
+                blockID += fileInputStream.read();
+                blockID += fileInputStream.read() * 0x100;
+                System.out.println(blockID);
+                this.blockData[ix] = blockID;
+            }
+
+        } catch (IOException e) {
+            var msg = String.format("Unable to load chunk: %s", path);
+            throw new RuntimeException(msg);
+        }
     }
 
 }

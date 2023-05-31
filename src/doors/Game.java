@@ -1,10 +1,14 @@
 package doors;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL15;
 
 import doors.entity.EntityTransitionManager;
 import doors.graphics.Shader;
+import doors.job.IWorkUnit;
 import doors.io.Display;
 import doors.io.Keyboard;
 import doors.io.Mouse;
@@ -19,6 +23,7 @@ public class Game {
 
     public static OverlayTexture OVERLAY_TEXTURE = new OverlayTexture();
 
+    public static Game GAME = new Game();
     public static Display DISPLAY = new Display();
     public static Keyboard KEYBOARD = new Keyboard();
     public static TypedCharacterStream TYPED_CHARACTER_STREAM = new TypedCharacterStream(); 
@@ -32,9 +37,17 @@ public class Game {
     public static PerformanceTracker PERFORMANCE_TRACKER = new PerformanceTracker();
     public static Terrain TERRAIN = new Terrain();
 
-    private static int WORLD_SIM_MS = 50;
 
-    private Timer simTimer = new Timer();
+    private static int WORLD_SIM_MS = 50;
+    private static int JOB_LIMIT_MS = 10;
+
+    public Queue<IWorkUnit> workQueue;
+    private Timer timer;
+
+    public Game() {
+        this.timer = new Timer();
+        this.workQueue = new LinkedList<>();
+    }
 
     private void initialize() {
         DISPLAY.setup();
@@ -60,7 +73,7 @@ public class Game {
     }
 
     private void renderWorld() {
-        var simFactor = (float)this.simTimer.millisElapsed()/WORLD_SIM_MS;
+        var simFactor = (float)this.timer.millisElapsed()/WORLD_SIM_MS;
         CAMERA.prepare(simFactor);
         GL15.glEnable(GL15.GL_DEPTH_TEST);
         SHADER.bind();
@@ -96,7 +109,7 @@ public class Game {
     private void run() {
         this.initialize();
 
-        this.simTimer.resetStartTime();
+        this.timer.resetStartTime();
         while(!DISPLAY.shouldClose()) {
             refresh();
 
@@ -104,9 +117,14 @@ public class Game {
                 DISPLAY.setShouldClose();
             }
 
-            while(simTimer.millisElapsed() > WORLD_SIM_MS) {
-                this.simTimer.incrementStartTime(WORLD_SIM_MS);
+            while(timer.millisElapsed() > WORLD_SIM_MS) {
+                this.timer.incrementStartTime(WORLD_SIM_MS);
                 this.simulate();
+            }
+
+            var jobLimit = timer.millisElapsed() + JOB_LIMIT_MS;
+            while(timer.millisElapsed() <= jobLimit && !this.workQueue.isEmpty()) {
+                this.workQueue.remove().execute();
             }
 
             this.renderWorld();
@@ -115,7 +133,7 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        new Game().run();
+        GAME.run();
     }
 
 }
