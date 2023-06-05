@@ -36,6 +36,6 @@ public class Keyboard {
     }
 
     public void setup() {
-        GLFW.glfwSetKeyCallback(Game.DISPLAY.windowID, this::onKeyEvent);
+        GLFW.glfwSetKeyCallback(Game.WINDOW.windowID, this::onKeyEvent);
     }
 }

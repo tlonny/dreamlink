@@ -59,7 +59,8 @@ public class Terrain {
         var toml = new Toml().read(configString);
 
         var texturePath = Paths.get(terrainDirectory, "atlas.png");
-        this.texture.setup(texturePath);
+        this.texture.setup();
+        this.texture.loadTextureDataFromFile(texturePath);
 
         var index = 1;
         for(var block : toml.getTables("block")) {

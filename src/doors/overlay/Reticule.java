@@ -3,6 +3,7 @@ package doors.overlay;
 import org.joml.Vector2i;
 
 import doors.Game;
+import doors.Screen;
 import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
 
@@ -19,8 +20,8 @@ public class Reticule {
         this.sprite.textureSample = Game.OVERLAY_TEXTURE.reticule;
         this.sprite.dimensions.set(RETICULE_SIZE);
         this.sprite.position.set(
-            Game.DISPLAY.dimensions.x/2 - RETICULE_SIZE.x/2,
-            Game.DISPLAY.dimensions.y/2 - RETICULE_SIZE.y/2
+            Screen.RESOLUTION.x/2 - RETICULE_SIZE.x/2,
+            Screen.RESOLUTION.y/2 - RETICULE_SIZE.y/2
         );
     }
 

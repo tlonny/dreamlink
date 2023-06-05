@@ -14,7 +14,7 @@ public class PerformanceTracker {
     private MeshBuffer meshBuffer = new MeshBuffer(MAX_QUADS);
     private Mesh mesh = new Mesh();
     private Text text = new Text();
-    private Vector2i basePosition = new Vector2i(20, Game.DISPLAY.dimensions.y - 52);
+    private Vector2i basePosition = new Vector2i(4, 4);
 
     public long previousTime;
     public float framePeriod = 0f;
@@ -27,7 +27,7 @@ public class PerformanceTracker {
     private void write(String text) {
         this.text.text = text;
         this.text.write(this.meshBuffer);
-        this.text.position.y -= 32;
+        this.text.position.y += 32;
     }
 
     public void render() {

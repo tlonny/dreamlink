@@ -19,7 +19,7 @@ public class TypedCharacterStream {
     }
 
     public void setup() {
-        GLFW.glfwSetCharCallback(Game.DISPLAY.windowID, this::onCharEvent);
+        GLFW.glfwSetCharCallback(Game.WINDOW.windowID, this::onCharEvent);
     }
 
     public void refresh() {

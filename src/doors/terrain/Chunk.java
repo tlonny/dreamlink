@@ -48,7 +48,6 @@ public class Chunk {
                 var blockID = 0;
                 blockID += fileInputStream.read();
                 blockID += fileInputStream.read() * 0x100;
-                System.out.println(blockID);
                 this.blockData[ix] = blockID;
             }
 

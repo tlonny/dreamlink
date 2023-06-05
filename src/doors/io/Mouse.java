@@ -55,7 +55,7 @@ public class Mouse {
     }
 
     public void refresh() {
-        GLFW.glfwGetCursorPos(Game.DISPLAY.windowID, this.xBuffer, this.yBuffer);
+        GLFW.glfwGetCursorPos(Game.WINDOW.windowID, this.xBuffer, this.yBuffer);
 
         this.position.set(
             (float)this.xBuffer[0],
@@ -63,13 +63,13 @@ public class Mouse {
         );
 
         GLFW.glfwSetCursorPos(
-            Game.DISPLAY.windowID, 
-            Game.DISPLAY.dimensions.x / 2f, 
-            Game.DISPLAY.dimensions.y / 2f
+            Game.WINDOW.windowID, 
+            Game.WINDOW.dimensions.x / 2f, 
+            Game.WINDOW.dimensions.y / 2f
         );
     }
 
     public void setup() {
-        GLFW.glfwSetMouseButtonCallback(Game.DISPLAY.windowID, this::onMouseButtonEvent);
+        GLFW.glfwSetMouseButtonCallback(Game.WINDOW.windowID, this::onMouseButtonEvent);
     }
 }

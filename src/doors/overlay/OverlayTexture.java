@@ -236,7 +236,9 @@ public class OverlayTexture extends Texture {
     }
 
     public void setup() {
-        this.setup(OVERLAY_SRC);
+        super.setup();
+        this.loadTextureDataFromFile(OVERLAY_SRC);
+
     }
 
 }

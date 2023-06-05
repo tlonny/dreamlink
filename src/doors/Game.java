@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL15;
 import doors.entity.EntityTransitionManager;
 import doors.graphics.Shader;
 import doors.job.IWorkUnit;
-import doors.io.Display;
+import doors.io.Window;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
@@ -24,7 +24,7 @@ public class Game {
     public static OverlayTexture OVERLAY_TEXTURE = new OverlayTexture();
 
     public static Game GAME = new Game();
-    public static Display DISPLAY = new Display();
+    public static Window WINDOW = new Window();
     public static Keyboard KEYBOARD = new Keyboard();
     public static TypedCharacterStream TYPED_CHARACTER_STREAM = new TypedCharacterStream(); 
     public static Mouse MOUSE = new Mouse();
@@ -36,7 +36,7 @@ public class Game {
     public static Camera CAMERA = new Camera();
     public static PerformanceTracker PERFORMANCE_TRACKER = new PerformanceTracker();
     public static Terrain TERRAIN = new Terrain();
-
+    public static Screen SCREEN = new Screen();
 
     private static int WORLD_SIM_MS = 50;
     private static int JOB_LIMIT_MS = 10;
@@ -50,7 +50,7 @@ public class Game {
     }
 
     private void initialize() {
-        DISPLAY.setup();
+        WINDOW.setup();
         KEYBOARD.setup();
         MOUSE.setup();
         TYPED_CHARACTER_STREAM.setup();
@@ -59,11 +59,12 @@ public class Game {
         OVERLAY_TEXTURE.setup();
         PERFORMANCE_TRACKER.setup();
         TERRAIN.setup("scratch/test");
+        SCREEN.setup();
     }
 
     private void refresh() {
         TYPED_CHARACTER_STREAM.refresh();
-        DISPLAY.refresh();
+        WINDOW.refresh();
         MOUSE.refresh();
     }
 
@@ -110,11 +111,11 @@ public class Game {
         this.initialize();
 
         this.timer.resetStartTime();
-        while(!DISPLAY.shouldClose()) {
+        while(!WINDOW.shouldClose()) {
             refresh();
 
             if(KEYBOARD.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
-                DISPLAY.setShouldClose();
+                WINDOW.setShouldClose();
             }
 
             while(timer.millisElapsed() > WORLD_SIM_MS) {
@@ -129,6 +130,8 @@ public class Game {
 
             this.renderWorld();
             this.renderOverlay();
+
+            SCREEN.flush();
         }
     }
 

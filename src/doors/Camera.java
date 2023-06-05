@@ -24,8 +24,8 @@ public class Camera {
     public Matrix4f projectionMatrix = new Matrix4f();
 
     public void prepare(float simFactor) {
-        this.rotation.x -= (Game.MOUSE.position.x - Game.DISPLAY.dimensions.x /2f) * MOUSE_SENSITIVITY;
-        this.rotation.y -= (Game.MOUSE.position.y - Game.DISPLAY.dimensions.y /2f) * MOUSE_SENSITIVITY;
+        this.rotation.x -= (Game.MOUSE.position.x - Game.WINDOW.dimensions.x /2f) * MOUSE_SENSITIVITY;
+        this.rotation.y -= (Game.MOUSE.position.y - Game.WINDOW.dimensions.y /2f) * MOUSE_SENSITIVITY;
         this.rotation.y = Math.min(Math.max(this.rotation.y, - PITCH_LIMIT), PITCH_LIMIT);
 
         this.position.set(
@@ -67,7 +67,7 @@ public class Camera {
     }
 
     private void updateProjectionMatrix() {
-        var aspectRatio = (float) Game.DISPLAY.dimensions.x / Game.DISPLAY.dimensions.y;
+        var aspectRatio = (float) Game.WINDOW.dimensions.x / Game.WINDOW.dimensions.y;
         this.projectionMatrix.identity();
         this.projectionMatrix.perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
     }

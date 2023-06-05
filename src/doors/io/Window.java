@@ -5,15 +5,20 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
-public class Display {
+public class Window {
 
     private static String TITLE = "Doors";
 
     public long windowID;
-    public Vector2i dimensions = new Vector2i(2560, 1440);
+    public Vector2i dimensions;
+
+    public Window() {
+        this.dimensions = new Vector2i();
+    }
 
     public boolean isFocused() {
         return GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1;
@@ -33,22 +38,12 @@ public class Display {
 
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-
-        this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, MemoryUtil.NULL, MemoryUtil.NULL);
-
-        try (var stack = MemoryStack.stackPush() ) {
-            var width  = stack.mallocInt(1);
-            var height = stack.mallocInt(1);
-            GLFW.glfwGetWindowSize( this.windowID, width, height);
-            var vidMode = GLFW.glfwGetVideoMode( GLFW.glfwGetPrimaryMonitor() );
-            if(vidMode == null)
-                throw new RuntimeException("Unable to construct display");
-            GLFW.glfwSetWindowPos(
-                this.windowID,
-                (vidMode.width() - width.get(0) )/2,
-                (vidMode.height() - height.get(0) )/2
-            );
-        }
+        GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
+        var primaryMonitorID = GLFW.glfwGetPrimaryMonitor();
+        var vidMode = GLFW.glfwGetVideoMode(primaryMonitorID);
+        this.dimensions.set(vidMode.width(), vidMode.height());
+        System.out.println(this.dimensions);
+        this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, primaryMonitorID, MemoryUtil.NULL);
 
         GLFW.glfwMakeContextCurrent(this.windowID);
         GLFW.glfwSwapInterval(1);
@@ -56,16 +51,22 @@ public class Display {
         GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
         GL.createCapabilities();
+        GL15.glClearColor(1f, 0f, 0f, 0f);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL15.glClearColor(1f, 0f, 0f, 0f);
+        GL20.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
     }
 
     public void refresh() {
         GLFW.glfwSwapBuffers(this.windowID);
         GLFW.glfwPollEvents();
-        GL15.glClear( GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
+    }
+
+    public void bind() {
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL11.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
+        GL15.glClear(GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
     }
 
 
