@@ -27,8 +27,8 @@ public class PlayerControlSystem {
             if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
                 this.velocityBuffer.x += SPEED;
 
-        this.velocityBuffer.rotateX(Game.CAMERA.rotation.y);
-        this.velocityBuffer.rotateY(Game.CAMERA.rotation.x);
+        this.velocityBuffer.rotateX(Game.WORLD_CAMERA.rotation.y);
+        this.velocityBuffer.rotateY(Game.WORLD_CAMERA.rotation.x);
         component.velocity.add(this.velocityBuffer); 
         component.velocity.mul(1 - FRICTION);
         Maths.zeroFuzz(component.velocity);

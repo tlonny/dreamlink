@@ -11,10 +11,12 @@ import org.joml.Vector3i;
 import com.moandjiezana.toml.Toml;
 
 import doors.Game;
+import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
+import doors.graphics.ShaderProgram;
 import doors.graphics.Texture;
 import doors.utility.CubeFace;
-import doors.utility.IO;
+import doors.utility.FileIO;
 import doors.utility.Maths;
 
 public class Terrain {
@@ -27,16 +29,16 @@ public class Terrain {
     public Texture texture;
     public Vector3f position;
 
-    private MeshBuffer meshBuffer;
     private Chunk[] chunks;
-    private BlockFace blockFace;
+    private MeshBuffer meshBuffer;
+    private Mesh doorMesh;
 
     public Terrain() {
         this.blockMap = new HashMap<>();
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
-        this.blockFace = new BlockFace();
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
+        this.doorMesh = new Mesh();
         this.texture = new Texture(MAX_TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
@@ -45,6 +47,9 @@ public class Terrain {
     }
 
     public void setup(String terrainDirectory) {
+        this.doorMesh.setup();
+        this.texture.setup();
+
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
             chunk.setup();
@@ -53,14 +58,13 @@ public class Terrain {
             Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
         }
 
-
-        var configPath = Paths.get(terrainDirectory, "config.toml");
-        var configString = IO.loadText(configPath);
+        var configPath = Paths.get(terrainDirectory, "config.toml").toString();
+        var configString = FileIO.loadText(configPath);
         var toml = new Toml().read(configString);
 
-        var texturePath = Paths.get(terrainDirectory, "atlas.png");
-        this.texture.setup();
-        this.texture.loadTextureDataFromFile(texturePath);
+        var texturePath = Paths.get(terrainDirectory, "atlas.png").toString();
+        this.texture.bind();
+        Texture.loadFromFile(texturePath);
 
         var index = 1;
         for(var block : toml.getTables("block")) {
@@ -80,6 +84,25 @@ public class Terrain {
             ));
             index += 1;
         }
+
+        var writer = new BlockFaceMeshBufferWriter(this.meshBuffer);
+        for(var door : toml.getTables("door")) {
+            var cubeFaceIndex = door.getLong("orientation").intValue();
+            var cubeFace = CubeFace.HORIZONTAL_CUBE_FACES[cubeFaceIndex];
+            var position = new Vector3i(
+                door.getLong("position[0]").intValue(), 
+                door.getLong("position[1]").intValue(),
+                door.getLong("position[2]").intValue()
+            );
+            writer.pushBlockFace(position, cubeFace, this.blockMap.get(1));
+            position.y += 1;
+            writer.pushBlockFace(position, cubeFace, this.blockMap.get(1));
+        }
+
+        this.meshBuffer.flip();
+        this.doorMesh.bind();
+        Mesh.loadFromMeshBuffer(this.meshBuffer);
+        this.meshBuffer.clear();
     }
 
     public boolean isCollision(Vector3f position, Vector3f dimensions) {
@@ -141,8 +164,7 @@ public class Terrain {
     }
 
     private void processDirtyChunk(Chunk chunk) {
-        this.meshBuffer.clear();
-
+        var writer = new BlockFaceMeshBufferWriter(this.meshBuffer);
         var maxIndex = Maths.volume(Chunk.DIMENSIONS);
         for(var blockIndex = 0; blockIndex < maxIndex; blockIndex += 1) {
             var localBlockPosition = Maths.deserialize(blockIndex, Chunk.DIMENSIONS);
@@ -161,27 +183,37 @@ public class Terrain {
                     continue;
                 }
 
-                this.blockFace.block = block;
-                this.blockFace.cubeFace = cubeFace;
-                this.blockFace.position.set(localBlockPosition);
-                this.blockFace.write(this.meshBuffer);
+                writer.pushBlockFace(localBlockPosition, cubeFace, block);
             }
         }
 
+        chunk.mesh.bind();
+
         this.meshBuffer.flip();
-        chunk.mesh.loadFromMeshBuffer(this.meshBuffer);
+        Mesh.loadFromMeshBuffer(this.meshBuffer);
+        this.meshBuffer.clear();
+
         chunk.isDirty = false;
     }
 
     public void render() {
+        this.texture.bind();
+
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
-            var chunkGlobalPosition = new Vector3f(chunk.position).add(this.position);
-            Game.SHADER.modelMatrix.identity().translate(chunkGlobalPosition);
-            Game.SHADER.writeModelMatrix();
-            this.texture.bind();
-            this.chunks[ix].mesh.render();
+            chunk.mesh.bind();
+
+            ShaderProgram.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);
+            Mesh.render();
         }
+    }
+
+    public void renderDoors(Texture texture) {
+        texture.bind();
+        this.doorMesh.bind();
+
+        ShaderProgram.setModel(this.position, Maths.VEC3F_ONE);
+        Mesh.render();
     }
 
 }

@@ -1,8 +1,5 @@
 package doors.overlay;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.joml.Vector2i;
 
 import doors.graphics.TextureSample;
@@ -11,7 +8,7 @@ import doors.graphics.Texture;
 public class OverlayTexture extends Texture {
 
     private static Vector2i DIMENSIONS = new Vector2i(512, 512);
-    private static Path OVERLAY_SRC = Paths.get("src/texture/overlay.png");
+    private static String OVERLAY_SRC = "src/texture/overlay.png";
 
     private static Vector2i TILE_8_16 = new Vector2i(8, 16);
     private static Vector2i TILE_8_8 = new Vector2i(8,8);
@@ -237,7 +234,8 @@ public class OverlayTexture extends Texture {
 
     public void setup() {
         super.setup();
-        this.loadTextureDataFromFile(OVERLAY_SRC);
+        this.bind();
+        loadFromFile(OVERLAY_SRC);
 
     }
 

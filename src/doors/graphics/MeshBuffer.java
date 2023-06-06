@@ -7,7 +7,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class MeshBuffer {
+public class MeshBuffer implements IMeshBuffer {
 
     private static final int[] QUAD_INDICES = new int[] { 0, 1, 3, 3, 1, 2 };
 
@@ -17,10 +17,6 @@ public class MeshBuffer {
     public IntBuffer indexBuffer;
     public int indexCount;
     public int vertexCount;
-
-    public Vector3f position = new Vector3f();
-    public Vector3f normal = new Vector3f();
-    public Vector2f textureOffset = new Vector2f();
 
     public MeshBuffer(int quadCapacity) {
         this.positionBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
@@ -34,6 +30,44 @@ public class MeshBuffer {
         MemoryUtil.memFree(this.normalBuffer);
         MemoryUtil.memFree(this.textureOffsetBuffer);
         MemoryUtil.memFree(this.indexBuffer);
+    }
+
+    public void pushVertex(Vector3f position, Vector3f normal, Vector2f textureOffset) {
+        this.positionBuffer.put(position.x);
+        this.positionBuffer.put(position.y);
+        this.positionBuffer.put(position.z);
+        this.normalBuffer.put(normal.x);
+        this.normalBuffer.put(normal.y);
+        this.normalBuffer.put(normal.z);
+        this.textureOffsetBuffer.put(textureOffset.x);
+        this.textureOffsetBuffer.put(textureOffset.y);
+        this.vertexCount += 1;
+
+        if(this.vertexCount % 4 == 0) {
+            for(var index : QUAD_INDICES)
+                this.indexBuffer.put(index + this.vertexCount - 4);
+            this.indexCount += 6;
+        }
+    }
+
+    public FloatBuffer getPositionBuffer() {
+        return this.positionBuffer;
+    }
+
+    public FloatBuffer getNormalBuffer() {
+        return this.normalBuffer;
+    }
+
+    public FloatBuffer getTextureOffsetBuffer() {
+        return this.textureOffsetBuffer;
+    }
+
+    public IntBuffer getIndexBuffer() {
+        return this.indexBuffer;
+    }
+
+    public int getIndexCount() {
+        return this.indexCount;
     }
 
     public void flip() {
@@ -50,27 +84,6 @@ public class MeshBuffer {
         this.indexBuffer.clear();
         this.indexCount = 0;
         this.vertexCount = 0;
-    }
-
-    private void indexQuad() {
-        for(var index : QUAD_INDICES)
-            this.indexBuffer.put(index + this.vertexCount - 4);
-        this.indexCount += 6;
-    }
-
-    public void writeVertex() {
-        this.positionBuffer.put(this.position.x);
-        this.positionBuffer.put(this.position.y);
-        this.positionBuffer.put(this.position.z);
-        this.normalBuffer.put(this.normal.x);
-        this.normalBuffer.put(this.normal.y);
-        this.normalBuffer.put(this.normal.z);
-        this.textureOffsetBuffer.put(this.textureOffset.x);
-        this.textureOffsetBuffer.put(this.textureOffset.y);
-        this.vertexCount += 1;
-        if(this.vertexCount % 4 == 0) {
-            this.indexQuad();
-        }
     }
 
 }

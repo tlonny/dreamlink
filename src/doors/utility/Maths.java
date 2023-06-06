@@ -7,7 +7,11 @@ import org.joml.Vector3i;
 
 public class Maths {
 
-    private static float EPSILON = 0.0001f;
+    public static float EPSILON = 0.0001f;
+
+    public static Vector2i VEC2I_ZERO = new Vector2i(0, 0);
+    public static Vector3f VEC3F_ONE = new Vector3f(1, 1, 1);
+    public static Vector3f VEC3F_ZERO = new Vector3f(0, 0, 0);
 
     public static Vector3f zeroFuzz(Vector3f target) {
         if(Math.abs(target.x) < EPSILON) {
