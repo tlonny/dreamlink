@@ -1,30 +1,37 @@
 package doors.overlay;
 
 import org.joml.Vector2i;
+import org.joml.Vector3f;
+
 import doors.graphics.MeshBuffer;
+import doors.graphics.TextureChannel;
+import doors.utility.Maths;
 
 public class TextMeshBufferWriter {
+
+    public String text;
+
+    private SpriteMeshBufferWriter spriteMeshBuffer;
 
     public TextMeshBufferWriter(MeshBuffer meshBuffer) {
         this.spriteMeshBuffer = new SpriteMeshBufferWriter(meshBuffer);
     }
 
-    public String text;
-    public Vector2i position = new Vector2i();
-    public boolean isUnderlined;
-    private SpriteMeshBufferWriter spriteMeshBuffer;
-
-    public void pushText(Vector2i position, Vector2i characterDimensions, String text, boolean isUnderlined) {
+    public void pushText(Vector2i position, String text, Vector3f color, boolean isUnderlined) {
         var cursor = new Vector2i(position);
         for(var ix = 0; ix < text.length(); ix +=1 ) {
             var character = text.charAt(ix);
             var glyph = Glyph.GLYPH_CHARACTER_LOOKUP.get(character);
+
             this.spriteMeshBuffer.pushSprite(
                 cursor,
-                characterDimensions,
-                isUnderlined ? glyph.underlineTextureSample : glyph.textureSample
+                OverlayTexture.TILE_8_16,
+                isUnderlined ? glyph.underlineTextureSample : glyph.textureSample,
+                TextureChannel.OVERLAY_TEXTURE_CHANNEL,
+                Maths.VEC3F_ONE
             );
-            cursor.x += characterDimensions.x;
+
+            cursor.x += OverlayTexture.TILE_8_16.x;
         }
     }
 

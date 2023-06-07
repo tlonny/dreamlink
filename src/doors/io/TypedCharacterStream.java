@@ -5,9 +5,9 @@ import java.util.Queue;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.Game;
-
 public class TypedCharacterStream {
+
+    public static TypedCharacterStream TYPED_CHARACTER_STREAM = new TypedCharacterStream();
 
     public Queue<Character> characterQueue = new LinkedList<>(); 
 
@@ -19,7 +19,7 @@ public class TypedCharacterStream {
     }
 
     public void setup() {
-        GLFW.glfwSetCharCallback(Game.WINDOW.windowID, this::onCharEvent);
+        GLFW.glfwSetCharCallback(Window.WINDOW.windowID, this::onCharEvent);
     }
 
     public void refresh() {

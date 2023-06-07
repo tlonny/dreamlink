@@ -1,12 +1,11 @@
 package doors;
 
-import doors.terrain.Block;
 import doors.spatial.PlayerControlSystem;
 import doors.spatial.SpatialComponent;
 
 public class Player {
 
-    public Block blockType = null;
+    public static Player PLAYER = new Player();
 
     public SpatialComponent spatialComponent = new SpatialComponent();
     public PlayerControlSystem playerControlSystem = new PlayerControlSystem();

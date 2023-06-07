@@ -3,7 +3,8 @@ package doors.spatial;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import doors.Game;
+import doors.WorldCamera;
+import doors.io.Keyboard;
 import doors.utility.Maths;
 
 public class PlayerControlSystem {
@@ -15,20 +16,20 @@ public class PlayerControlSystem {
     private void updateVelocity(SpatialComponent component) {
         this.velocityBuffer.zero();
 
-            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
+            if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
                 this.velocityBuffer.z += SPEED;
 
-            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_W))
+            if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_W))
                 this.velocityBuffer.z -= SPEED;
 
-            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_A))
+            if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_A))
                 this.velocityBuffer.x -= SPEED;
 
-            if(Game.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
+            if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
                 this.velocityBuffer.x += SPEED;
 
-        this.velocityBuffer.rotateX(Game.WORLD_CAMERA.rotation.y);
-        this.velocityBuffer.rotateY(Game.WORLD_CAMERA.rotation.x);
+        this.velocityBuffer.rotateX(WorldCamera.WORLD_CAMERA.rotation.y);
+        this.velocityBuffer.rotateY(WorldCamera.WORLD_CAMERA.rotation.x);
         component.velocity.add(this.velocityBuffer); 
         component.velocity.mul(1 - FRICTION);
         Maths.zeroFuzz(component.velocity);

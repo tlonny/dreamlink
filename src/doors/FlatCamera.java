@@ -6,6 +6,8 @@ import org.joml.Matrix4f;
 
 public class FlatCamera implements IView {
 
+    public static FlatCamera FLAT_CAMERA = new FlatCamera();
+
     @Override
      public void writeViewTranslationMatrix(Matrix4f matrix) {
         matrix.identity();

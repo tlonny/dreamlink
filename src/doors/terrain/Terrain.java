@@ -7,14 +7,13 @@ import java.util.Map;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import com.moandjiezana.toml.Toml;
+import org.json.JSONObject;
 
 import doors.Game;
-import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
 import doors.graphics.ShaderProgram;
-import doors.graphics.Texture;
+import doors.graphics.TextureChannel;
+import doors.graphics.TextureData;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
 import doors.utility.Maths;
@@ -23,23 +22,21 @@ public class Terrain {
     
     private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
     private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
-    private static Vector2i MAX_TEXTURE_DIMENSIONS = new Vector2i(512, 512);
+    public static Vector2i TEXTURE_DIMENSIONS = new Vector2i(512, 512);
 
     public Map<Integer, Block> blockMap;
-    public Texture texture;
+    public TextureData textureData;
     public Vector3f position;
 
     private Chunk[] chunks;
     private MeshBuffer meshBuffer;
-    private Mesh doorMesh;
 
     public Terrain() {
         this.blockMap = new HashMap<>();
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
-        this.doorMesh = new Mesh();
-        this.texture = new Texture(MAX_TEXTURE_DIMENSIONS);
+        this.textureData = new TextureData(TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
             this.chunks[ix] = new Chunk(chunkPosition);
@@ -47,9 +44,6 @@ public class Terrain {
     }
 
     public void setup(String terrainDirectory) {
-        this.doorMesh.setup();
-        this.texture.setup();
-
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
             chunk.setup();
@@ -58,51 +52,33 @@ public class Terrain {
             Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
         }
 
-        var configPath = Paths.get(terrainDirectory, "config.toml").toString();
+        var configPath = Paths.get(terrainDirectory, "config.json").toString();
         var configString = FileIO.loadText(configPath);
-        var toml = new Toml().read(configString);
+        var json = new JSONObject(configString);
 
         var texturePath = Paths.get(terrainDirectory, "atlas.png").toString();
-        this.texture.bind();
-        Texture.loadFromFile(texturePath);
+        this.textureData.setup(texturePath);
 
-        var index = 1;
-        for(var block : toml.getTables("block")) {
-            this.blockMap.put(index, new Block(
-                index,
+        var blocks = json.getJSONArray("blocks");
+        for(var ix = 0; ix < blocks.length(); ix += 1) {
+            var block = blocks.getJSONObject(ix);
+            var textureSample = block.getJSONArray("texture_sample");
+            this.blockMap.put(ix + 1, new Block(
+                ix + 1,
                 block.getString("name"),
-                this.texture.createTextureSample(
+                this.textureData.createTextureSample(
                     new Vector2i(
-                        block.getLong("texture_sample[0]").intValue(), 
-                        block.getLong("texture_sample[1]").intValue()
+                        textureSample.getInt(0),
+                        textureSample.getInt(1)
                     ),
                     new Vector2i(
-                        block.getLong("texture_sample[2]").intValue(), 
-                        block.getLong("texture_sample[3]").intValue()
+                        textureSample.getInt(2),
+                        textureSample.getInt(3)
                     )
                 )
             ));
-            index += 1;
         }
 
-        var writer = new BlockFaceMeshBufferWriter(this.meshBuffer);
-        for(var door : toml.getTables("door")) {
-            var cubeFaceIndex = door.getLong("orientation").intValue();
-            var cubeFace = CubeFace.HORIZONTAL_CUBE_FACES[cubeFaceIndex];
-            var position = new Vector3i(
-                door.getLong("position[0]").intValue(), 
-                door.getLong("position[1]").intValue(),
-                door.getLong("position[2]").intValue()
-            );
-            writer.pushBlockFace(position, cubeFace, this.blockMap.get(1));
-            position.y += 1;
-            writer.pushBlockFace(position, cubeFace, this.blockMap.get(1));
-        }
-
-        this.meshBuffer.flip();
-        this.doorMesh.bind();
-        Mesh.loadFromMeshBuffer(this.meshBuffer);
-        this.meshBuffer.clear();
     }
 
     public boolean isCollision(Vector3f position, Vector3f dimensions) {
@@ -183,37 +159,23 @@ public class Terrain {
                     continue;
                 }
 
-                writer.pushBlockFace(localBlockPosition, cubeFace, block);
+                writer.pushBlockFace(localBlockPosition, cubeFace, block, Maths.VEC3F_ONE);
             }
         }
 
-        chunk.mesh.bind();
-
         this.meshBuffer.flip();
-        Mesh.loadFromMeshBuffer(this.meshBuffer);
+        chunk.mesh.loadFromMeshBuffer(this.meshBuffer);
         this.meshBuffer.clear();
-
         chunk.isDirty = false;
     }
 
     public void render() {
-        this.texture.bind();
-
+        TextureChannel.TERRAIN_TEXTURE_CHANNEL.setTexture(this.textureData);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
-            chunk.mesh.bind();
-
             ShaderProgram.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);
-            Mesh.render();
+            chunk.mesh.render();
         }
-    }
-
-    public void renderDoors(Texture texture) {
-        texture.bind();
-        this.doorMesh.bind();
-
-        ShaderProgram.setModel(this.position, Maths.VEC3F_ONE);
-        Mesh.render();
     }
 
 }

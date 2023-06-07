@@ -2,9 +2,9 @@ package doors.io;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.Game;
-
 public class Keyboard {
+
+    public static Keyboard KEYBOARD = new Keyboard();
 
     private long[] pressedKeys = new long[500];
     private long[] releasedKeys = new long[500];
@@ -36,6 +36,6 @@ public class Keyboard {
     }
 
     public void setup() {
-        GLFW.glfwSetKeyCallback(Game.WINDOW.windowID, this::onKeyEvent);
+        GLFW.glfwSetKeyCallback(Window.WINDOW.windowID, this::onKeyEvent);
     }
 }

@@ -1,87 +1,90 @@
 package doors.graphics;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
+
+import doors.utility.Debug;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class MeshBuffer implements IMeshBuffer {
+public class MeshBuffer {
 
     private static final int[] QUAD_INDICES = new int[] { 0, 1, 3, 3, 1, 2 };
 
+    public IntBuffer indexBuffer;
     public FloatBuffer positionBuffer;
     public FloatBuffer normalBuffer;
     public FloatBuffer textureOffsetBuffer;
-    public IntBuffer indexBuffer;
-    public int indexCount;
+    public IntBuffer packedColorTextureUnitBuffer;
+
     public int vertexCount;
+    public int indexCount;
 
     public MeshBuffer(int quadCapacity) {
+        this.indexBuffer = MemoryUtil.memAllocInt(quadCapacity * 6);
         this.positionBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
         this.normalBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
         this.textureOffsetBuffer = MemoryUtil.memAllocFloat(quadCapacity * 8);
-        this.indexBuffer = MemoryUtil.memAllocInt(quadCapacity * 6);
+        this.packedColorTextureUnitBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
     }
 
     public void tearDown() {
+        MemoryUtil.memFree(this.indexBuffer);
         MemoryUtil.memFree(this.positionBuffer);
         MemoryUtil.memFree(this.normalBuffer);
         MemoryUtil.memFree(this.textureOffsetBuffer);
-        MemoryUtil.memFree(this.indexBuffer);
+        MemoryUtil.memFree(this.packedColorTextureUnitBuffer);
     }
 
-    public void pushVertex(Vector3f position, Vector3f normal, Vector2f textureOffset) {
-        this.positionBuffer.put(position.x);
-        this.positionBuffer.put(position.y);
-        this.positionBuffer.put(position.z);
-        this.normalBuffer.put(normal.x);
-        this.normalBuffer.put(normal.y);
-        this.normalBuffer.put(normal.z);
-        this.textureOffsetBuffer.put(textureOffset.x);
-        this.textureOffsetBuffer.put(textureOffset.y);
-        this.vertexCount += 1;
+    private int packColorTextureUnit(int normalisedTextureUnitID, Vector3f color) {
+        var packed = normalisedTextureUnitID;
+        packed *= 0x100;
+        packed += (int)(color.x * 0xFF);
+        packed *= 0x100;
+        packed += (int)(color.y * 0xFF);
+        packed *= 0x100;
+        packed += (int)(color.z * 0xFF);
+        return packed;
+    }
 
-        if(this.vertexCount % 4 == 0) {
-            for(var index : QUAD_INDICES)
-                this.indexBuffer.put(index + this.vertexCount - 4);
-            this.indexCount += 6;
+    public void pushQuad(Vector3f[] positions, Vector3f normal, TextureSample textureSample, TextureChannel textureChannel, Vector3f color) {
+        var packed = this.packColorTextureUnit(textureChannel.getNormalizedTextureUnitID(), color);
+        for(var ix = 0; ix < 4; ix += 1) {
+            this.positionBuffer.put(positions[ix].x);
+            this.positionBuffer.put(positions[ix].y);
+            this.positionBuffer.put(positions[ix].z);
+            this.normalBuffer.put(normal.x);
+            this.normalBuffer.put(normal.y);
+            this.normalBuffer.put(normal.z);
+            this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].x);
+            this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].y);
+            this.packedColorTextureUnitBuffer.put(packed);
         }
-    }
 
-    public FloatBuffer getPositionBuffer() {
-        return this.positionBuffer;
-    }
+        for(var index : QUAD_INDICES)
+            this.indexBuffer.put(index + this.vertexCount);
 
-    public FloatBuffer getNormalBuffer() {
-        return this.normalBuffer;
-    }
-
-    public FloatBuffer getTextureOffsetBuffer() {
-        return this.textureOffsetBuffer;
-    }
-
-    public IntBuffer getIndexBuffer() {
-        return this.indexBuffer;
-    }
-
-    public int getIndexCount() {
-        return this.indexCount;
+        this.vertexCount += 4;
+        this.indexCount += 6;
     }
 
     public void flip() {
+        this.indexBuffer.flip();
         this.positionBuffer.flip();
         this.normalBuffer.flip();
         this.textureOffsetBuffer.flip();
-        this.indexBuffer.flip();
+        this.packedColorTextureUnitBuffer.flip();
     }
 
     public void clear() {
+        this.indexBuffer.clear();
         this.positionBuffer.clear();
         this.normalBuffer.clear();
         this.textureOffsetBuffer.clear();
-        this.indexBuffer.clear();
+        this.packedColorTextureUnitBuffer.clear();
+
         this.indexCount = 0;
         this.vertexCount = 0;
     }

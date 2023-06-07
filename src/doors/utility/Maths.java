@@ -35,19 +35,19 @@ public class Maths {
         return target;
     }
 
+    public static Vector2f div(Vector2f target, Vector2i divisor) {
+        target.set(
+            target.x / divisor.x,
+            target.y / divisor.y
+        );
+        return target;
+    }
+
     public static Vector3i ceil(Vector3i target, Vector3i divisor) {
         target.set(
             Math.ceilDiv(target.x, divisor.x),
             Math.ceilDiv(target.y, divisor.y),
             Math.ceilDiv(target.z, divisor.z)
-        );
-        return target;
-    }
-
-    public static Vector2f div(Vector2f target, Vector2i divisor) {
-        target.set(
-            target.x / divisor.x,
-            target.y / divisor.y
         );
         return target;
     }

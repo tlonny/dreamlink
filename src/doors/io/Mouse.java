@@ -3,9 +3,9 @@ package doors.io;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
-import doors.Game;
-
 public class Mouse {
+
+    public static Mouse MOUSE = new Mouse();
 
     private long leftPressed;
     private long leftReleased;
@@ -55,7 +55,7 @@ public class Mouse {
     }
 
     public void refresh() {
-        GLFW.glfwGetCursorPos(Game.WINDOW.windowID, this.xBuffer, this.yBuffer);
+        GLFW.glfwGetCursorPos(Window.WINDOW.windowID, this.xBuffer, this.yBuffer);
 
         this.position.set(
             (float)this.xBuffer[0],
@@ -63,13 +63,13 @@ public class Mouse {
         );
 
         GLFW.glfwSetCursorPos(
-            Game.WINDOW.windowID, 
-            Game.WINDOW.dimensions.x / 2f, 
-            Game.WINDOW.dimensions.y / 2f
+            Window.WINDOW.windowID, 
+            Window.WINDOW.dimensions.x / 2f, 
+            Window.WINDOW.dimensions.y / 2f
         );
     }
 
     public void setup() {
-        GLFW.glfwSetMouseButtonCallback(Game.WINDOW.windowID, this::onMouseButtonEvent);
+        GLFW.glfwSetMouseButtonCallback(Window.WINDOW.windowID, this::onMouseButtonEvent);
     }
 }

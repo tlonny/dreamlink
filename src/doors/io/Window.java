@@ -3,15 +3,14 @@ package doors.io;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
 public class Window {
 
     private static String TITLE = "Doors";
+
+    public static Window WINDOW = new Window();
 
     public long windowID;
     public Vector2i dimensions;
@@ -42,7 +41,6 @@ public class Window {
         var primaryMonitorID = GLFW.glfwGetPrimaryMonitor();
         var vidMode = GLFW.glfwGetVideoMode(primaryMonitorID);
         this.dimensions.set(vidMode.width(), vidMode.height());
-        System.out.println(this.dimensions);
         this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, primaryMonitorID, MemoryUtil.NULL);
 
         GLFW.glfwMakeContextCurrent(this.windowID);
@@ -51,11 +49,11 @@ public class Window {
         GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
         GL.createCapabilities();
-        GL15.glClearColor(1f, 0f, 0f, 0f);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL20.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        GL42.glClearColor(0f, 0f, 0f, 0f);
+        GL42.glEnable(GL42.GL_CULL_FACE);
+        GL42.glEnable(GL42.GL_BLEND);
+        GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
+        GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
     }
 
     public void refresh() {
@@ -64,9 +62,9 @@ public class Window {
     }
 
     public void bind() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        GL11.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
-        GL15.glClear(GL15.GL_COLOR_BUFFER_BIT | GL15.GL_DEPTH_BUFFER_BIT );
+        GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, 0);
+        GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
+        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT );
     }
 
 
