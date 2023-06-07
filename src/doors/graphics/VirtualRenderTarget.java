@@ -34,6 +34,5 @@ public class VirtualRenderTarget extends TextureData implements IRenderTarget {
             GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
             PhysicalRenderTarget.BOUND_RENDER_TARGET = this;
         }
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT );
     }
 }

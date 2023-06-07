@@ -1,15 +1,16 @@
-package doors;
+package doors.perspective;
 
-import doors.graphics.IView;
+import doors.Config;
+import doors.Player;
 import doors.io.Mouse;
 import doors.io.Window;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class WorldCamera implements IView {
+public class WorldPerspective implements IView {
 
-    public static WorldCamera WORLD_CAMERA = new WorldCamera();
+    public static WorldPerspective WORLD_PERSPECTIVE = new WorldPerspective();
 
     private static float PITCH_LIMIT = (float)Math.toRadians(85f);
     private static float MOUSE_SENSITIVITY = 1f/900;

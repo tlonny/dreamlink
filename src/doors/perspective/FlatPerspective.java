@@ -1,12 +1,10 @@
-package doors;
-
-import doors.graphics.IView;
+package doors.perspective;
 
 import org.joml.Matrix4f;
 
-public class FlatCamera implements IView {
+public class FlatPerspective implements IView {
 
-    public static FlatCamera FLAT_CAMERA = new FlatCamera();
+    public static FlatPerspective FLAT_PERSPECTIVE = new FlatPerspective();
 
     @Override
      public void writeViewTranslationMatrix(Matrix4f matrix) {

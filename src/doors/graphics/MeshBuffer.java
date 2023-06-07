@@ -1,10 +1,7 @@
 package doors.graphics;
 
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
-
-import doors.utility.Debug;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

@@ -3,7 +3,7 @@ package doors.spatial;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import doors.WorldCamera;
+import doors.perspective.WorldPerspective;
 import doors.io.Keyboard;
 import doors.utility.Maths;
 
@@ -28,8 +28,8 @@ public class PlayerControlSystem {
             if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
                 this.velocityBuffer.x += SPEED;
 
-        this.velocityBuffer.rotateX(WorldCamera.WORLD_CAMERA.rotation.y);
-        this.velocityBuffer.rotateY(WorldCamera.WORLD_CAMERA.rotation.x);
+        this.velocityBuffer.rotateX(WorldPerspective.WORLD_PERSPECTIVE.rotation.y);
+        this.velocityBuffer.rotateY(WorldPerspective.WORLD_PERSPECTIVE.rotation.x);
         component.velocity.add(this.velocityBuffer); 
         component.velocity.mul(1 - FRICTION);
         Maths.zeroFuzz(component.velocity);

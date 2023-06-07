@@ -18,6 +18,8 @@ import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
 import doors.utility.Timer;
 import doors.overlay.OverlayTexture;
+import doors.perspective.FlatPerspective;
+import doors.perspective.WorldPerspective;
 import doors.overlay.HUD;
 import doors.terrain.Terrain;
 
@@ -72,17 +74,27 @@ public class Game {
     }
 
     private void renderWorld() {
-        GLFns.enableDepthTest();
         VirtualRenderTarget.WORLD_RENDER_TARGET.bind();
-        CoreShader.CORE_SHADER.bind(WorldCamera.WORLD_CAMERA);
+
+        CoreShader.CORE_SHADER.bind();
+        CoreShader.setTextureChannels();
+        CoreShader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
+
+        GLFns.enableDepthTest();
+        GLFns.clear();
 
         this.level1.render();
     }
 
     private void renderOverlay() {
-        GLFns.disableDepthTest();
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.bind();
-        CoreShader.CORE_SHADER.bind(FlatCamera.FLAT_CAMERA);
+
+        CoreShader.CORE_SHADER.bind();
+        CoreShader.setTextureChannels();
+        CoreShader.setPerspective(FlatPerspective.FLAT_PERSPECTIVE);
+
+        GLFns.disableDepthTest();
+        GLFns.clear();
 
         HUD.HUD.render();
     }
@@ -109,7 +121,7 @@ public class Game {
             }
 
             var simFactor = (float)this.timer.millisElapsed()/WORLD_SIM_MS;
-            WorldCamera.WORLD_CAMERA.update(simFactor);
+            WorldPerspective.WORLD_PERSPECTIVE.update(simFactor);
             this.renderWorld();
             this.renderOverlay();
         }

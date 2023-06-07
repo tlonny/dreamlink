@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
+import doors.perspective.IView;
 import doors.utility.FileIO;
 
 import java.nio.FloatBuffer;
@@ -63,12 +64,14 @@ public class ShaderProgram {
         GL42.glAttachShader(this.programID, shaderID);
     }
 
-    public void bind(IView view) {
+    public void bind() {
         if(BOUND_SHADER_PROGRAM != this) {
             GL42.glUseProgram(this.programID);
             BOUND_SHADER_PROGRAM = this;
         }
+    }
 
+    public static void setPerspective(IView view) {
         view.writeViewProjectionMatrix(MATRIX);
         setUniform(BOUND_SHADER_PROGRAM.viewProjectionMatrixUniformID, MATRIX);
 
@@ -77,17 +80,17 @@ public class ShaderProgram {
 
         view.writeViewTranslationMatrix(MATRIX);
         setUniform(BOUND_SHADER_PROGRAM.viewTranslationMatrixUniformID, MATRIX);
+    }
 
+    public static void setTextureChannels() {
         setUniform(
             BOUND_SHADER_PROGRAM.worldRenderTextureChannelSamplerUniformID, 
             TextureChannel.WORLD_RENDER_CHANNEL.getNormalizedTextureUnitID()
         );
-
         setUniform(
             BOUND_SHADER_PROGRAM.overlayTextureChannelSamplerUniformID,
             TextureChannel.OVERLAY_TEXTURE_CHANNEL.getNormalizedTextureUnitID()
         );
-
         setUniform(
             BOUND_SHADER_PROGRAM.terrainTextureChannelSamplerUniformID,
             TextureChannel.TERRAIN_TEXTURE_CHANNEL.getNormalizedTextureUnitID()

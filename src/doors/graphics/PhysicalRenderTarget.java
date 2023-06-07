@@ -16,6 +16,5 @@ public class PhysicalRenderTarget implements IRenderTarget {
             GL42.glViewport(0, 0, Window.WINDOW.dimensions.x, Window.WINDOW.dimensions.y);
             PhysicalRenderTarget.BOUND_RENDER_TARGET = this;
         }
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT );
     }
 }
