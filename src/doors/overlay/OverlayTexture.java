@@ -3,10 +3,12 @@ package doors.overlay;
 import org.joml.Vector2i;
 
 import doors.graphics.TextureSample;
-import doors.graphics.TextureData;
+import doors.graphics.Texture;
+import doors.graphics.TextureChannel;
 
-public class OverlayTexture extends TextureData {
+public class OverlayTexture extends Texture {
 
+    private static String OVERLAY_NAME = "overlay";
     private static String OVERLAY_SRC = "data/texture/overlay.png";
     public static Vector2i DIMENSIONS = new Vector2i(512, 512);
     public static Vector2i TILE_8_16 = new Vector2i(8, 16);
@@ -220,10 +222,11 @@ public class OverlayTexture extends TextureData {
     public static TextureSample RETICULE = OVERLAY_TEXTURE.createTextureSample(new Vector2i(16, 96), TILE_8_8);
 
     public OverlayTexture() {
-        super(DIMENSIONS);
+        super(OVERLAY_NAME, TextureChannel.OVERLAY_TEXTURE_CHANNEL, DIMENSIONS);
     }
 
     public void setup() {
-        this.setup(OVERLAY_SRC);
+        super.setup();
+        this.loadFromFile(OVERLAY_SRC);
     }
 }

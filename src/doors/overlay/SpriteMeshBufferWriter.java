@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 
 import doors.Config;
 import doors.graphics.MeshBuffer;
-import doors.graphics.TextureChannel;
 import doors.graphics.TextureSample;
 import doors.utility.CubeFace;
 
@@ -23,7 +22,7 @@ public class SpriteMeshBufferWriter {
         }
     }
 
-    public void pushSprite(Vector2i position, Vector2i dimensions, TextureSample textureSample, TextureChannel textureChannel, Vector3f color) {
+    public void pushSprite(Vector2i position, Vector2i dimensions, TextureSample textureSample, Vector3f color) {
         for(var ix = 0; ix < CubeFace.FRONT.vertices.length; ix +=1) {
             var vertex = CubeFace.FRONT.vertices[ix];
             this.positionBuffer[ix].set(
@@ -32,8 +31,7 @@ public class SpriteMeshBufferWriter {
                 1f
             );
         }
-        var normal = new Vector3f(CubeFace.FRONT.normal);
-        this.meshBuffer.pushQuad(this.positionBuffer, normal, textureSample, textureChannel, color);
+        this.meshBuffer.pushQuad(this.positionBuffer, CubeFace.FRONT, textureSample, color);
     }
 
 }

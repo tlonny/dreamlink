@@ -4,13 +4,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL42;
 
 import doors.graphics.CoreShader;
 import doors.graphics.PhysicalRenderTarget;
 import doors.utility.GLFns;
 import doors.graphics.VirtualRenderTarget;
-import doors.graphics.TextureChannel;
 import doors.job.IWorkUnit;
 import doors.io.Window;
 import doors.io.Keyboard;
@@ -42,10 +40,6 @@ public class Game {
 
     private void initialize() {
 
-        System.out.println(GL42.GL_TEXTURE0);
-        System.out.println(GL42.GL_TEXTURE1);
-        System.out.println(GL42.GL_TEXTURE2);
-
         Window.WINDOW.setup();
         Keyboard.KEYBOARD.setup();
         Mouse.MOUSE.setup();
@@ -55,10 +49,10 @@ public class Game {
         HUD.HUD.setup();
 
         OverlayTexture.OVERLAY_TEXTURE.setup();
-        TextureChannel.OVERLAY_TEXTURE_CHANNEL.setTexture(OverlayTexture.OVERLAY_TEXTURE);
-
         VirtualRenderTarget.WORLD_RENDER_TARGET.setup();
-        TextureChannel.WORLD_RENDER_CHANNEL.setTexture(VirtualRenderTarget.WORLD_RENDER_TARGET);
+
+        OverlayTexture.OVERLAY_TEXTURE.bindTexture();
+        VirtualRenderTarget.WORLD_RENDER_TARGET.bindTexture();
 
         level1.setup("scratch/world_1");
     }
@@ -74,9 +68,9 @@ public class Game {
     }
 
     private void renderWorld() {
-        VirtualRenderTarget.WORLD_RENDER_TARGET.bind();
+        VirtualRenderTarget.WORLD_RENDER_TARGET.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bind();
+        CoreShader.CORE_SHADER.bindShaderProgram();
         CoreShader.setTextureChannels();
         CoreShader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
 
@@ -87,9 +81,9 @@ public class Game {
     }
 
     private void renderOverlay() {
-        PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.bind();
+        PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bind();
+        CoreShader.CORE_SHADER.bindShaderProgram();
         CoreShader.setTextureChannels();
         CoreShader.setPerspective(FlatPerspective.FLAT_PERSPECTIVE);
 

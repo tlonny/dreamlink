@@ -10,7 +10,7 @@ public class PhysicalRenderTarget implements IRenderTarget {
     public static IRenderTarget BOUND_RENDER_TARGET = PhysicalRenderTarget.PHYSICAL_RENDER_TARGET;
 
     @Override
-    public void bind() {
+    public void bindRenderTarget() {
         if(PhysicalRenderTarget.BOUND_RENDER_TARGET != this) {
             GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, 0);
             GL42.glViewport(0, 0, Window.WINDOW.dimensions.x, Window.WINDOW.dimensions.y);

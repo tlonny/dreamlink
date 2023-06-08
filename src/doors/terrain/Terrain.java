@@ -13,7 +13,7 @@ import doors.Game;
 import doors.graphics.MeshBuffer;
 import doors.graphics.ShaderProgram;
 import doors.graphics.TextureChannel;
-import doors.graphics.TextureData;
+import doors.graphics.Texture;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
 import doors.utility.Maths;
@@ -25,7 +25,7 @@ public class Terrain {
     public static Vector2i TEXTURE_DIMENSIONS = new Vector2i(512, 512);
 
     public Map<Integer, Block> blockMap;
-    public TextureData textureData;
+    public Texture textureData;
     public Vector3f position;
 
     private Chunk[] chunks;
@@ -36,7 +36,7 @@ public class Terrain {
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
-        this.textureData = new TextureData(TEXTURE_DIMENSIONS);
+        this.textureData = new Texture(TextureChannel.TERRAIN_TEXTURE_CHANNEL, TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
             this.chunks[ix] = new Chunk(chunkPosition);
@@ -57,7 +57,8 @@ public class Terrain {
         var json = new JSONObject(configString);
 
         var texturePath = Paths.get(terrainDirectory, "atlas.png").toString();
-        this.textureData.setup(texturePath);
+        this.textureData.setup();
+        this.textureData.loadFromFile(texturePath);
 
         var blocks = json.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
@@ -170,7 +171,7 @@ public class Terrain {
     }
 
     public void render() {
-        TextureChannel.TERRAIN_TEXTURE_CHANNEL.setTexture(this.textureData);
+        this.textureData.bindTexture();
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
             ShaderProgram.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);

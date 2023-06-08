@@ -4,7 +4,6 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import doors.graphics.MeshBuffer;
-import doors.graphics.TextureChannel;
 import doors.utility.Maths;
 
 public class TextMeshBufferWriter {
@@ -27,7 +26,6 @@ public class TextMeshBufferWriter {
                 cursor,
                 OverlayTexture.TILE_8_16,
                 isUnderlined ? glyph.underlineTextureSample : glyph.textureSample,
-                TextureChannel.OVERLAY_TEXTURE_CHANNEL,
                 Maths.VEC3F_ONE
             );
 

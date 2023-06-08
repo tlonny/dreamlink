@@ -4,7 +4,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import doors.graphics.MeshBuffer;
-import doors.graphics.TextureChannel;
 import doors.utility.CubeFace;
 
 public class BlockFaceMeshBufferWriter {
@@ -26,8 +25,7 @@ public class BlockFaceMeshBufferWriter {
             this.positionBuffer[ix].set(position).add(vertex);
         }
 
-        var normal = new Vector3f(cubeFace.normal);
-        this.meshBuffer.pushQuad(this.positionBuffer, normal, block.textureSample, TextureChannel.TERRAIN_TEXTURE_CHANNEL, color);
+        this.meshBuffer.pushQuad(this.positionBuffer, cubeFace, block.textureSample, color);
     }
 
 }

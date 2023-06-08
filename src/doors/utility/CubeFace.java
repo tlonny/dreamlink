@@ -68,6 +68,7 @@ public class CubeFace {
     public Vector3i normal;
     public Vector3f floatNormal;
     public Vector3f[] vertices;
+    public String name;
 
     CubeFace(Vector3i normal, Vector3f firstVertex, Vector3f secondVertex, Vector3f thirdVertex, Vector3f fourthVertex) {
         this.normal = normal;

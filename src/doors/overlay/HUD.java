@@ -7,7 +7,6 @@ import doors.Player;
 import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
 import doors.graphics.ShaderProgram;
-import doors.graphics.TextureChannel;
 import doors.graphics.VirtualRenderTarget;
 import doors.utility.Maths;
 
@@ -15,7 +14,7 @@ public class HUD {
 
     private static Vector2i RETICULE_SIZE = new Vector2i(16, 16);
     private static int MAX_SPRITES = 500;
-    private static float EXPONENTIAL_WEIGHTING = 0.01f;
+    private static float EXPONENTIAL_WEIGHTING = 0.1f;
     private static Vector2i BASE_POSITION = new Vector2i(4, 4);
 
     public static HUD HUD = new HUD();
@@ -69,12 +68,12 @@ public class HUD {
             Config.RESOLUTION.x / 2 - RETICULE_SIZE.x / 2,
             Config.RESOLUTION.y / 2 - RETICULE_SIZE.y / 2
         );
-        spriteWriter.pushSprite(reticulePosition, RETICULE_SIZE, OverlayTexture.RETICULE, TextureChannel.OVERLAY_TEXTURE_CHANNEL, Maths.VEC3F_ONE);
+        spriteWriter.pushSprite(reticulePosition, RETICULE_SIZE, OverlayTexture.RETICULE, Maths.VEC3F_ONE);
     }
 
     private void buildWorldBillboardMesh() {
         var spriteWriter = new SpriteMeshBufferWriter(this.meshBuffer);
-        spriteWriter.pushSprite(Maths.VEC2I_ZERO, Config.RESOLUTION, VirtualRenderTarget.WORLD_RENDER_TARGET.billboardTextureSample, TextureChannel.WORLD_RENDER_CHANNEL, Maths.VEC3F_ONE);
+        spriteWriter.pushSprite(Maths.VEC2I_ZERO, Config.RESOLUTION, VirtualRenderTarget.WORLD_RENDER_TARGET.billboardTextureSample, Maths.VEC3F_ONE);
     }
 
     public void render() {

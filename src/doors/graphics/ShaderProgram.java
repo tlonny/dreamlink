@@ -10,6 +10,8 @@ import doors.utility.FileIO;
 
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShaderProgram {
 
@@ -25,9 +27,7 @@ public class ShaderProgram {
     private int modelMatrixUniformID;
     private int colorUniformID;
 
-    private int worldRenderTextureChannelSamplerUniformID;
-    private int overlayTextureChannelSamplerUniformID;
-    private int terrainTextureChannelSamplerUniformID;
+    private Map<String,Integer> samplerUniformIDMap;
 
     public void setup(String shaderDirectory) {
         this.programID = GL42.glCreateProgram();
@@ -49,9 +49,11 @@ public class ShaderProgram {
         this.modelMatrixUniformID = this.createUniform("model_matrix");
         this.colorUniformID = this.createUniform("color");
 
-        this.worldRenderTextureChannelSamplerUniformID = this.createUniform("world_render_sampler");
-        this.overlayTextureChannelSamplerUniformID = this.createUniform("overlay_sampler");
-        this.terrainTextureChannelSamplerUniformID = this.createUniform("terrain_sampler");
+        this.samplerUniformIDMap = new HashMap<>();
+        for(var channel : TextureChannel.TEXTURE_CHANNELS) {
+            var uniformName = channel.getSamplerUniformName();
+            this.samplerUniformIDMap.put(channel.name, this.createUniform(uniformName));
+        }
     }
 
     private void attachShader(int shaderID, String shaderCode) {
@@ -64,7 +66,7 @@ public class ShaderProgram {
         GL42.glAttachShader(this.programID, shaderID);
     }
 
-    public void bind() {
+    public void bindShaderProgram() {
         if(BOUND_SHADER_PROGRAM != this) {
             GL42.glUseProgram(this.programID);
             BOUND_SHADER_PROGRAM = this;
@@ -83,18 +85,10 @@ public class ShaderProgram {
     }
 
     public static void setTextureChannels() {
-        setUniform(
-            BOUND_SHADER_PROGRAM.worldRenderTextureChannelSamplerUniformID, 
-            TextureChannel.WORLD_RENDER_CHANNEL.getNormalizedTextureUnitID()
-        );
-        setUniform(
-            BOUND_SHADER_PROGRAM.overlayTextureChannelSamplerUniformID,
-            TextureChannel.OVERLAY_TEXTURE_CHANNEL.getNormalizedTextureUnitID()
-        );
-        setUniform(
-            BOUND_SHADER_PROGRAM.terrainTextureChannelSamplerUniformID,
-            TextureChannel.TERRAIN_TEXTURE_CHANNEL.getNormalizedTextureUnitID()
-        );
+        for(var channel : TextureChannel.TEXTURE_CHANNELS) {
+            var uniformID = BOUND_SHADER_PROGRAM.samplerUniformIDMap.get(channel.name);
+            setUniform(uniformID, channel.getSamplerUniformValue());
+        }
     }
 
     public static void setModel(Vector3f position, Vector3f color) {

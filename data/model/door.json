@@ -1,8 +1,9 @@
 {
     "fragments": [{
+        "texture": "entity",
         "dimensions": [1.0, 2.0, 0.2],
         "origin": [0.0, 0.0, 0.0],
-        "textureOffsets": {
+        "texture_samples": {
             "front": [16, 16, 16, 16],
             "back": [16, 16, 16, 16],
             "top": [16, 16, 16, 0.2],

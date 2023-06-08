@@ -2,22 +2,25 @@ package doors.graphics;
 
 import org.lwjgl.opengl.GL42;
 
-public class VirtualRenderTarget extends TextureData implements IRenderTarget {
+import doors.Config;
 
-    public static VirtualRenderTarget WORLD_RENDER_TARGET = new VirtualRenderTarget();
+public class VirtualRenderTarget extends Texture implements IRenderTarget {
+
+    public static VirtualRenderTarget WORLD_RENDER_TARGET = 
+        new VirtualRenderTarget(TextureChannel.WORLD_RENDER_CHANNEL);
 
     private int frameBufferID;
     private int depthBufferID;
 
-    public VirtualRenderTarget() {
-        super(IRenderTarget.RESOLUTION);
+    public VirtualRenderTarget(TextureChannel textureChannel) {
+        super(textureChannel, Config.RESOLUTION);
     }
 
     public void setup() {        
-        super.setup(null);
+        super.setup();
 
         this.frameBufferID = GL42.glGenFramebuffers();
-        this.bind();
+        this.bindRenderTarget();
 
         GL42.glFramebufferTexture(GL42.GL_FRAMEBUFFER, GL42.GL_COLOR_ATTACHMENT0, this.textureID, 0);
 
@@ -28,7 +31,7 @@ public class VirtualRenderTarget extends TextureData implements IRenderTarget {
     }
 
     @Override
-    public void bind() {
+    public void bindRenderTarget() {
         if(PhysicalRenderTarget.BOUND_RENDER_TARGET != this) {
             GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, this.frameBufferID);
             GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);

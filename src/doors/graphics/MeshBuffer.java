@@ -3,6 +3,8 @@ package doors.graphics;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
+import doors.utility.CubeFace;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -46,15 +48,15 @@ public class MeshBuffer {
         return packed;
     }
 
-    public void pushQuad(Vector3f[] positions, Vector3f normal, TextureSample textureSample, TextureChannel textureChannel, Vector3f color) {
-        var packed = this.packColorTextureUnit(textureChannel.getNormalizedTextureUnitID(), color);
+    public void pushQuad(Vector3f[] positions, CubeFace cubeFace, TextureSample textureSample, Vector3f color) {
+        var packed = this.packColorTextureUnit(textureSample.textureChannel.getSamplerUniformValue(), color);
         for(var ix = 0; ix < 4; ix += 1) {
             this.positionBuffer.put(positions[ix].x);
             this.positionBuffer.put(positions[ix].y);
             this.positionBuffer.put(positions[ix].z);
-            this.normalBuffer.put(normal.x);
-            this.normalBuffer.put(normal.y);
-            this.normalBuffer.put(normal.z);
+            this.normalBuffer.put(cubeFace.normal.x);
+            this.normalBuffer.put(cubeFace.normal.y);
+            this.normalBuffer.put(cubeFace.normal.z);
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].x);
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].y);
             this.packedColorTextureUnitBuffer.put(packed);
