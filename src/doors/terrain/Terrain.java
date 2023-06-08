@@ -11,9 +11,10 @@ import org.json.JSONObject;
 
 import doors.Game;
 import doors.graphics.MeshBuffer;
-import doors.graphics.ShaderProgram;
+import doors.graphics.Shader;
 import doors.graphics.TextureChannel;
-import doors.graphics.Texture;
+import doors.graphics.TextureSampler;
+import doors.graphics.ImageTexture;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
 import doors.utility.Maths;
@@ -22,10 +23,10 @@ public class Terrain {
     
     private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
     private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
-    public static Vector2i TEXTURE_DIMENSIONS = new Vector2i(512, 512);
+    private static TextureSampler TERRAIN_SAMPLER = new TextureSampler(TextureChannel.TERRAIN_TEXTURE_CHANNEL, new Vector2i(512, 512));
 
     public Map<Integer, Block> blockMap;
-    public Texture textureData;
+    public ImageTexture texture;
     public Vector3f position;
 
     private Chunk[] chunks;
@@ -36,7 +37,6 @@ public class Terrain {
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
-        this.textureData = new Texture(TextureChannel.TERRAIN_TEXTURE_CHANNEL, TEXTURE_DIMENSIONS);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
             this.chunks[ix] = new Chunk(chunkPosition);
@@ -57,8 +57,8 @@ public class Terrain {
         var json = new JSONObject(configString);
 
         var texturePath = Paths.get(terrainDirectory, "atlas.png").toString();
-        this.textureData.setup();
-        this.textureData.loadFromFile(texturePath);
+        this.texture = new ImageTexture(texturePath);
+        this.texture.setup();
 
         var blocks = json.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
@@ -67,7 +67,7 @@ public class Terrain {
             this.blockMap.put(ix + 1, new Block(
                 ix + 1,
                 block.getString("name"),
-                this.textureData.createTextureSample(
+                TERRAIN_SAMPLER.createTextureSample(
                     new Vector2i(
                         textureSample.getInt(0),
                         textureSample.getInt(1)
@@ -171,10 +171,10 @@ public class Terrain {
     }
 
     public void render() {
-        this.textureData.bindTexture();
+        TextureChannel.TERRAIN_TEXTURE_CHANNEL.bindTextureToTextureChannel(this.texture);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
-            ShaderProgram.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);
+            Shader.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);
             chunk.mesh.render();
         }
     }

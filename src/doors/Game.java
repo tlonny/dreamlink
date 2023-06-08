@@ -3,19 +3,23 @@ package doors;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import doors.graphics.CoreShader;
+import doors.graphics.ImageTexture;
+import doors.graphics.ModelMesh;
 import doors.graphics.PhysicalRenderTarget;
+import doors.graphics.TextureChannel;
 import doors.utility.GLFns;
-import doors.graphics.VirtualRenderTarget;
+import doors.utility.Maths;
+import doors.graphics.RenderTargetTexture;
 import doors.job.IWorkUnit;
 import doors.io.Window;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
 import doors.utility.Timer;
-import doors.overlay.OverlayTexture;
 import doors.perspective.FlatPerspective;
 import doors.perspective.WorldPerspective;
 import doors.overlay.HUD;
@@ -48,13 +52,18 @@ public class Game {
         CoreShader.CORE_SHADER.setup();
         HUD.HUD.setup();
 
-        OverlayTexture.OVERLAY_TEXTURE.setup();
-        VirtualRenderTarget.WORLD_RENDER_TARGET.setup();
+        ImageTexture.OVERLAY_TEXTURE.setup();
+        ImageTexture.ENTITY_TEXTURE.setup();
 
-        OverlayTexture.OVERLAY_TEXTURE.bindTexture();
-        VirtualRenderTarget.WORLD_RENDER_TARGET.bindTexture();
+        RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE.setup();
+
+        TextureChannel.OVERLAY_TEXTURE_CHANNEL.bindTextureToTextureChannel(ImageTexture.OVERLAY_TEXTURE);
+        TextureChannel.ENTITY_TEXTURE_CHANNEL.bindTextureToTextureChannel(ImageTexture.ENTITY_TEXTURE);
+        TextureChannel.WORLD_RENDER_TEXTURE_CHANNEL.bindTextureToTextureChannel(RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE);
 
         level1.setup("scratch/world_1");
+
+        ModelMesh.DOOR.setup();
     }
     
     private void refresh() {
@@ -68,9 +77,9 @@ public class Game {
     }
 
     private void renderWorld() {
-        VirtualRenderTarget.WORLD_RENDER_TARGET.bindRenderTarget();
+        RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bindShaderProgram();
+        CoreShader.CORE_SHADER.bindShader();
         CoreShader.setTextureChannels();
         CoreShader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
 
@@ -78,12 +87,15 @@ public class Game {
         GLFns.clear();
 
         this.level1.render();
+
+        CoreShader.setModel(new Vector3f(-2, -2, -2), Maths.VEC3F_ONE);
+        ModelMesh.DOOR.render();
     }
 
     private void renderOverlay() {
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bindShaderProgram();
+        CoreShader.CORE_SHADER.bindShader();
         CoreShader.setTextureChannels();
         CoreShader.setPerspective(FlatPerspective.FLAT_PERSPECTIVE);
 

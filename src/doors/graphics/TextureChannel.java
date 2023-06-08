@@ -1,10 +1,15 @@
 package doors.graphics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.lwjgl.opengl.GL42;
 
 public class TextureChannel {
 
-    public static TextureChannel WORLD_RENDER_CHANNEL = 
+    public static Map<String, TextureChannel> TEXTURE_CHANNEL_LOOKUP = new HashMap<>();
+
+    public static TextureChannel WORLD_RENDER_TEXTURE_CHANNEL = 
         new TextureChannel("world_render", GL42.GL_TEXTURE1);
 
     public static TextureChannel OVERLAY_TEXTURE_CHANNEL = 
@@ -16,15 +21,8 @@ public class TextureChannel {
     public static TextureChannel ENTITY_TEXTURE_CHANNEL = 
         new TextureChannel("entity", GL42.GL_TEXTURE4);
 
-    public static TextureChannel[] TEXTURE_CHANNELS = new TextureChannel[] {
-        WORLD_RENDER_CHANNEL,
-        OVERLAY_TEXTURE_CHANNEL,
-        TERRAIN_TEXTURE_CHANNEL,
-        ENTITY_TEXTURE_CHANNEL
-    };
-
     public int textureUnitID;
-    public int boundTextureID;
+    public ITexture boundTexture;
     public String name;
 
     public int getSamplerUniformValue() {
@@ -38,13 +36,14 @@ public class TextureChannel {
     public TextureChannel(String name, int textureUnitID) {
         this.name = name;
         this.textureUnitID = textureUnitID;
+        TEXTURE_CHANNEL_LOOKUP.put(name, this);
     }
 
-    public void bindTextureID(int textureID) {
-        if(this.boundTextureID != textureID) {
+    public void bindTextureToTextureChannel(ITexture texture) {
+        if(this.boundTexture != texture) {
             GL42.glActiveTexture(this.textureUnitID);
-            GL42.glBindTexture(GL42.GL_TEXTURE_2D, textureID);
-            this.boundTextureID = textureID;
+            GL42.glBindTexture(GL42.GL_TEXTURE_2D, texture.getTextureID());
+            this.boundTexture = texture;
         }
     }
 

@@ -1,15 +1,33 @@
 {
     "fragments": [{
-        "texture": "entity",
-        "dimensions": [1.0, 2.0, 0.2],
+        "texture": {
+            "channel": "entity",
+            "dimensions": [512, 512],
+            "samples": {
+                "front": [16, 80, 16, 32],
+                "back": [16, 80, 16, 32],
+                "top": [16, 80, 16, 2],
+                "bottom": [16, 80, 16, 2],
+                "left": [16, 80, 2, 16],
+                "right": [16, 80, 2, 16]
+            }
+        },
+        "dimensions": [1, 2.0, 0.25],
         "origin": [0.0, 0.0, 0.0],
-        "texture_samples": {
-            "front": [16, 16, 16, 16],
-            "back": [16, 16, 16, 16],
-            "top": [16, 16, 16, 0.2],
-            "bottom": [16, 16, 16, 0.2],
-            "left": [16, 16, 0.2, 16],
-            "right": [16, 16, 0.2, 16]
-        }
+    }, {
+        "texture": {
+            "channel": "entity",
+            "dimensions": [512, 512],
+            "samples": {
+                "front": [16, 80, 2, 2],
+                "back": [16, 80, 2, 2],
+                "top": [16, 80, 2, 1],
+                "bottom": [16, 80, 2, 1],
+                "left": [16, 80, 1, 2],
+                "right": [16, 80, 1, 2]
+            }
+        },
+        "dimensions": [0.25, 0.25, 0.125],
+        "origin": [0.1, 0.9, 0.25],
     }]
 }

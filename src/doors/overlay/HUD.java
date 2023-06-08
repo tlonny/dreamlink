@@ -6,8 +6,10 @@ import doors.Config;
 import doors.Player;
 import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
-import doors.graphics.ShaderProgram;
-import doors.graphics.VirtualRenderTarget;
+import doors.graphics.Shader;
+import doors.graphics.TextureChannel;
+import doors.graphics.TextureSample;
+import doors.graphics.TextureSampler;
 import doors.utility.Maths;
 
 public class HUD {
@@ -16,6 +18,8 @@ public class HUD {
     private static int MAX_SPRITES = 500;
     private static float EXPONENTIAL_WEIGHTING = 0.1f;
     private static Vector2i BASE_POSITION = new Vector2i(4, 4);
+    private static TextureSample WORLD_RENDER_TEXTURE_SAMPLE = 
+        new TextureSampler(TextureChannel.WORLD_RENDER_TEXTURE_CHANNEL, Config.RESOLUTION).createTextureSample();
 
     public static HUD HUD = new HUD();
 
@@ -39,7 +43,7 @@ public class HUD {
     private void write(String text) {
         var textWriter = new TextMeshBufferWriter(this.meshBuffer);
         textWriter.pushText(this.positionCursor, text, Maths.VEC3F_ONE, false);
-        this.positionCursor.y += OverlayTexture.TILE_8_16.y;
+        this.positionCursor.y += OverlayTextureAtlas.TILE_8_16.y;
     }
 
     private void buildPerformanceTrackingMesh() {
@@ -68,12 +72,12 @@ public class HUD {
             Config.RESOLUTION.x / 2 - RETICULE_SIZE.x / 2,
             Config.RESOLUTION.y / 2 - RETICULE_SIZE.y / 2
         );
-        spriteWriter.pushSprite(reticulePosition, RETICULE_SIZE, OverlayTexture.RETICULE, Maths.VEC3F_ONE);
+        spriteWriter.pushSprite(reticulePosition, RETICULE_SIZE, OverlayTextureAtlas.RETICULE, Maths.VEC3F_ONE);
     }
 
     private void buildWorldBillboardMesh() {
         var spriteWriter = new SpriteMeshBufferWriter(this.meshBuffer);
-        spriteWriter.pushSprite(Maths.VEC2I_ZERO, Config.RESOLUTION, VirtualRenderTarget.WORLD_RENDER_TARGET.billboardTextureSample, Maths.VEC3F_ONE);
+        spriteWriter.pushSprite(Maths.VEC2I_ZERO, Config.RESOLUTION, WORLD_RENDER_TEXTURE_SAMPLE, Maths.VEC3F_ONE);
     }
 
     public void render() {
@@ -85,7 +89,7 @@ public class HUD {
         this.mesh.loadFromMeshBuffer(this.meshBuffer);
         this.meshBuffer.clear();
 
-        ShaderProgram.setModel(Maths.VEC3F_ZERO, Maths.VEC3F_ONE);
+        Shader.setModel(Maths.VEC3F_ZERO, Maths.VEC3F_ONE);
         this.mesh.render();
     }
 

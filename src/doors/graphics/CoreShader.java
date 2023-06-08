@@ -1,6 +1,6 @@
 package doors.graphics;
 
-public class CoreShader extends ShaderProgram {
+public class CoreShader extends Shader {
 
     public static CoreShader CORE_SHADER = new CoreShader();
 

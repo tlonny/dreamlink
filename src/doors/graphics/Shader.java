@@ -13,9 +13,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShaderProgram {
+public class Shader {
 
-    public static ShaderProgram BOUND_SHADER_PROGRAM = null;
+    public static Shader BOUND_SHADER = null;
     private static FloatBuffer MATRIX_BUFFER = MemoryUtil.memAllocFloat(16);
     private static Matrix4f MATRIX = new Matrix4f();
 
@@ -50,9 +50,10 @@ public class ShaderProgram {
         this.colorUniformID = this.createUniform("color");
 
         this.samplerUniformIDMap = new HashMap<>();
-        for(var channel : TextureChannel.TEXTURE_CHANNELS) {
-            var uniformName = channel.getSamplerUniformName();
-            this.samplerUniformIDMap.put(channel.name, this.createUniform(uniformName));
+        for(var entry : TextureChannel.TEXTURE_CHANNEL_LOOKUP.entrySet()) {
+            var channelName = entry.getKey();
+            var uniformName = entry.getValue().getSamplerUniformName();
+            this.samplerUniformIDMap.put(channelName, this.createUniform(uniformName));
         }
     }
 
@@ -66,39 +67,44 @@ public class ShaderProgram {
         GL42.glAttachShader(this.programID, shaderID);
     }
 
-    public void bindShaderProgram() {
-        if(BOUND_SHADER_PROGRAM != this) {
+    public void bindShader() {
+        if(BOUND_SHADER != this) {
             GL42.glUseProgram(this.programID);
-            BOUND_SHADER_PROGRAM = this;
+            BOUND_SHADER = this;
         }
     }
 
     public static void setPerspective(IView view) {
         view.writeViewProjectionMatrix(MATRIX);
-        setUniform(BOUND_SHADER_PROGRAM.viewProjectionMatrixUniformID, MATRIX);
+        setUniform(BOUND_SHADER.viewProjectionMatrixUniformID, MATRIX);
 
         view.writeViewRotationMatrix(MATRIX);
-        setUniform(BOUND_SHADER_PROGRAM.viewRotationMatrixUniformID, MATRIX);
+        setUniform(BOUND_SHADER.viewRotationMatrixUniformID, MATRIX);
 
         view.writeViewTranslationMatrix(MATRIX);
-        setUniform(BOUND_SHADER_PROGRAM.viewTranslationMatrixUniformID, MATRIX);
+        setUniform(BOUND_SHADER.viewTranslationMatrixUniformID, MATRIX);
     }
 
     public static void setTextureChannels() {
-        for(var channel : TextureChannel.TEXTURE_CHANNELS) {
-            var uniformID = BOUND_SHADER_PROGRAM.samplerUniformIDMap.get(channel.name);
-            setUniform(uniformID, channel.getSamplerUniformValue());
+        for(var entry : TextureChannel.TEXTURE_CHANNEL_LOOKUP.entrySet()) {
+            var channelName = entry.getKey();
+            var uniformID = BOUND_SHADER.samplerUniformIDMap.get(channelName);
+            var uniformValue = entry.getValue().getSamplerUniformValue();
+            setUniform(uniformID, uniformValue);
         }
     }
 
     public static void setModel(Vector3f position, Vector3f color) {
         MATRIX.identity().translate(position);
-        setUniform(BOUND_SHADER_PROGRAM.modelMatrixUniformID, MATRIX);
-        setUniform(BOUND_SHADER_PROGRAM.colorUniformID, color);
+        setUniform(BOUND_SHADER.modelMatrixUniformID, MATRIX);
+        setUniform(BOUND_SHADER.colorUniformID, color);
     }
 
     private int createUniform(String uniformName) {
-        return GL42.glGetUniformLocation(this.programID, uniformName);
+        var x =  GL42.glGetUniformLocation(this.programID, uniformName);
+        System.out.println(uniformName + " " + x);
+        return x;
+
     }
 
     private static void setUniform(int uniformID, int value) {

@@ -1,22 +1,12 @@
 package doors.graphics;
 
-import org.joml.Vector2i;
-import org.joml.Vector3f;
-import org.json.JSONObject;
 import org.lwjgl.opengl.GL42;
-
-import doors.utility.CubeFace;
-import doors.utility.FileIO;
-import doors.utility.Maths;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Mesh {
 
     private static Mesh BOUND_MESH = null;
-    private static int MAX_QUADS = 1_000;
-    private static MeshBuffer MESH_BUFFER = new MeshBuffer(MAX_QUADS);
 
     private static int POSITION_LOCATION = 0;
     private static int NORMAL_LOCATION = 1;
@@ -43,52 +33,6 @@ public class Mesh {
         this.packedColorTextureUnitBufferID = GL42.glGenBuffers();
     }
 
-    public void loadFromFile(String path) {
-        var modelString = FileIO.loadText(path);
-        var fragments = new JSONObject(modelString).getJSONArray("fragments");
-
-        var positionBuffer = new Vector3f[4];
-        for(var ix = 0; ix < positionBuffer.length; ix += 1) {
-            positionBuffer[ix] = new Vector3f();
-        }
-
-        for(var fragIX = 0; fragIX < fragments.length(); fragIX += 1) {
-            var fragment = fragments.getJSONObject(fragIX);
-
-            var textureStr = fragment.getString("texture");
-            var texture = Texture.TEXTURE_DATA_LOOKUP.get(textureStr);
-
-            var dimensionsArray = fragment.getJSONArray("dimensions");
-
-            var dimensions = new Vector3f(
-                dimensionsArray.getFloat(0),
-                dimensionsArray.getFloat(1),
-                dimensionsArray.getFloat(2)
-            );
-
-            var originArray = fragment.getJSONArray("origin");
-            var origin = new Vector3f(
-                originArray.getFloat(0),
-                originArray.getFloat(1),
-                originArray.getFloat(2)
-            );
-
-            var allTextureSamples = fragment.getJSONObject("texture_samples");
-
-            for(var cubeFace : CubeFace.CUBE_FACES) {
-                var textureSampleOffsets = allTextureSamples.getJSONArray(cubeFace.name);
-                for(var ix = 0; ix < cubeFace.vertices.length; ix += 1) {
-                    positionBuffer[ix] = cubeFace.vertices[ix].mul(dimensions).sub(origin);
-                }
-                var textureSample = texture.createTextureSample(
-                    new Vector2i(textureSampleOffsets.getInt(0), textureSampleOffsets.getInt(1)),
-                    new Vector2i(textureSampleOffsets.getInt(2), textureSampleOffsets.getInt(3))
-                );
-                MESH_BUFFER.pushQuad(positionBuffer, cubeFace, textureSample, Maths.VEC3F_ONE);
-            }
-
-        }
-    }
 
     private void bind() {
         if(this != BOUND_MESH) {

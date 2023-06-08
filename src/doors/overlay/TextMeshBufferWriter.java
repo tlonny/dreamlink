@@ -24,12 +24,12 @@ public class TextMeshBufferWriter {
 
             this.spriteMeshBuffer.pushSprite(
                 cursor,
-                OverlayTexture.TILE_8_16,
+                OverlayTextureAtlas.TILE_8_16,
                 isUnderlined ? glyph.underlineTextureSample : glyph.textureSample,
                 Maths.VEC3F_ONE
             );
 
-            cursor.x += OverlayTexture.TILE_8_16.x;
+            cursor.x += OverlayTextureAtlas.TILE_8_16.x;
         }
     }
 

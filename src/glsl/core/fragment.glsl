@@ -9,6 +9,7 @@ out vec4 frag_color;
 uniform sampler2D world_render_sampler;
 uniform sampler2D overlay_sampler;
 uniform sampler2D terrain_sampler;
+uniform sampler2D entity_sampler;
 uniform vec3 color;
 
 void main()
@@ -24,6 +25,9 @@ void main()
             break;
         case 3:
             tex_color = texture(terrain_sampler, vert_texture_offset);
+            break;
+        case 4:
+            tex_color = texture(entity_sampler, vert_texture_offset);
             break;
         default:
             tex_color = vec4(1.0, 0.0, 0.0, 1.0);
