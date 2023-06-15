@@ -1,7 +1,8 @@
 {
+    "origin": [0.5, 1, 0.0],
     "fragments": [{
         "texture": {
-            "channel": "portal_render",
+            "channel": "portal",
             "dimensions": [1, 1],
             "samples": {
                 "front": [0, 0, 1, 1],
@@ -12,7 +13,23 @@
                 "right": [0, 0, 1, 1]
             }
         },
-        "dimensions": [1, 2.0, 0.5],
-        "origin": [0, 0, 0],
-    }]
+        "dimensions": [1, 2.0, 0.1],
+        "position": [0, 0, 0]
+    }, {
+        "texture": {
+            "channel": "entity",
+            "dimensions": [512, 512],
+            "samples": {
+                "front": [240, 16, 16, 16],
+                "back": [240, 16, 16, 16],
+                "left": [240, 16, 16, 16],
+                "right": [240, 16, 16, 16],
+                "top": [240, 16, 16, 16],
+                "bottom": [240, 16, 16, 16]
+            }
+        },
+        "dimensions": [1, 2.0, 0.1],
+        "position": [0, 0, 0.2]
+    }
+]
 }

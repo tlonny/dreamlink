@@ -13,6 +13,7 @@ public class CubeFace {
     public static final CubeFace FRONT = new CubeFace(
         "front",
         new Vector3i(0, 0, 1),
+        new Vector3f(0, 0, 0),
         new Vector3f(0, 1, 1),
         new Vector3f(0, 0, 1),
         new Vector3f(1, 0, 1),
@@ -22,6 +23,7 @@ public class CubeFace {
     public static final CubeFace BACK = new CubeFace(
         "back",
         new Vector3i(0, 0, -1),
+        new Vector3f(0, (float)Math.toRadians(180), 0),
         new Vector3f(1, 1, 0),
         new Vector3f(1, 0, 0),
         new Vector3f(0, 0, 0),
@@ -31,6 +33,7 @@ public class CubeFace {
     public static final CubeFace LEFT = new CubeFace(
         "left",
         new Vector3i(-1, 0, 0),
+        new Vector3f(0, (float)Math.toRadians(-90), 0),
         new Vector3f(0, 1, 0),
         new Vector3f(0,0,0),
         new Vector3f(0,0,1),
@@ -40,6 +43,7 @@ public class CubeFace {
     public static final CubeFace RIGHT = new CubeFace(
         "right",
         new Vector3i(1, 0, 0),
+        new Vector3f(0, (float)Math.toRadians(90), 0),
         new Vector3f(1, 1, 1),
         new Vector3f(1, 0, 1),
         new Vector3f(1, 0, 0),
@@ -49,6 +53,7 @@ public class CubeFace {
     public static final CubeFace TOP = new CubeFace(
         "top",
         new Vector3i(0,1,0),
+        new Vector3f((float)Math.toRadians(90), 0, 0),
         new Vector3f(0,1,0),
         new Vector3f(0,1,1),
         new Vector3f(1,1,1),
@@ -58,6 +63,7 @@ public class CubeFace {
     public static final CubeFace BOTTOM = new CubeFace(
         "bottom",
         new Vector3i(0,-1,0),
+        new Vector3f((float)Math.toRadians(-90), 0, 0),
         new Vector3f(0,0,1),
         new Vector3f(0,0,0),
         new Vector3f(1,0,0),
@@ -76,14 +82,18 @@ public class CubeFace {
         FRONT, BACK, LEFT, RIGHT
     };
 
-    public Vector3i normal;
-    public Vector3f floatNormal;
+    public Vector3i normalI;
+    public Vector3f normalF;
+
+    public Vector3f rotation;
     public Vector3f[] vertices;
     public String name;
 
-    CubeFace(String name, Vector3i normal, Vector3f firstVertex, Vector3f secondVertex, Vector3f thirdVertex, Vector3f fourthVertex) {
+    CubeFace(String name, Vector3i normal, Vector3f rotation, Vector3f firstVertex, Vector3f secondVertex, Vector3f thirdVertex, Vector3f fourthVertex) {
         this.name = name;
-        this.normal = normal;
+        this.rotation = rotation;
+        this.normalI = normal;
+        this.normalF = new Vector3f(normal);
         this.vertices = new Vector3f[] {
             firstVertex, secondVertex, thirdVertex, fourthVertex
         };

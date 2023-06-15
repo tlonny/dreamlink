@@ -13,6 +13,7 @@ public class ModelMesh extends Mesh {
     private static int MAX_QUADS = 1_000;
     private static MeshBuffer MESH_BUFFER = new MeshBuffer(MAX_QUADS);
 
+    public static ModelMesh UNIT = new ModelMesh("data/model/unit.json");
     public static ModelMesh DOOR = new ModelMesh("data/model/door.json");
     public static ModelMesh PORTAL = new ModelMesh("data/model/portal.json");
 
@@ -25,15 +26,23 @@ public class ModelMesh extends Mesh {
     public void setup() {
         super.setup();
 
-        var modelString = FileIO.loadText(path);
-        var fragments = new JSONObject(modelString).getJSONArray("fragments");
-
         var positionBuffer = new Vector3f[4];
         for(var ix = 0; ix < positionBuffer.length; ix += 1) {
             positionBuffer[ix] = new Vector3f();
         }
 
+        var modelString = FileIO.loadText(path);
+        var modelConfig = new JSONObject(modelString);
+        var originArray = modelConfig.getJSONArray("origin");
+        var origin = new Vector3f(
+            originArray.getFloat(0),
+            originArray.getFloat(1),
+            originArray.getFloat(2)
+        );
+
         MESH_BUFFER.clear();
+
+        var fragments = modelConfig.getJSONArray("fragments");
         for(var fragIX = 0; fragIX < fragments.length(); fragIX += 1) {
             var fragment = fragments.getJSONObject(fragIX);
 
@@ -53,11 +62,11 @@ public class ModelMesh extends Mesh {
                 dimensionsArray.getFloat(2)
             );
 
-            var originArray = fragment.getJSONArray("origin");
-            var origin = new Vector3f(
-                originArray.getFloat(0),
-                originArray.getFloat(1),
-                originArray.getFloat(2)
+            var positionArray = fragment.getJSONArray("position");
+            var position = new Vector3f(
+                positionArray.getFloat(0),
+                positionArray.getFloat(1),
+                positionArray.getFloat(2)
             );
 
             var textureSamplesObj = textureObj.getJSONObject("samples");
@@ -65,7 +74,7 @@ public class ModelMesh extends Mesh {
             for(var cubeFace : CubeFace.CUBE_FACES) {
                 var textureSampleOffsets = textureSamplesObj.getJSONArray(cubeFace.name);
                 for(var ix = 0; ix < cubeFace.vertices.length; ix += 1) {
-                    positionBuffer[ix].set(cubeFace.vertices[ix]).mul(dimensions).add(origin);
+                    positionBuffer[ix].set(cubeFace.vertices[ix]).mul(dimensions).add(position).sub(origin);
                 }
                 var textureSample = sampler.createTextureSample(
                     new Vector2i(textureSampleOffsets.getInt(0), textureSampleOffsets.getInt(1)),

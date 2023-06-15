@@ -26,7 +26,7 @@ public class VoxelCaster {
 
         for(var cubeFace : CubeFace.CUBE_FACES) {
 
-            var normal = new Vector3f(cubeFace.normal);
+            var normal = new Vector3f(cubeFace.normalI);
             var normalComponent = normal.dot(1f, 1f, 1f);
             var dot = normal.dot(this.direction);
 
@@ -48,7 +48,7 @@ public class VoxelCaster {
 
         var delta = new Vector3f(this.direction).mul(minDistance);
         this.position.add(delta);
-        this.cursor.add(minFace.normal);
+        this.cursor.add(minFace.normalI);
     }
 
 }

@@ -54,9 +54,9 @@ public class MeshBuffer {
             this.positionBuffer.put(positions[ix].x);
             this.positionBuffer.put(positions[ix].y);
             this.positionBuffer.put(positions[ix].z);
-            this.normalBuffer.put(cubeFace.normal.x);
-            this.normalBuffer.put(cubeFace.normal.y);
-            this.normalBuffer.put(cubeFace.normal.z);
+            this.normalBuffer.put(cubeFace.normalI.x);
+            this.normalBuffer.put(cubeFace.normalI.y);
+            this.normalBuffer.put(cubeFace.normalI.z);
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].x);
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].y);
             this.packedColorTextureUnitBuffer.put(packed);

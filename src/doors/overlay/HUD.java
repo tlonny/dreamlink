@@ -2,11 +2,10 @@ package doors.overlay;
 
 import org.joml.Vector2i;
 
+import doors.Camera;
 import doors.Config;
-import doors.Player;
 import doors.graphics.Mesh;
 import doors.graphics.MeshBuffer;
-import doors.graphics.Shader;
 import doors.graphics.TextureChannel;
 import doors.graphics.TextureSample;
 import doors.graphics.TextureSampler;
@@ -19,7 +18,7 @@ public class HUD {
     private static float EXPONENTIAL_WEIGHTING = 0.1f;
     private static Vector2i BASE_POSITION = new Vector2i(4, 4);
     private static TextureSample WORLD_RENDER_TEXTURE_SAMPLE = 
-        new TextureSampler(TextureChannel.WORLD_RENDER_TEXTURE_CHANNEL, Config.RESOLUTION).createTextureSample();
+        new TextureSampler(TextureChannel.PORTAL_TEXTURE_CHANNEL, Config.RESOLUTION).createTextureSample();
 
     public static HUD HUD = new HUD();
 
@@ -59,10 +58,10 @@ public class HUD {
         this.positionCursor.set(BASE_POSITION);
         this.write(String.format("frames per second: %.2f", fps));
         this.write(String.format(
-                "player position: %.1f, %.1f, %.1f", 
-                Player.PLAYER.spatialComponent.position.x, 
-                Player.PLAYER.spatialComponent.position.y, 
-                Player.PLAYER.spatialComponent.position.z
+                "position: %.1f, %.1f, %.1f", 
+                Camera.CAMERA.position.x, 
+                Camera.CAMERA.position.y, 
+                Camera.CAMERA.position.z
         ));
 
     }
@@ -88,9 +87,7 @@ public class HUD {
         this.meshBuffer.flip();
         this.mesh.loadFromMeshBuffer(this.meshBuffer);
         this.meshBuffer.clear();
-
-        Shader.setModel(Maths.VEC3F_ZERO, Maths.VEC3F_ONE);
-        this.mesh.render();
+        this.mesh.render(Maths.VEC3F_ZERO, Maths.VEC3F_ZERO, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
     }
 
 }

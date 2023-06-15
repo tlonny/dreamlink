@@ -9,10 +9,10 @@ import doors.Config;
 
 public class RenderTargetTexture implements IRenderTarget, ITexture {
 
-    public static RenderTargetTexture WORLD_RENDER_TARGET_TEXTURE = 
+    public static RenderTargetTexture CURRENT_WORLD_RENDER_TARGET_TEXTURE = 
         new RenderTargetTexture(Config.RESOLUTION);
 
-    public static RenderTargetTexture PORTAL_RENDER_TARGET_TEXTURE = 
+    public static RenderTargetTexture TARGET_WORLD_RENDER_TARGET_TEXTURE = 
         new RenderTargetTexture(Config.RESOLUTION);
 
     private int frameBufferID;
@@ -34,7 +34,7 @@ public class RenderTargetTexture implements IRenderTarget, ITexture {
 
         GL42.glTexImage2D(GL42.GL_TEXTURE_2D, 0, GL42.GL_RGBA, this.dimensions.x, this.dimensions.y, 0, GL42.GL_RGBA, GL42.GL_UNSIGNED_BYTE, (ByteBuffer)null);
         this.frameBufferID = GL42.glGenFramebuffers();
-        this.bindRenderTarget();
+        this.use();
 
         GL42.glFramebufferTexture(GL42.GL_FRAMEBUFFER, GL42.GL_COLOR_ATTACHMENT0, this.textureID, 0);
 
@@ -50,11 +50,12 @@ public class RenderTargetTexture implements IRenderTarget, ITexture {
     }
 
     @Override
-    public void bindRenderTarget() {
-        if(PhysicalRenderTarget.BOUND_RENDER_TARGET != this) {
-            GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, this.frameBufferID);
-            GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
-            PhysicalRenderTarget.BOUND_RENDER_TARGET = this;
+    public void use() {
+        if(PhysicalRenderTarget.USED_RENDER_TARGET == this) {
+            return;
         }
+        GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, this.frameBufferID);
+        GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
+        PhysicalRenderTarget.USED_RENDER_TARGET = this;
     }
 }

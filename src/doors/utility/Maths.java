@@ -5,6 +5,9 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import doors.spatial.IHasDimensions;
+import doors.spatial.IHasPosition;
+
 public class Maths {
 
     public static float EPSILON = 0.0001f;
@@ -85,5 +88,26 @@ public class Maths {
             return false;
         }
         return true;
+    }
+
+    public static <T extends IHasPosition & IHasDimensions> boolean isCollision(T first, T second) {
+        var thisMin = new Vector3f(first.getDimensions()).mul(-0.5f).add(first.getPosition());
+        var thisMax = new Vector3f(first.getDimensions()).mul(0.5f).add(first.getPosition());
+
+        var otherMin = new Vector3f(second.getDimensions()).mul(-0.5f).add(second.getPosition());
+        var otherMax = new Vector3f(second.getDimensions()).mul(0.5f).add(second.getPosition());
+
+        if (thisMax.x < otherMin.x || thisMin.x > otherMax.x) {
+            return false;
+        }
+        if (thisMax.y < otherMin.y || thisMin.y > otherMax.y) {
+            return false;
+        }
+        if (thisMax.z < otherMin.z || thisMin.z > otherMax.z) {
+            return false; 
+        }
+
+        return true;
+        
     }
 }

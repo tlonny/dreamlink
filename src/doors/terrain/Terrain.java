@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import doors.Game;
 import doors.graphics.MeshBuffer;
-import doors.graphics.Shader;
+import doors.graphics.ModelMesh;
 import doors.graphics.TextureChannel;
 import doors.graphics.TextureSampler;
 import doors.graphics.ImageTexture;
@@ -21,7 +21,7 @@ import doors.utility.Maths;
 
 public class Terrain {
 
-    public static Map<String, Terrain> TERRAIN_MAP = new HashMap<>();
+    public static Map<String, Terrain> TERRAIN_LOOKUP = new HashMap<>();
     
     private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
     private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
@@ -29,19 +29,17 @@ public class Terrain {
 
     public Map<Integer, Block> blockMap;
     public ImageTexture texture;
-    public Vector3f position;
 
     private Chunk[] chunks;
     private MeshBuffer meshBuffer;
-    private String terrainDirectory;
-    private Map<String, Door> doors;
-    public Door openDoor;
+    public String terrainDirectory;
+    public Map<String, Door> doors;
+    public Door openDoor = null;
 
     public Terrain(String terrainDirectory) {
         this.terrainDirectory = terrainDirectory;
         this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
-        this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
@@ -49,7 +47,7 @@ public class Terrain {
             this.chunks[ix] = new Chunk(chunkPosition);
         }
 
-        TERRAIN_MAP.put(terrainDirectory, this);
+        TERRAIN_LOOKUP.put(terrainDirectory, this);
     }
 
     public void setup() {
@@ -67,7 +65,7 @@ public class Terrain {
 
         var texturePath = Paths.get(this.terrainDirectory, "atlas.png").toString();
         this.texture = new ImageTexture(texturePath);
-        this.texture.setup();
+        Game.GAME.workQueue.add(() -> this.texture.setup());
 
         var blocks = json.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
@@ -93,8 +91,11 @@ public class Terrain {
         for(var doorName : doors.keySet()) {
             var doorConfig = doors.getJSONObject(doorName);
             var position = doorConfig.getJSONArray("position");
+            var target = doorConfig.getJSONObject("target");
             var door = new Door(
-                doorConfig.getString("url"),
+                this,
+                target.getString("terrain"),
+                target.getString("door"),
                 new Vector3f(
                     position.getInt(0),
                     position.getInt(1),
@@ -179,7 +180,7 @@ public class Terrain {
             }
 
             for(var cubeFace : CubeFace.CUBE_FACES) {
-                var adjacentPosition = new Vector3i(globalBlockPosition).add(cubeFace.normal);
+                var adjacentPosition = new Vector3i(globalBlockPosition).add(cubeFace.normalI);
                 var adjacentBlock = this.getBlock(adjacentPosition);
 
                 if(adjacentBlock != null) {
@@ -196,20 +197,24 @@ public class Terrain {
         chunk.isDirty = false;
     }
 
-    public void renderOpenDoor() {
-        if(this.openDoor == null) {
-            return;
-        }
-
-        this.openDoor.render();
-    }
-
     public void render() {
-        TextureChannel.TERRAIN_TEXTURE_CHANNEL.bindTextureToTextureChannel(this.texture);
+        TextureChannel.TERRAIN_TEXTURE_CHANNEL.useTexture(this.texture);
+        var positionCursor = new Vector3f();
+        
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
-            Shader.setModel(new Vector3f(chunk.position).add(this.position), Maths.VEC3F_ONE);
-            chunk.mesh.render();
+            positionCursor.set(chunk.position);
+            chunk.mesh.render(positionCursor, Maths.VEC3F_ZERO, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
+        }
+    }
+
+    public void renderPortal() {
+        ModelMesh.PORTAL.render(this.openDoor.position, this.openDoor.orientation.rotation, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
+    }
+
+    public void simulate() {
+        for(var door : this.doors.values()) {
+            door.simulate();
         }
     }
 

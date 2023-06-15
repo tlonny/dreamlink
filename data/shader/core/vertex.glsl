@@ -12,6 +12,7 @@ uniform mat4 model_matrix;
 
 out vec2 vert_texture_offset;
 out vec3 vert_color;
+out vec4 vert_position;
 flat out int vert_texture_unit;
 
 void main()
@@ -24,9 +25,11 @@ void main()
     vert_texture_offset = vec2(texture.x, 1.0 - texture.y);
     vert_color = vec3(color_red, color_green, color_blue);
 
-    gl_Position = projection_matrix
+    vert_position = projection_matrix
         * view_rotation_matrix
         * view_translation_matrix
         * model_matrix 
         * vec4(position, 1.0);
+
+    gl_Position = vert_position;
 }

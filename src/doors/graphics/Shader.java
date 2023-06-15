@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
-import doors.perspective.IView;
 import doors.utility.FileIO;
 
 import java.nio.FloatBuffer;
@@ -15,12 +14,10 @@ import java.util.Map;
 
 public class Shader {
 
-    public static Shader CORE_SHADER = new Shader("data/shader/core");
-    public static Shader PORTAL_SHADER = new Shader("data/shader/portal");
+    public static Shader SHADER = new Shader("data/shader/core");
 
-    public static Shader BOUND_SHADER = null;
-    private static FloatBuffer MATRIX_BUFFER = MemoryUtil.memAllocFloat(16);
-    private static Matrix4f MATRIX = new Matrix4f();
+    private FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
+    private Matrix4f workingMatrix = new Matrix4f();
 
     private int programID;
     private String shaderDirectory;
@@ -63,6 +60,14 @@ public class Shader {
             var uniformName = entry.getValue().getSamplerUniformName();
             this.samplerUniformIDMap.put(channelName, this.createUniform(uniformName));
         }
+
+        GL42.glUseProgram(this.programID);
+        setTextureChannels();
+    }
+
+    private int createUniform(String uniformName) {
+        var uniformID =  GL42.glGetUniformLocation(this.programID, uniformName);
+        return uniformID;
     }
 
     private void attachShader(int shaderID, String shaderCode) {
@@ -75,58 +80,55 @@ public class Shader {
         GL42.glAttachShader(this.programID, shaderID);
     }
 
-    public void bindShader() {
-        if(BOUND_SHADER != this) {
-            GL42.glUseProgram(this.programID);
-            BOUND_SHADER = this;
-        }
-    }
-
-    public static void setPerspective(IView view) {
-        view.writeViewProjectionMatrix(MATRIX);
-        setUniform(BOUND_SHADER.viewProjectionMatrixUniformID, MATRIX);
-
-        view.writeViewRotationMatrix(MATRIX);
-        setUniform(BOUND_SHADER.viewRotationMatrixUniformID, MATRIX);
-
-        view.writeViewTranslationMatrix(MATRIX);
-        setUniform(BOUND_SHADER.viewTranslationMatrixUniformID, MATRIX);
-    }
-
-    public static void setTextureChannels() {
+    private void setTextureChannels() {
         for(var entry : TextureChannel.TEXTURE_CHANNEL_LOOKUP.entrySet()) {
             var channelName = entry.getKey();
-            var uniformID = BOUND_SHADER.samplerUniformIDMap.get(channelName);
+            var uniformID = this.samplerUniformIDMap.get(channelName);
             var uniformValue = entry.getValue().getSamplerUniformValue();
-            setUniform(uniformID, uniformValue);
+            this.setUniform(uniformID, uniformValue);
         }
     }
 
-    public static void setModel(Vector3f position, Vector3f color) {
-        MATRIX.identity().translate(position);
-        setUniform(BOUND_SHADER.modelMatrixUniformID, MATRIX);
-        setUniform(BOUND_SHADER.colorUniformID, color);
+    public void setModelMatrix(Vector3f position, Vector3f rotation, Vector3f scale) {
+        workingMatrix
+            .identity()
+            .translate(position)
+            .rotateY(rotation.y)
+            .rotateX(rotation.x)
+            .rotateZ(rotation.z)
+            .scale(scale);
+
+        this.setUniform(this.modelMatrixUniformID, workingMatrix);
     }
 
-    private int createUniform(String uniformName) {
-        var x =  GL42.glGetUniformLocation(this.programID, uniformName);
-        System.out.println(uniformName + " " + x);
-        return x;
-
+    public void setViewTranslationMatrix(Matrix4f matrix) {
+        this.setUniform(this.viewTranslationMatrixUniformID, matrix);
     }
 
-    private static void setUniform(int uniformID, int value) {
+    public void setViewRotationMatrix(Matrix4f matrix) {
+        this.setUniform(this.viewRotationMatrixUniformID, matrix);
+    }
+
+    public void setViewProjectionMatrix(Matrix4f matrix) {
+        this.setUniform(this.viewProjectionMatrixUniformID, matrix);
+    }
+
+    public void setColor(Vector3f color) {
+        this.setUniform(this.colorUniformID, color);
+    }
+
+    private void setUniform(int uniformID, int value) {
         GL42.glUniform1i(uniformID, value);
     }
 
-    private static void setUniform(int uniformID, Vector3f value) {
+    private void setUniform(int uniformID, Vector3f value) {
         GL42.glUniform3f(uniformID, value.x, value.y, value.z);
     }
 
-    private static void setUniform(int uniformID, Matrix4f value) {
-        MATRIX_BUFFER.clear();
-        value.get(MATRIX_BUFFER);
-        GL42.glUniformMatrix4fv(uniformID, false, MATRIX_BUFFER);
+    private void setUniform(int uniformID, Matrix4f value) {
+        matrixBuffer.clear();
+        value.get(matrixBuffer);
+        GL42.glUniformMatrix4fv(uniformID, false, matrixBuffer);
     }
 }
 
