@@ -12,14 +12,17 @@ public class TextureChannel {
     public static TextureChannel WORLD_RENDER_TEXTURE_CHANNEL = 
         new TextureChannel("world_render", GL42.GL_TEXTURE1);
 
+    public static TextureChannel PORTAL_RENDER_TEXTURE_CHANNEL = 
+        new TextureChannel("portal_render", GL42.GL_TEXTURE2);
+
     public static TextureChannel OVERLAY_TEXTURE_CHANNEL = 
-        new TextureChannel("overlay", GL42.GL_TEXTURE2);
+        new TextureChannel("overlay", GL42.GL_TEXTURE3);
 
     public static TextureChannel TERRAIN_TEXTURE_CHANNEL = 
-        new TextureChannel("terrain", GL42.GL_TEXTURE3);
+        new TextureChannel("terrain", GL42.GL_TEXTURE4);
 
     public static TextureChannel ENTITY_TEXTURE_CHANNEL = 
-        new TextureChannel("entity", GL42.GL_TEXTURE4);
+        new TextureChannel("entity", GL42.GL_TEXTURE5);
 
     public int textureUnitID;
     public ITexture boundTexture;

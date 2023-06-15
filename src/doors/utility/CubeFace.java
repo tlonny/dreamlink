@@ -1,9 +1,14 @@
 package doors.utility;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 public class CubeFace {
+
+    public static Map<String, CubeFace> CUBE_FACE_MAP = new HashMap<>();
 
     public static final CubeFace FRONT = new CubeFace(
         "front",
@@ -82,5 +87,6 @@ public class CubeFace {
         this.vertices = new Vector3f[] {
             firstVertex, secondVertex, thirdVertex, fourthVertex
         };
+        CUBE_FACE_MAP.put(name, this);
     }
 }

@@ -20,6 +20,8 @@ import doors.utility.FileIO;
 import doors.utility.Maths;
 
 public class Terrain {
+
+    public static Map<String, Terrain> TERRAIN_MAP = new HashMap<>();
     
     private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
     private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
@@ -31,8 +33,13 @@ public class Terrain {
 
     private Chunk[] chunks;
     private MeshBuffer meshBuffer;
+    private String terrainDirectory;
+    private Map<String, Door> doors;
+    public Door openDoor;
 
-    public Terrain() {
+    public Terrain(String terrainDirectory) {
+        this.terrainDirectory = terrainDirectory;
+        this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
         this.position = new Vector3f();
         this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
@@ -41,22 +48,24 @@ public class Terrain {
             var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
             this.chunks[ix] = new Chunk(chunkPosition);
         }
+
+        TERRAIN_MAP.put(terrainDirectory, this);
     }
 
-    public void setup(String terrainDirectory) {
+    public void setup() {
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunk = this.chunks[ix];
             chunk.setup();
-            var levelDataPath = Paths.get(terrainDirectory, String.format("level/chunk-%03d.blob", ix));
+            var levelDataPath = Paths.get(this.terrainDirectory, String.format("level/chunk-%03d.blob", ix));
             Game.GAME.workQueue.add(() -> chunk.loadFromFile(levelDataPath.toString()));
             Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
         }
 
-        var configPath = Paths.get(terrainDirectory, "config.json").toString();
+        var configPath = Paths.get(this.terrainDirectory, "config.json").toString();
         var configString = FileIO.loadText(configPath);
         var json = new JSONObject(configString);
 
-        var texturePath = Paths.get(terrainDirectory, "atlas.png").toString();
+        var texturePath = Paths.get(this.terrainDirectory, "atlas.png").toString();
         this.texture = new ImageTexture(texturePath);
         this.texture.setup();
 
@@ -78,6 +87,23 @@ public class Terrain {
                     )
                 )
             ));
+        }
+
+        var doors = json.getJSONObject("doors");
+        for(var doorName : doors.keySet()) {
+            var doorConfig = doors.getJSONObject(doorName);
+            var position = doorConfig.getJSONArray("position");
+            var door = new Door(
+                doorConfig.getString("url"),
+                new Vector3f(
+                    position.getInt(0),
+                    position.getInt(1),
+                    position.getInt(2)
+                ),
+                CubeFace.CUBE_FACE_MAP.get(doorConfig.getString("orientation"))
+            );
+            this.doors.put(doorName, door);
+            this.openDoor = door;
         }
 
     }
@@ -168,6 +194,14 @@ public class Terrain {
         chunk.mesh.loadFromMeshBuffer(this.meshBuffer);
         this.meshBuffer.clear();
         chunk.isDirty = false;
+    }
+
+    public void renderOpenDoor() {
+        if(this.openDoor == null) {
+            return;
+        }
+
+        this.openDoor.render();
     }
 
     public void render() {

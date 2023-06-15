@@ -15,11 +15,15 @@ import java.util.Map;
 
 public class Shader {
 
+    public static Shader CORE_SHADER = new Shader("data/shader/core");
+    public static Shader PORTAL_SHADER = new Shader("data/shader/portal");
+
     public static Shader BOUND_SHADER = null;
     private static FloatBuffer MATRIX_BUFFER = MemoryUtil.memAllocFloat(16);
     private static Matrix4f MATRIX = new Matrix4f();
 
     private int programID;
+    private String shaderDirectory;
 
     private int viewRotationMatrixUniformID;
     private int viewTranslationMatrixUniformID;
@@ -29,15 +33,19 @@ public class Shader {
 
     private Map<String,Integer> samplerUniformIDMap;
 
-    public void setup(String shaderDirectory) {
+    public Shader(String shaderDirectory) {
+        this.shaderDirectory = shaderDirectory;
+    }
+
+    public void setup() {
         this.programID = GL42.glCreateProgram();
 
         var vertexID = GL42.glCreateShader(GL42.GL_VERTEX_SHADER);
-        var vertexShaderPath = Paths.get(shaderDirectory, "vertex.glsl").toString();
+        var vertexShaderPath = Paths.get(this.shaderDirectory, "vertex.glsl").toString();
         this.attachShader(vertexID, FileIO.loadText(vertexShaderPath));
 
         var fragmentID = GL42.glCreateShader(GL42.GL_FRAGMENT_SHADER);
-        var fragmentShaderPath = Paths.get(shaderDirectory, "fragment.glsl").toString();
+        var fragmentShaderPath = Paths.get(this.shaderDirectory, "fragment.glsl").toString();
         this.attachShader(fragmentID, FileIO.loadText(fragmentShaderPath));
 
         GL42.glLinkProgram(this.programID);

@@ -14,6 +14,7 @@ public class ModelMesh extends Mesh {
     private static MeshBuffer MESH_BUFFER = new MeshBuffer(MAX_QUADS);
 
     public static ModelMesh DOOR = new ModelMesh("data/model/door.json");
+    public static ModelMesh PORTAL = new ModelMesh("data/model/portal.json");
 
     private String path;
 

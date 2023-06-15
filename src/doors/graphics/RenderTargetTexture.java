@@ -12,6 +12,9 @@ public class RenderTargetTexture implements IRenderTarget, ITexture {
     public static RenderTargetTexture WORLD_RENDER_TARGET_TEXTURE = 
         new RenderTargetTexture(Config.RESOLUTION);
 
+    public static RenderTargetTexture PORTAL_RENDER_TARGET_TEXTURE = 
+        new RenderTargetTexture(Config.RESOLUTION);
+
     private int frameBufferID;
     private int depthBufferID;
 

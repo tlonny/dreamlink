@@ -7,6 +7,7 @@ flat in int vert_texture_unit;
 out vec4 frag_color;
 
 uniform sampler2D world_render_sampler;
+uniform sampler2D portal_render_sampler;
 uniform sampler2D overlay_sampler;
 uniform sampler2D terrain_sampler;
 uniform sampler2D entity_sampler;
@@ -21,12 +22,15 @@ void main()
             tex_color = texture(world_render_sampler, vert_texture_offset);
             break;
         case 2:
-            tex_color = texture(overlay_sampler, vert_texture_offset);
+            tex_color = texture(portal_render_sampler, vert_texture_offset);
             break;
         case 3:
-            tex_color = texture(terrain_sampler, vert_texture_offset);
+            tex_color = texture(overlay_sampler, vert_texture_offset);
             break;
         case 4:
+            tex_color = texture(terrain_sampler, vert_texture_offset);
+            break;
+        case 5:
             tex_color = texture(entity_sampler, vert_texture_offset);
             break;
         default:

@@ -3,16 +3,14 @@ package doors;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import doors.graphics.CoreShader;
+import doors.graphics.Shader;
 import doors.graphics.ImageTexture;
 import doors.graphics.ModelMesh;
 import doors.graphics.PhysicalRenderTarget;
 import doors.graphics.TextureChannel;
 import doors.utility.GLFns;
-import doors.utility.Maths;
 import doors.graphics.RenderTargetTexture;
 import doors.job.IWorkUnit;
 import doors.io.Window;
@@ -29,7 +27,6 @@ public class Game {
 
     public static Game GAME = new Game();
 
-    public Terrain level1 = new Terrain();
 
     private static int WORLD_SIM_MS = 50;
     private static int JOB_LIMIT_MS = 10;
@@ -37,33 +34,41 @@ public class Game {
     public Queue<IWorkUnit> workQueue;
     private Timer timer;
 
+    private Terrain currentTerrain = new Terrain("scratch/empty");
+    private Terrain portalTerrain = new Terrain("scratch/sphere");
+
     public Game() {
         this.timer = new Timer();
         this.workQueue = new LinkedList<>();
     }
 
-    private void initialize() {
+    private void setup() {
 
         Window.WINDOW.setup();
         Keyboard.KEYBOARD.setup();
         Mouse.MOUSE.setup();
         TypedCharacterStream.TYPED_CHARACTER_STREAM.setup();
 
-        CoreShader.CORE_SHADER.setup();
+        Shader.CORE_SHADER.setup();
+        Shader.PORTAL_SHADER.setup();
         HUD.HUD.setup();
 
         ImageTexture.OVERLAY_TEXTURE.setup();
         ImageTexture.ENTITY_TEXTURE.setup();
 
         RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE.setup();
+        RenderTargetTexture.PORTAL_RENDER_TARGET_TEXTURE.setup();
 
         TextureChannel.OVERLAY_TEXTURE_CHANNEL.bindTextureToTextureChannel(ImageTexture.OVERLAY_TEXTURE);
         TextureChannel.ENTITY_TEXTURE_CHANNEL.bindTextureToTextureChannel(ImageTexture.ENTITY_TEXTURE);
+        TextureChannel.PORTAL_RENDER_TEXTURE_CHANNEL.bindTextureToTextureChannel(RenderTargetTexture.PORTAL_RENDER_TARGET_TEXTURE);
         TextureChannel.WORLD_RENDER_TEXTURE_CHANNEL.bindTextureToTextureChannel(RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE);
 
-        level1.setup("scratch/world_1");
+        this.currentTerrain.setup();
+        this.portalTerrain.setup();
 
         ModelMesh.DOOR.setup();
+        ModelMesh.PORTAL.setup();
     }
     
     private void refresh() {
@@ -75,29 +80,46 @@ public class Game {
     private void simulate() {
         Player.PLAYER.simulate();
     }
+    
+    private void renderPortal() {
+        RenderTargetTexture.PORTAL_RENDER_TARGET_TEXTURE.bindRenderTarget();
+
+        Shader.CORE_SHADER.bindShader();
+        Shader.setTextureChannels();
+        Shader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
+
+        GLFns.enableDepthTest();
+        GLFns.clear();
+        this.portalTerrain.render();
+    }
 
     private void renderWorld() {
         RenderTargetTexture.WORLD_RENDER_TARGET_TEXTURE.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bindShader();
-        CoreShader.setTextureChannels();
-        CoreShader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
+        Shader.CORE_SHADER.bindShader();
+        Shader.setTextureChannels();
+        Shader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
 
         GLFns.enableDepthTest();
         GLFns.clear();
+        GLFns.enableFaceCulling();
 
-        this.level1.render();
+        this.currentTerrain.render();
 
-        CoreShader.setModel(new Vector3f(-2, -2, -2), Maths.VEC3F_ONE);
-        ModelMesh.DOOR.render();
+        GLFns.disableFaceCulling();
+        Shader.PORTAL_SHADER.bindShader();
+        Shader.setTextureChannels();
+        Shader.setPerspective(WorldPerspective.WORLD_PERSPECTIVE);
+
+        this.currentTerrain.renderOpenDoor();
     }
 
     private void renderOverlay() {
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.bindRenderTarget();
 
-        CoreShader.CORE_SHADER.bindShader();
-        CoreShader.setTextureChannels();
-        CoreShader.setPerspective(FlatPerspective.FLAT_PERSPECTIVE);
+        Shader.CORE_SHADER.bindShader();
+        Shader.setTextureChannels();
+        Shader.setPerspective(FlatPerspective.FLAT_PERSPECTIVE);
 
         GLFns.disableDepthTest();
         GLFns.clear();
@@ -106,7 +128,6 @@ public class Game {
     }
 
     private void run() {
-        this.initialize();
         this.timer.resetStartTime();
 
         while(!Window.WINDOW.shouldClose()) {
@@ -128,12 +149,14 @@ public class Game {
 
             var simFactor = (float)this.timer.millisElapsed()/WORLD_SIM_MS;
             WorldPerspective.WORLD_PERSPECTIVE.update(simFactor);
+            this.renderPortal();
             this.renderWorld();
             this.renderOverlay();
         }
     }
 
     public static void main(String[] args) {
+        GAME.setup();
         GAME.run();
     }
 

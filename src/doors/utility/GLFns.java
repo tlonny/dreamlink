@@ -16,4 +16,12 @@ public class GLFns {
         GL42.glDisable(GL42.GL_DEPTH_TEST);
     }
 
+    public static void enableFaceCulling() {
+        GL42.glEnable(GL42.GL_CULL_FACE);
+    }
+
+    public static void disableFaceCulling() {
+        GL42.glDisable(GL42.GL_CULL_FACE);
+    }
+
 }
