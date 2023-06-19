@@ -33,7 +33,7 @@ public class Overlay {
         this.mesh.setup();
     }
 
-    public void paint(Vector2i position, Vector2i dimensions, TextureSample textureSample, Vector3f color) {
+    public void pushSprite(Vector2i position, Vector2i dimensions, TextureSample textureSample, Vector3f color) {
         for(var ix = 0; ix < CubeFace.FRONT.vertices.length; ix +=1) {
             var vertex = CubeFace.FRONT.vertices[ix];
             this.positionBuffer[ix].set(

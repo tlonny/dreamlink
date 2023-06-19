@@ -3,6 +3,7 @@ package doors;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL42;
 
 import doors.graphics.Shader;
@@ -10,6 +11,8 @@ import doors.ui.Menu;
 import doors.overlay.Overlay;
 import doors.overlay.Reticule;
 import doors.overlay.WorldScreen;
+import doors.gamestate.CameraGameState;
+import doors.gamestate.UIGameState;
 import doors.graphics.ImageTexture;
 import doors.graphics.ModelMesh;
 import doors.graphics.PhysicalRenderTarget;
@@ -17,11 +20,11 @@ import doors.graphics.TextureChannel;
 import doors.perspective.FlatPerspective;
 import doors.perspective.WorldPerspective;
 import doors.graphics.RenderTargetTexture;
-import doors.job.IWorkUnit;
 import doors.io.Window;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
+import doors.utility.Functional;
 import doors.utility.Timer;
 import doors.terrain.Terrain;
 import doors.terrain.TerrainCache;
@@ -32,7 +35,7 @@ public class Game {
 
     private static int JOB_LIMIT_MS = 10;
 
-    public Queue<IWorkUnit> workQueue;
+    public Queue<Functional.IAction> workQueue;
     public long currentTick;
     public long previousTick;
 
@@ -72,9 +75,10 @@ public class Game {
         ModelMesh.ARROW.setup();
 
         Camera.CAMERA.position.set(10, 2, 8);
-        this.currentTerrain = TerrainCache.TERRAIN_CACHE.getTerrain("scratch/sphere_2");
+        this.currentTerrain = TerrainCache.TERRAIN_CACHE.getTerrain("scratch/sphere");
+        CameraGameState.CAMERA_GAME_STATE.use();
     }
-    
+
     private void refresh() {
         Window.WINDOW.refresh();
         TypedCharacterStream.TYPED_CHARACTER_STREAM.refresh();
@@ -126,9 +130,9 @@ public class Game {
         var perspective = new FlatPerspective();
         perspective.apply();
 
-        WorldScreen.WORLD_SCREEN.paint();
-        Reticule.RETICULE.paint();
-        Menu.MENU.paint();
+        WorldScreen.WORLD_SCREEN.render();
+        Reticule.RETICULE.render();
+        Menu.MENU.render();
 
         Overlay.OVERLAY.render();
     }
@@ -139,12 +143,19 @@ public class Game {
         while(!Window.WINDOW.shouldClose()) {
             this.timer.resetStartTime();
             while(timer.millisElapsed() <= JOB_LIMIT_MS && !this.workQueue.isEmpty()) {
-                this.workQueue.remove().execute();
+                this.workQueue.remove().invoke();
             }
+
 
             this.previousTick = this.currentTick;
             this.currentTick = System.currentTimeMillis();
             this.refresh();
+
+            if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+                var newState = UIGameState.MENU_GAME_STATE.isUsed() ? CameraGameState.CAMERA_GAME_STATE : UIGameState.MENU_GAME_STATE;
+                newState.use();
+            }
+
             this.update();
             this.render();
         }

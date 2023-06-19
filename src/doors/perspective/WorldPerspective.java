@@ -5,8 +5,8 @@ import org.joml.Vector3f;
 
 import doors.Camera;
 import doors.Config;
-import doors.spatial.IHasPosition;
-import doors.spatial.IHasRotation;
+import doors.component.IHasPosition;
+import doors.component.IHasRotation;
 
 public class WorldPerspective extends Perspective implements IHasRotation, IHasPosition {
 

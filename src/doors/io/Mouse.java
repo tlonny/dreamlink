@@ -15,24 +15,20 @@ public class Mouse {
     private long rightPressed;
     private long rightReleased;
 
-    public boolean centerLock = true;
+    private boolean centerLock;
 
     private double[] xBuffer = new double[1];
     private double[] yBuffer = new double[1];
 
     public Vector2i position = new Vector2i();
 
-    public void setCenterLock(boolean state) {
-        this.centerLock = state;
-        
-        // Required to stop the mouse jerking due to the delta between
-        // where the current mouse is and the center of the screen
-        // when we go from false to true :-)
-        GLFW.glfwSetCursorPos(
-            Window.WINDOW.windowID, 
-            Window.WINDOW.dimensions.x / 2f, 
-            Window.WINDOW.dimensions.y / 2f
-        );
+    public void setCenterLock(boolean centerLock) {
+        this.centerLock = centerLock;
+    }
+
+    public void setCursorVisibility(boolean visible) {
+        var cursorFlag = visible ? GLFW.GLFW_CURSOR_NORMAL : GLFW.GLFW_CURSOR_HIDDEN;
+        GLFW.glfwSetInputMode(Window.WINDOW.windowID, GLFW.GLFW_CURSOR, cursorFlag);
     }
 
     private void onMouseButtonEvent(long window, int button, int action, int mode) {
@@ -68,9 +64,6 @@ public class Mouse {
     }
 
     public void refresh() {
-        var cursorFlag = this.centerLock ? GLFW.GLFW_CURSOR_HIDDEN : GLFW.GLFW_CURSOR_NORMAL;
-        GLFW.glfwSetInputMode(Window.WINDOW.windowID, GLFW.GLFW_CURSOR, cursorFlag);
-
         GLFW.glfwGetCursorPos(Window.WINDOW.windowID, this.xBuffer, this.yBuffer);
         this.position.set(
             (int)(this.xBuffer[0] / Window.WINDOW.dimensions.x * Config.RESOLUTION.x),

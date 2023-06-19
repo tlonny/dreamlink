@@ -10,14 +10,14 @@ public class Reticule {
 
     public static Reticule RETICULE = new Reticule();
 
-    public void paint() {
+    public void render() {
         var reticulePosition = new Vector2i();
 
         reticulePosition.set(
             Config.RESOLUTION.x / 2 - RETICULE_SIZE.x / 2,
             Config.RESOLUTION.y / 2 - RETICULE_SIZE.y / 2
         );
-        Overlay.OVERLAY.paint(reticulePosition, RETICULE_SIZE, SystemTextureAtlas.RETICULE, Maths.VEC3F_ONE);
+        Overlay.OVERLAY.pushSprite(reticulePosition, RETICULE_SIZE, SystemTextureAtlas.RETICULE, Maths.VEC3F_ONE);
     }
 
 

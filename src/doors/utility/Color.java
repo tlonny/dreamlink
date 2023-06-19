@@ -13,8 +13,8 @@ public class Color {
 
     public static Vector3f TEXT = fromHex(0x2B, 0x27, 0x2E);
 
-    public static Vector3f BUTTON_ACTIVE = fromHex(0x00, 0x00, 0xFF);
-    public static Vector3f BUTTON_HOVER = fromHex(0xFF, 0x00, 0xFF);
+    public static Vector3f BUTTON_ACTIVE = fromHex(0xDE, 0xC9, 0xB4);
+    public static Vector3f BUTTON_HOVER = fromHex(0xAD, 0x84, 0x5A);
 
     public static Vector3f MENU_BACKGROUND_PRIMARY = fromHex(0xF5, 0xE0, 0xCB);
 

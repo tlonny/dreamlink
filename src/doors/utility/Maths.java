@@ -5,8 +5,8 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-import doors.spatial.IHasDimensions;
-import doors.spatial.IHasPosition;
+import doors.component.IHasDimensions;
+import doors.component.IHasPosition;
 
 public class Maths {
 

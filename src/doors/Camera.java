@@ -2,9 +2,10 @@ package doors;
 
 import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.spatial.IHasDimensions;
-import doors.spatial.IHasPosition;
-import doors.spatial.IHasRotation;
+import doors.component.IHasDimensions;
+import doors.component.IHasPosition;
+import doors.component.IHasRotation;
+import doors.gamestate.CameraGameState;
 import doors.terrain.Door;
 import doors.utility.Maths;
 import org.joml.Vector3f;
@@ -31,6 +32,13 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
     private static float FRICTION = 0.7f;
 
     public void update() {
+        if(!CameraGameState.CAMERA_GAME_STATE.isUsed()) {
+            return;
+        }
+
+        Maths.zeroFuzz(this.velocity);
+        this.position.add(this.velocity);
+
         var extraVelocity = new Vector3f();
 
         if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
@@ -54,17 +62,12 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         this.velocity.add(extraVelocity);
         this.velocity.mul(1 - FRICTION);
 
-        Maths.zeroFuzz(this.velocity);
-        this.position.add(this.velocity);
+        var centerX = (float)Mouse.MOUSE.position.x / Config.RESOLUTION.x - 0.5f;
+        var centerY = (float)Mouse.MOUSE.position.y / Config.RESOLUTION.y - 0.5f;
 
-        if(Mouse.MOUSE.centerLock) {
-            var centerX = (float)Mouse.MOUSE.position.x / Config.RESOLUTION.x - 0.5f;
-            var centerY = (float)Mouse.MOUSE.position.y / Config.RESOLUTION.y - 0.5f;
-
-            this.rotation.y -= centerX * MOUSE_SENSITIVITY;
-            this.rotation.x -= centerY * MOUSE_SENSITIVITY;
-            this.rotation.x = Math.min(Math.max(this.rotation.x, - PITCH_LIMIT), PITCH_LIMIT);
-        }
+        this.rotation.y -= centerX * MOUSE_SENSITIVITY;
+        this.rotation.x -= centerY * MOUSE_SENSITIVITY;
+        this.rotation.x = Math.min(Math.max(this.rotation.x, - PITCH_LIMIT), PITCH_LIMIT);
     }
 
     public void openDoor() {

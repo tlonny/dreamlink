@@ -4,9 +4,9 @@ import org.joml.Vector3f;
 
 import doors.Camera;
 import doors.Game;
-import doors.spatial.IHasDimensions;
-import doors.spatial.IHasPosition;
-import doors.spatial.IHasRotation;
+import doors.component.IHasDimensions;
+import doors.component.IHasPosition;
+import doors.component.IHasRotation;
 import doors.utility.CubeFace;
 import doors.utility.Maths;
 

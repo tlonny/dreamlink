@@ -15,8 +15,8 @@ public class WorldScreen {
 
     public static WorldScreen WORLD_SCREEN = new WorldScreen();
 
-    public void paint() {
-        Overlay.OVERLAY.paint(Maths.VEC2I_ZERO, Config.RESOLUTION, TEXTURE_SAMPLE, Color.WHITE);
+    public void render() {
+        Overlay.OVERLAY.pushSprite(Maths.VEC2I_ZERO, Config.RESOLUTION, TEXTURE_SAMPLE, Color.WHITE);
     }
 
 

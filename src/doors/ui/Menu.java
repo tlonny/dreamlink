@@ -1,43 +1,50 @@
 package doors.ui;
 
+import java.util.Arrays;
 import org.joml.Vector2i;
-import org.lwjgl.glfw.GLFW;
-
 import doors.Config;
-import doors.io.Keyboard;
+import doors.gamestate.UIGameState;
 import doors.io.Mouse;
 import doors.io.Window;
+import doors.overlay.SystemTextureAtlas;
+import doors.utility.Color;
 
 public class Menu {
 
-    private static Vector2i MENU_SIZE = new Vector2i(100, 40);
-    private static Vector2i POSITION = new Vector2i(
-        Config.RESOLUTION.x / 2 - MENU_SIZE.x / 2,
-        Config.RESOLUTION.y / 2 - MENU_SIZE.y / 2
-    );
-
     public static Menu MENU = new Menu();
 
-    private Box root;
+    private IElement root;
     public boolean active;
 
     public Menu() {
-        this.root = new Box(MENU_SIZE);
-        this.root.center = true;
-        this.root.children.add(new Button("quit", () -> Window.WINDOW.setShouldClose()));
+        var quitText = new TextLineElement("Quit", false, Color.TEXT);
+        var quitButton = new ButtonElement(quitText, () -> Window.WINDOW.setShouldClose());
+        var grid = new VerticalSpanElement(Arrays.asList(
+            new PaddingElement(new BlockPickerElement(), 4),
+            new PaddingElement(new SpriteElement(SystemTextureAtlas.AT, new Vector2i(20,20), Color.WHITE), 4)
+        ), false);
+        this.root = new BorderElement(
+                new PaddingElement(
+                    new VerticalSpanElement(Arrays.asList(quitButton, grid), true),
+                    10
+                ), Color.BUTTON_ACTIVE
+        );
+                
     }
 
-    public void paint() {
-        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            this.active = !this.active;
-            Mouse.MOUSE.setCenterLock(!this.active);
-        }
-
-        if(!active) {
+    public void render() {
+        if(!UIGameState.MENU_GAME_STATE.isUsed()) {
             return;
         }
 
-        this.root.paint(POSITION);
+        var dimensions = this.root.getDimensions();
+        var centeredPosition = new Vector2i(
+            Config.RESOLUTION.x / 2 - dimensions.x / 2,
+            Config.RESOLUTION.y / 2 - dimensions.y / 2
+        );
+
+        this.root.render(centeredPosition);
+        Mouse.MOUSE.setCursorVisibility(true);
     }
 
 }

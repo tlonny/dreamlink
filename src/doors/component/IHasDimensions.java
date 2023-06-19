@@ -1,4 +1,4 @@
-package doors.spatial;
+package doors.component;
 
 import org.joml.Vector3f;
 
