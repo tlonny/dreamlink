@@ -12,13 +12,13 @@ public class RenderTargetTexture implements IRenderTarget, ITexture {
     public static RenderTargetTexture CURRENT_WORLD_RENDER_TARGET_TEXTURE = 
         new RenderTargetTexture(Config.RESOLUTION);
 
-    public static RenderTargetTexture TARGET_WORLD_RENDER_TARGET_TEXTURE = 
+    public static RenderTargetTexture PORTAL_WORLD_RENDER_TARGET_TEXTURE = 
         new RenderTargetTexture(Config.RESOLUTION);
 
     private int frameBufferID;
     private int depthBufferID;
 
-    private Vector2i dimensions;
+    public Vector2i dimensions;
     private int textureID;
 
     public RenderTargetTexture(Vector2i dimensions) {
@@ -51,7 +51,7 @@ public class RenderTargetTexture implements IRenderTarget, ITexture {
 
     @Override
     public void use() {
-        if(PhysicalRenderTarget.USED_RENDER_TARGET == this) {
+        if(PhysicalRenderTarget.USED_RENDER_TARGET == this || this.frameBufferID == 0) {
             return;
         }
         GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, this.frameBufferID);

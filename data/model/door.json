@@ -1,5 +1,6 @@
 {
-    "origin": [0.45, 0.9, 0.0],
+    "cullFaces": true,
+    "origin": [1.0, 1.0, 0.0],
     "fragments": [{
         "texture": {
             "channel": "entity",
@@ -13,7 +14,7 @@
                 "bottom": [240, 16, 16, 16]
             }
         },
-        "position": [0.0, 0.0, 0.01],
-        "dimensions": [0.9, 1.8, 0.25]
+        "dimensions": [2.0, 2.0, 0.25],
+        "position": [0.0, 0.0, -0.25]
     }]
 }

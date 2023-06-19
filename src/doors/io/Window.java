@@ -46,10 +46,9 @@ public class Window {
         GLFW.glfwMakeContextCurrent(this.windowID);
         GLFW.glfwSwapInterval(1);
         GLFW.glfwShowWindow(this.windowID);
-        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
         GL.createCapabilities();
-        GL42.glClearColor(0f, 0f, 0f, 0f);
+        GL42.glClearColor(0f, 0f, 0f, 1f);
         GL42.glEnable(GL42.GL_CULL_FACE);
         GL42.glEnable(GL42.GL_BLEND);
         GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);

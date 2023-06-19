@@ -9,8 +9,8 @@ public class TextureChannel {
 
     public static Map<String, TextureChannel> TEXTURE_CHANNEL_LOOKUP = new HashMap<>();
 
-    public static TextureChannel OVERLAY_TEXTURE_CHANNEL = 
-        new TextureChannel("overlay", GL42.GL_TEXTURE1);
+    public static TextureChannel UI_TEXTURE_CHANNEL = 
+        new TextureChannel("ui", GL42.GL_TEXTURE1);
 
     public static TextureChannel ENTITY_TEXTURE_CHANNEL = 
         new TextureChannel("entity", GL42.GL_TEXTURE2);
@@ -20,6 +20,9 @@ public class TextureChannel {
 
     public static TextureChannel PORTAL_TEXTURE_CHANNEL = 
         new TextureChannel("portal", GL42.GL_TEXTURE4);
+
+    public static TextureChannel WORLD_TEXTURE_CHANNEL = 
+        new TextureChannel("world", GL42.GL_TEXTURE5);
 
     public int textureUnitID;
     public ITexture usedTexture;
@@ -40,7 +43,7 @@ public class TextureChannel {
     }
 
     public void useTexture(ITexture texture) {
-        if(this.usedTexture == texture) {
+        if(this.usedTexture == texture || texture.getTextureID() == 0) {
             return;
         }
 

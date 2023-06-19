@@ -1,5 +1,6 @@
 {
-    "origin": [0.5, 1, 0.0],
+    "cullFaces": false,
+    "origin": [1.0, 1.0, 0.0],
     "fragments": [{
         "texture": {
             "channel": "portal",
@@ -13,8 +14,8 @@
                 "right": [0, 0, 1, 1]
             }
         },
-        "dimensions": [1, 2.0, 0.1],
-        "position": [0, 0, 0]
+        "dimensions": [2.0, 2.0, 0.2],
+        "position": [0, 0.01, -0.2]
     }, {
         "texture": {
             "channel": "entity",
@@ -28,8 +29,7 @@
                 "bottom": [240, 16, 16, 16]
             }
         },
-        "dimensions": [1, 2.0, 0.1],
-        "position": [0, 0, 0.2]
-    }
-]
+        "dimensions": [2.0, 2.0, 0.049],
+        "position": [0.0, 0.01, -0.251]
+    }]
 }

@@ -16,10 +16,12 @@ public class ModelMesh extends Mesh {
     public static ModelMesh UNIT = new ModelMesh("data/model/unit.json");
     public static ModelMesh DOOR = new ModelMesh("data/model/door.json");
     public static ModelMesh PORTAL = new ModelMesh("data/model/portal.json");
+    public static ModelMesh ARROW = new ModelMesh("data/model/arrow.json");
 
     private String path;
 
     public ModelMesh(String path) {
+        super();
         this.path = path;
     }
 
@@ -33,6 +35,9 @@ public class ModelMesh extends Mesh {
 
         var modelString = FileIO.loadText(path);
         var modelConfig = new JSONObject(modelString);
+
+        this.cullFaces = modelConfig.getBoolean("cullFaces");
+
         var originArray = modelConfig.getJSONArray("origin");
         var origin = new Vector3f(
             originArray.getFloat(0),

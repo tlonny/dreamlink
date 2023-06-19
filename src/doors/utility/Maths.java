@@ -108,6 +108,5 @@ public class Maths {
         }
 
         return true;
-        
     }
 }

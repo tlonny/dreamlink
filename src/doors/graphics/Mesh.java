@@ -7,9 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Mesh {
-
     private static Mesh USED_MESH = null;
-
     private static int POSITION_LOCATION = 0;
     private static int NORMAL_LOCATION = 1;
     private static int TEXTURE_OFFSET_LOCATION = 2;
@@ -23,6 +21,11 @@ public class Mesh {
     private int packedColorTextureUnitBufferID;
 
     public int numIndices;
+    public boolean cullFaces;
+
+    public Mesh() {
+        this.cullFaces = true;
+    }
 
     public void setup() {
         this.vertexArrayID = GL42.glGenVertexArrays();
@@ -37,10 +40,18 @@ public class Mesh {
 
 
     private void use() {
-        if(this == USED_MESH) {
+        if(this == USED_MESH || this.vertexArrayID == 0) {
             return;
         }
+
+        if(this.cullFaces) {
+            GL42.glEnable(GL42.GL_CULL_FACE);
+        } else {
+            GL42.glDisable(GL42.GL_CULL_FACE);
+        }
+
         GL42.glBindVertexArray(this.vertexArrayID);
+
         USED_MESH = this;
     }
 

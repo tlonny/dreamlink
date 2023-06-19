@@ -1,4 +1,4 @@
-package doors.graphics.perspective;
+package doors.perspective;
 
 import org.joml.Matrix4f;
 

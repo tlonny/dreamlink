@@ -21,44 +21,28 @@ import doors.utility.Maths;
 
 public class Terrain {
 
-    public static Map<String, Terrain> TERRAIN_LOOKUP = new HashMap<>();
-    
-    private static Vector3i MAX_CHUNK_SPACE_DIMENSIONS = new Vector3i(8, 8, 8);
-    private static Vector3i MAX_DIMENSIONS = new Vector3i(MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
     private static TextureSampler TERRAIN_SAMPLER = new TextureSampler(TextureChannel.TERRAIN_TEXTURE_CHANNEL, new Vector2i(512, 512));
 
     public Map<Integer, Block> blockMap;
     public ImageTexture texture;
 
+    private Vector3i chunkDimensions;
+    private Vector3i blockDimensions;
     private Chunk[] chunks;
     private MeshBuffer meshBuffer;
     public String terrainDirectory;
     public Map<String, Door> doors;
-    public Door openDoor = null;
+    public Portal openPortal = null;
+    public boolean isSetup = false;
 
     public Terrain(String terrainDirectory) {
         this.terrainDirectory = terrainDirectory;
         this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
-        this.chunks = new Chunk[Maths.volume(MAX_CHUNK_SPACE_DIMENSIONS)];
         this.meshBuffer = new MeshBuffer(Maths.volume(Chunk.DIMENSIONS) * 6);
-        for(var ix = 0; ix < this.chunks.length; ix += 1) {
-            var chunkPosition = Maths.deserialize(ix, MAX_CHUNK_SPACE_DIMENSIONS).mul(Chunk.DIMENSIONS);
-            this.chunks[ix] = new Chunk(chunkPosition);
-        }
-
-        TERRAIN_LOOKUP.put(terrainDirectory, this);
     }
 
     public void setup() {
-        for(var ix = 0; ix < this.chunks.length; ix += 1) {
-            var chunk = this.chunks[ix];
-            chunk.setup();
-            var levelDataPath = Paths.get(this.terrainDirectory, String.format("level/chunk-%03d.blob", ix));
-            Game.GAME.workQueue.add(() -> chunk.loadFromFile(levelDataPath.toString()));
-            Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
-        }
-
         var configPath = Paths.get(this.terrainDirectory, "config.json").toString();
         var configString = FileIO.loadText(configPath);
         var json = new JSONObject(configString);
@@ -66,6 +50,29 @@ public class Terrain {
         var texturePath = Paths.get(this.terrainDirectory, "atlas.png").toString();
         this.texture = new ImageTexture(texturePath);
         Game.GAME.workQueue.add(() -> this.texture.setup());
+
+        var dimensions = json.getJSONArray("chunk_dimensions");
+        this.chunkDimensions = new Vector3i(
+            dimensions.getInt(0),
+            dimensions.getInt(1),
+            dimensions.getInt(2)
+        );
+        this.blockDimensions = new Vector3i(this.chunkDimensions).mul(Chunk.DIMENSIONS);
+
+        this.chunks = new Chunk[Maths.volume(this.chunkDimensions)];
+        for(var ix = 0; ix < this.chunks.length; ix += 1) {
+            var chunkPosition = Maths.deserialize(ix, this.chunkDimensions).mul(Chunk.DIMENSIONS);
+            var chunkPath = Paths.get(this.terrainDirectory, String.format("level/chunk-%03d.blob", ix));
+            var chunk = new Chunk(chunkPosition, chunkPath.toString());
+            this.chunks[ix] = chunk;
+            Game.GAME.workQueue.add(() -> chunk.setup());
+        }
+
+        // Make sure chunks are processed after all chunks are setup to ensure the
+        // no redundant mesh is created at chunk boundaries.
+        for(var chunk : this.chunks) {
+            Game.GAME.workQueue.add(() -> this.processDirtyChunk(chunk));
+        }
 
         var blocks = json.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
@@ -104,9 +111,11 @@ public class Terrain {
                 CubeFace.CUBE_FACE_MAP.get(doorConfig.getString("orientation"))
             );
             this.doors.put(doorName, door);
-            this.openDoor = door;
         }
 
+        Game.GAME.workQueue.add(() -> {
+            this.isSetup = true;
+        });
     }
 
     public boolean isCollision(Vector3f position, Vector3f dimensions) {
@@ -135,14 +144,14 @@ public class Terrain {
     }
 
     public Block getBlock(Vector3i position) {
-        if(!Maths.isWithinBounds(position, MAX_DIMENSIONS)) {
+        if(!Maths.isWithinBounds(position, this.blockDimensions)) {
             return null;
         }
 
         var chunkSpacePosition = Maths.div(new Vector3i(position), Chunk.DIMENSIONS);
         var localBlockPosition = new Vector3i(chunkSpacePosition).mul(Chunk.DIMENSIONS).mul(-1).add(position);
 
-        var chunkIndex = Maths.serialize(chunkSpacePosition, MAX_CHUNK_SPACE_DIMENSIONS);
+        var chunkIndex = Maths.serialize(chunkSpacePosition, this.chunkDimensions);
         var chunk = this.chunks[chunkIndex];
 
         var blockID = chunk.getBlockID(localBlockPosition);
@@ -151,14 +160,14 @@ public class Terrain {
 
 
     public void setBlock(Vector3i position, Block block) {
-        if(!Maths.isWithinBounds(position, MAX_DIMENSIONS)) {
+        if(!Maths.isWithinBounds(position, this.blockDimensions)) {
             return;
         }
 
         var chunkSpacePosition = Maths.div(new Vector3i(position), Chunk.DIMENSIONS);
         var localBlockPosition = new Vector3i(chunkSpacePosition).mul(Chunk.DIMENSIONS).mul(-1).add(position);
 
-        var chunkIndex = Maths.serialize(chunkSpacePosition, MAX_CHUNK_SPACE_DIMENSIONS);
+        var chunkIndex = Maths.serialize(chunkSpacePosition, this.chunkDimensions);
         var chunk = this.chunks[chunkIndex];
 
         var madeDirty = chunk.setBlockID(localBlockPosition, block == null ? 0 : block.blockID);
@@ -206,16 +215,26 @@ public class Terrain {
             positionCursor.set(chunk.position);
             chunk.mesh.render(positionCursor, Maths.VEC3F_ZERO, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
         }
-    }
 
-    public void renderPortal() {
-        ModelMesh.PORTAL.render(this.openDoor.position, this.openDoor.orientation.rotation, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
+        for(var door : this.doors.values()) {
+            if(this.openPortal == null || this.openPortal.door != door) {
+                ModelMesh.DOOR.render(door.position, door.orientation.rotation, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
+            }
+        }
+
+        if(this.openPortal != null && Game.GAME.currentTerrain == this) {
+            ModelMesh.PORTAL.render(this.openPortal.position, this.openPortal.orientation.rotation, Maths.VEC3F_ONE, Maths.VEC3F_ONE);
+        }
     }
 
     public void simulate() {
-        for(var door : this.doors.values()) {
-            door.simulate();
+        if(this.openPortal == null) {
+            return;
         }
+        this.openPortal.simulate();
+    }
+
+    public void tearDown() {
     }
 
 }

@@ -6,10 +6,10 @@ import doors.graphics.TextureChannel;
 import doors.graphics.TextureSample;
 import doors.graphics.TextureSampler;
 
-public class OverlayTextureAtlas {
+public class SystemTextureAtlas {
 
     private static TextureSampler SAMPLER = new TextureSampler(
-        TextureChannel.OVERLAY_TEXTURE_CHANNEL, 
+        TextureChannel.UI_TEXTURE_CHANNEL, 
         new Vector2i(512, 512)
     );
 

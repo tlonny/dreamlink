@@ -3,38 +3,41 @@ package doors;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL42;
 
 import doors.graphics.Shader;
+import doors.ui.Menu;
+import doors.overlay.Overlay;
+import doors.overlay.Reticule;
+import doors.overlay.WorldScreen;
 import doors.graphics.ImageTexture;
 import doors.graphics.ModelMesh;
 import doors.graphics.PhysicalRenderTarget;
 import doors.graphics.TextureChannel;
-import doors.graphics.perspective.FlatPerspective;
-import doors.graphics.perspective.WorldPerspective;
+import doors.perspective.FlatPerspective;
+import doors.perspective.WorldPerspective;
 import doors.graphics.RenderTargetTexture;
 import doors.job.IWorkUnit;
 import doors.io.Window;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.io.TypedCharacterStream;
-import doors.utility.GLFns;
-import doors.utility.Maths;
 import doors.utility.Timer;
-import doors.overlay.HUD;
 import doors.terrain.Terrain;
+import doors.terrain.TerrainCache;
 
 public class Game {
 
     public static Game GAME = new Game();
 
-
     private static int JOB_LIMIT_MS = 10;
-    public boolean renderRecurse;
 
     public Queue<IWorkUnit> workQueue;
+    public long currentTick;
+    public long previousTick;
+
     private Timer timer;
+
     public Terrain currentTerrain;
 
     public Game() {
@@ -43,33 +46,33 @@ public class Game {
     }
 
     private void setup() {
-
         Window.WINDOW.setup();
         Keyboard.KEYBOARD.setup();
         Mouse.MOUSE.setup();
         TypedCharacterStream.TYPED_CHARACTER_STREAM.setup();
 
         Shader.SHADER.setup();
-        HUD.HUD.setup();
 
         ImageTexture.OVERLAY_TEXTURE.setup();
         ImageTexture.ENTITY_TEXTURE.setup();
 
         RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE.setup();
-        RenderTargetTexture.TARGET_WORLD_RENDER_TARGET_TEXTURE.setup();
+        RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE.setup();
 
-        TextureChannel.OVERLAY_TEXTURE_CHANNEL.useTexture(ImageTexture.OVERLAY_TEXTURE);
+        TextureChannel.UI_TEXTURE_CHANNEL.useTexture(ImageTexture.OVERLAY_TEXTURE);
         TextureChannel.ENTITY_TEXTURE_CHANNEL.useTexture(ImageTexture.ENTITY_TEXTURE);
+        TextureChannel.PORTAL_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE);
+        TextureChannel.WORLD_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE);
+
+        Overlay.OVERLAY.setup();
 
         ModelMesh.DOOR.setup();
         ModelMesh.PORTAL.setup();
         ModelMesh.UNIT.setup();
+        ModelMesh.ARROW.setup();
 
-        new Terrain("scratch/sphere").setup();
-        new Terrain("scratch/empty").setup();
         Camera.CAMERA.position.set(10, 2, 8);
-        this.currentTerrain = Terrain.TERRAIN_LOOKUP.get("scratch/empty");
-
+        this.currentTerrain = TerrainCache.TERRAIN_CACHE.getTerrain("scratch/sphere_2");
     }
     
     private void refresh() {
@@ -77,73 +80,73 @@ public class Game {
         TypedCharacterStream.TYPED_CHARACTER_STREAM.refresh();
         Mouse.MOUSE.refresh();
     }
-    
-    private void renderWorld() {
-        RenderTargetTexture.TARGET_WORLD_RENDER_TARGET_TEXTURE.use();
-        GLFns.clear();
-        GLFns.setDepthTest(true);
-        GLFns.setFaceCulling(true);
 
-        var openDoor = this.currentTerrain.openDoor;
-        var targetTerrain = Terrain.TERRAIN_LOOKUP.get(openDoor.targetTerrain);
+    private void update() {
+        Camera.CAMERA.update();
+        this.currentTerrain.simulate();
+    }
+
+    private void renderPortalWorld() {
+        RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE.use();
+        GL42.glEnable(GL42.GL_DEPTH_TEST);
+        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
+
+        if(this.currentTerrain.openPortal == null) {
+            return;
+        }
 
         var perspective = new WorldPerspective();
         perspective.alignToCamera();
-        openDoor.mutate(perspective);
+        this.currentTerrain.openPortal.mutate(perspective);
         perspective.apply();
 
-        targetTerrain.render();
+        this.currentTerrain.openPortal.targetPortal.door.terrain.render();
+    }
 
+    private void renderCurrentWorld() {
         RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE.use();
-        GLFns.clear();
+        GL42.glEnable(GL42.GL_DEPTH_TEST);
+        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
+        var perspective = new WorldPerspective();
         perspective.alignToCamera();
         perspective.apply();
 
         this.currentTerrain.render();
-
-        GLFns.setFaceCulling(false);
-
-        TextureChannel.PORTAL_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.TARGET_WORLD_RENDER_TARGET_TEXTURE);
-
-        this.currentTerrain.renderPortal();
     }
 
-    private void renderOverlay() {
+    private void render() {
+        this.renderPortalWorld();
+        this.renderCurrentWorld();
+
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.use();
-        TextureChannel.PORTAL_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE);
-        GLFns.clear();
+        GL42.glDisable(GL42.GL_DEPTH_TEST);
+        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
         var perspective = new FlatPerspective();
         perspective.apply();
 
-        GLFns.setDepthTest(false);
-        GLFns.setFaceCulling(true);
+        WorldScreen.WORLD_SCREEN.paint();
+        Reticule.RETICULE.paint();
+        Menu.MENU.paint();
 
-        HUD.HUD.render();
+        Overlay.OVERLAY.render();
     }
 
     private void run() {
         this.timer.resetStartTime();
 
         while(!Window.WINDOW.shouldClose()) {
-            this.refresh();
-
-            if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
-                Window.WINDOW.setShouldClose();
-            }
-
             this.timer.resetStartTime();
-
             while(timer.millisElapsed() <= JOB_LIMIT_MS && !this.workQueue.isEmpty()) {
                 this.workQueue.remove().execute();
             }
 
-            Camera.CAMERA.update();
-            this.currentTerrain.simulate();
-
-            this.renderWorld();
-            this.renderOverlay();
+            this.previousTick = this.currentTick;
+            this.currentTick = System.currentTimeMillis();
+            this.refresh();
+            this.update();
+            this.render();
         }
     }
 

@@ -2,10 +2,10 @@ package doors;
 
 import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.io.Window;
 import doors.spatial.IHasDimensions;
 import doors.spatial.IHasPosition;
 import doors.spatial.IHasRotation;
+import doors.terrain.Door;
 import doors.utility.Maths;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -15,7 +15,7 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
     public static Camera CAMERA = new Camera();
 
     private static float PITCH_LIMIT = (float)Math.toRadians(85f);
-    private static float MOUSE_SENSITIVITY = 1f/900;
+    private static float MOUSE_SENSITIVITY = 0.9f;
 
     public Vector3f position;
     public Vector3f rotation;
@@ -27,7 +27,7 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         this.velocity = new Vector3f();
     }
 
-    private static float SPEED = 0.05f;
+    private static float SPEED = 0.15f;
     private static float FRICTION = 0.7f;
 
     public void update() {
@@ -45,6 +45,10 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
             extraVelocity.x += SPEED;
 
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
+            this.openDoor();
+        }
+
         extraVelocity.rotateX(this.rotation.x);
         extraVelocity.rotateY(this.rotation.y);
         this.velocity.add(extraVelocity);
@@ -53,9 +57,29 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         Maths.zeroFuzz(this.velocity);
         this.position.add(this.velocity);
 
-        this.rotation.y -= (Mouse.MOUSE.position.x - Window.WINDOW.dimensions.x /2f) * MOUSE_SENSITIVITY;
-        this.rotation.x -= (Mouse.MOUSE.position.y - Window.WINDOW.dimensions.y /2f) * MOUSE_SENSITIVITY;
-        this.rotation.x = Math.min(Math.max(this.rotation.x, - PITCH_LIMIT), PITCH_LIMIT);
+        if(Mouse.MOUSE.centerLock) {
+            var centerX = (float)Mouse.MOUSE.position.x / Config.RESOLUTION.x - 0.5f;
+            var centerY = (float)Mouse.MOUSE.position.y / Config.RESOLUTION.y - 0.5f;
+
+            this.rotation.y -= centerX * MOUSE_SENSITIVITY;
+            this.rotation.x -= centerY * MOUSE_SENSITIVITY;
+            this.rotation.x = Math.min(Math.max(this.rotation.x, - PITCH_LIMIT), PITCH_LIMIT);
+        }
+    }
+
+    public void openDoor() {
+        Door target = null;
+        float distanceToTarget = Float.MAX_VALUE;
+
+        for(var door : Game.GAME.currentTerrain.doors.values()) {
+            var distance = door.position.distance(this.position);
+            if(distance < distanceToTarget) {
+                target = door;
+                distanceToTarget = distance;
+            }
+        }
+
+        target.open();
     }
 
     @Override
