@@ -1,169 +1,71 @@
 package doors;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL42;
-
 import doors.graphics.Shader;
-import doors.ui.Menu;
-import doors.overlay.Overlay;
-import doors.overlay.Reticule;
-import doors.overlay.WorldScreen;
-import doors.gamestate.CameraGameState;
-import doors.gamestate.UIGameState;
-import doors.graphics.ImageTexture;
-import doors.graphics.ModelMesh;
-import doors.graphics.PhysicalRenderTarget;
-import doors.graphics.TextureChannel;
-import doors.perspective.FlatPerspective;
-import doors.perspective.WorldPerspective;
-import doors.graphics.RenderTargetTexture;
+import doors.graphics.mesh.ModelMesh;
+import doors.graphics.rendertarget.RenderTargetTexture;
+import doors.graphics.texture.ImageTexture;
+import doors.graphics.texture.TextureChannel;
+import doors.state.GameState;
+import doors.state.MainMenuExploreGameState;
+import doors.state.MainMenuRootGameState;
 import doors.io.Window;
+import doors.overlay.SpriteBatch;
 import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.io.TypedCharacterStream;
-import doors.utility.Functional;
-import doors.utility.Timer;
-import doors.terrain.Terrain;
-import doors.terrain.TerrainCache;
+import doors.io.TypedCharacters;
 
 public class Game {
 
-    public static Game GAME = new Game();
-
-    private static int JOB_LIMIT_MS = 10;
-
-    public Queue<Functional.IAction> workQueue;
-    public long currentTick;
-    public long previousTick;
-
-    private Timer timer;
-
-    public Terrain currentTerrain;
-
-    public Game() {
-        this.timer = new Timer();
-        this.workQueue = new LinkedList<>();
-    }
-
-    private void setup() {
+    private static void setup() {
         Window.WINDOW.setup();
-        Keyboard.KEYBOARD.setup();
         Mouse.MOUSE.setup();
-        TypedCharacterStream.TYPED_CHARACTER_STREAM.setup();
-
+        Keyboard.KEYBOARD.setup();
+        TypedCharacters.TYPED_CHARACTERS.setup();
         Shader.SHADER.setup();
 
-        ImageTexture.OVERLAY_TEXTURE.setup();
+        ModelMesh.UNIT.setup();
+        ModelMesh.DOOR.setup();
+        ModelMesh.PORTAL.setup();
+        ModelMesh.ARROW.setup();
+
+        SpriteBatch.SPRITE_BATCH.setup();
+
+        Camera.CAMERA.setup();
+
+        ImageTexture.STANDARD_FONT_TEXTURE.setup();
+        ImageTexture.UI_TEXTURE.setup();
         ImageTexture.ENTITY_TEXTURE.setup();
 
         RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE.setup();
         RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE.setup();
 
-        TextureChannel.UI_TEXTURE_CHANNEL.useTexture(ImageTexture.OVERLAY_TEXTURE);
+        TextureChannel.UI_TEXTURE_CHANNEL.useTexture(ImageTexture.UI_TEXTURE);
+        TextureChannel.FONT_TEXTURE_CHANNEL.useTexture(ImageTexture.STANDARD_FONT_TEXTURE);
         TextureChannel.ENTITY_TEXTURE_CHANNEL.useTexture(ImageTexture.ENTITY_TEXTURE);
         TextureChannel.PORTAL_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE);
         TextureChannel.WORLD_TEXTURE_CHANNEL.useTexture(RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE);
 
-        Overlay.OVERLAY.setup();
+        MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE.setup();
+        MainMenuExploreGameState.MAIN_MENU_EXPLORE_GAME_STATE.setup();
 
-        ModelMesh.DOOR.setup();
-        ModelMesh.PORTAL.setup();
-        ModelMesh.UNIT.setup();
-        ModelMesh.ARROW.setup();
-
-        Camera.CAMERA.position.set(10, 2, 8);
-        this.currentTerrain = TerrainCache.TERRAIN_CACHE.getTerrain("scratch/sphere");
-        CameraGameState.CAMERA_GAME_STATE.use();
+        Camera.CAMERA.position.set(20,20,20);
+        MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE.use();
     }
 
-    private void refresh() {
-        Window.WINDOW.refresh();
-        TypedCharacterStream.TYPED_CHARACTER_STREAM.refresh();
-        Mouse.MOUSE.refresh();
-    }
-
-    private void update() {
-        Camera.CAMERA.update();
-        this.currentTerrain.simulate();
-    }
-
-    private void renderPortalWorld() {
-        RenderTargetTexture.PORTAL_WORLD_RENDER_TARGET_TEXTURE.use();
-        GL42.glEnable(GL42.GL_DEPTH_TEST);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-
-        if(this.currentTerrain.openPortal == null) {
-            return;
-        }
-
-        var perspective = new WorldPerspective();
-        perspective.alignToCamera();
-        this.currentTerrain.openPortal.mutate(perspective);
-        perspective.apply();
-
-        this.currentTerrain.openPortal.targetPortal.door.terrain.render();
-    }
-
-    private void renderCurrentWorld() {
-        RenderTargetTexture.CURRENT_WORLD_RENDER_TARGET_TEXTURE.use();
-        GL42.glEnable(GL42.GL_DEPTH_TEST);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-
-        var perspective = new WorldPerspective();
-        perspective.alignToCamera();
-        perspective.apply();
-
-        this.currentTerrain.render();
-    }
-
-    private void render() {
-        this.renderPortalWorld();
-        this.renderCurrentWorld();
-
-        PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.use();
-        GL42.glDisable(GL42.GL_DEPTH_TEST);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-
-        var perspective = new FlatPerspective();
-        perspective.apply();
-
-        WorldScreen.WORLD_SCREEN.render();
-        Reticule.RETICULE.render();
-        Menu.MENU.render();
-
-        Overlay.OVERLAY.render();
-    }
-
-    private void run() {
-        this.timer.resetStartTime();
-
+    private static void run() {
         while(!Window.WINDOW.shouldClose()) {
-            this.timer.resetStartTime();
-            while(timer.millisElapsed() <= JOB_LIMIT_MS && !this.workQueue.isEmpty()) {
-                this.workQueue.remove().invoke();
-            }
-
-
-            this.previousTick = this.currentTick;
-            this.currentTick = System.currentTimeMillis();
-            this.refresh();
-
-            if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-                var newState = UIGameState.MENU_GAME_STATE.isUsed() ? CameraGameState.CAMERA_GAME_STATE : UIGameState.MENU_GAME_STATE;
-                newState.use();
-            }
-
-            this.update();
-            this.render();
+            TypedCharacters.TYPED_CHARACTERS.update();
+            Window.WINDOW.update();
+            Mouse.MOUSE.update();
+            WorkQueue.WORK_QUEUE.update();
+            GameState.USED_GAME_STATE.update();
+            ExitListener.EXIT_LISTENER.update();
         }
     }
 
     public static void main(String[] args) {
-        GAME.setup();
-        GAME.run();
+        setup();
+        run();
     }
 
 }

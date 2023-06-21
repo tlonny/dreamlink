@@ -1,0 +1,121 @@
+package doors.utility.geometry;
+
+public class Vector2in implements IVector2fl {
+
+    public static Vector2in ZERO = new Vector2in(0, 0);
+    public static Vector2in ONE = new Vector2in(1, 1);
+
+    public int x;
+
+    @Override
+    public float getFloatX() {
+        return this.x;
+    }
+
+    public int y;
+
+    @Override
+    public float getFloatY() {
+        return this.y;
+    }
+
+    public Vector2in(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Vector2in() {
+        this(0, 0);
+    }
+
+    public Vector2in(Vector2in other) {
+        this(other.x, other.y);
+    }
+
+    public Vector2in add(int x, int y) {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+
+    public Vector2in add(Vector2in toAdd) {
+        return this.add(toAdd.x, toAdd.y);
+    }
+
+    public Vector2in sub(int x, int y) {
+        this.x -= x;
+        this.y -= y;
+        return this;
+    }
+
+    public Vector2in sub(Vector2in toSub) {
+        return this.sub(toSub.x, toSub.y);
+    }
+
+    public Vector2in mul(int x, int y) {
+        this.x *= x;
+        this.y *= y;
+        return this;
+    }
+
+    public Vector2in mul(int scalar) {
+        return this.mul(scalar, scalar);
+    }
+
+    public Vector2in mul(Vector2in toDivide) {
+        return this.mul(toDivide.x, toDivide.y);
+    }
+
+    public Vector2in div(int x, int y) {
+        this.x /= x;
+        this.y /= y;
+        return this;
+    }
+
+    public Vector2in div(int scalar) {
+        return this.div(scalar, scalar);
+    }
+
+    public Vector2in div(Vector2in toDivide) {
+        return this.div(toDivide.x, toDivide.y);
+    }
+
+    public Vector2in set(int x, int y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+    public Vector2in set(int scalar) {
+        return this.set(scalar, scalar);
+    }
+
+    public Vector2in set(Vector2in other) {
+        return this.set(other.x, other.y);
+    }
+
+    public String toString() {
+        return String.format("Vector2in(%d, %d)", this.x, this.y);
+    }
+
+    public Vector2in max(int x, int y) {
+        this.x = Math.max(this.x, x);
+        this.y = Math.max(this.y, y);
+        return this;
+    }
+
+    public Vector2in max(Vector2in other) {
+        return this.max(other.x, other.y);
+    }
+
+    public boolean isWithinBounds(Vector2in position, Vector2in dimensions) {
+        if(this.x < position.x || this.x >= position.x + dimensions.x) {
+            return false;
+        }
+        if(this.y < position.y || this.y >= position.y + dimensions.y) {
+            return false;
+        }
+        return true;
+    }
+
+}

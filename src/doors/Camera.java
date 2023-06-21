@@ -2,44 +2,40 @@ package doors;
 
 import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.component.IHasDimensions;
-import doors.component.IHasPosition;
-import doors.component.IHasRotation;
-import doors.gamestate.CameraGameState;
-import doors.terrain.Door;
-import doors.utility.Maths;
-import org.joml.Vector3f;
+import doors.level.Door;
+import doors.level.Terrain;
+import doors.utility.geometry.Vector3fl;
+
 import org.lwjgl.glfw.GLFW;
 
-public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
+public class Camera {
 
     public static Camera CAMERA = new Camera();
 
     private static float PITCH_LIMIT = (float)Math.toRadians(85f);
     private static float MOUSE_SENSITIVITY = 0.9f;
 
-    public Vector3f position;
-    public Vector3f rotation;
-    public Vector3f velocity;
+    public Vector3fl position;
+    public Vector3fl rotation;
+    public Vector3fl velocity;
 
     public Camera() {
-        this.position = new Vector3f();
-        this.rotation = new Vector3f();
-        this.velocity = new Vector3f();
+        this.position = new Vector3fl();
+        this.rotation = new Vector3fl();
+        this.velocity = new Vector3fl();
     }
 
     private static float SPEED = 0.15f;
     private static float FRICTION = 0.7f;
 
-    public void update() {
-        if(!CameraGameState.CAMERA_GAME_STATE.isUsed()) {
-            return;
-        }
+    public void setup() {
+    }
 
-        Maths.zeroFuzz(this.velocity);
+    public void update() {
+        this.velocity.zeroFuzz();
         this.position.add(this.velocity);
 
-        var extraVelocity = new Vector3f();
+        var extraVelocity = new Vector3fl();
 
         if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
             extraVelocity.z += SPEED;
@@ -74,7 +70,7 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         Door target = null;
         float distanceToTarget = Float.MAX_VALUE;
 
-        for(var door : Game.GAME.currentTerrain.doors.values()) {
+        for(var door : Terrain.CURRENT_TERRAIN.doors.values()) {
             var distance = door.position.distance(this.position);
             if(distance < distanceToTarget) {
                 target = door;
@@ -83,20 +79,5 @@ public class Camera implements IHasPosition, IHasRotation, IHasDimensions {
         }
 
         target.open();
-    }
-
-    @Override
-    public Vector3f getRotation() {
-        return this.rotation;
-    }
-
-    @Override
-    public Vector3f getDimensions() {
-        return Maths.VEC3F_ZERO;
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return this.position;
     }
 }

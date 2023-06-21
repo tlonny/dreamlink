@@ -1,25 +1,24 @@
 package doors.perspective;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import doors.Camera;
 import doors.Config;
-import doors.component.IHasPosition;
-import doors.component.IHasRotation;
+import doors.utility.geometry.Vector3fl;
 
-public class WorldPerspective extends Perspective implements IHasRotation, IHasPosition {
+public class WorldPerspective extends Perspective {
 
     private static float FOV = (float)Math.toRadians(70f);
     private static float NEAR_PLANE = 0.01f;
     private static float FAR_PLANE = 1000f;
 
-    public Vector3f position;
-    public Vector3f rotation;
+    public static WorldPerspective WORLD_PERSPECTIVE = new WorldPerspective();
+
+    public Vector3fl position;
+    public Vector3fl rotation;
 
     public WorldPerspective() {
-        this.position = new Vector3f();
-        this.rotation = new Vector3f();
+        this.position = new Vector3fl();
+        this.rotation = new Vector3fl();
     }
 
     public void alignToCamera() {
@@ -48,15 +47,5 @@ public class WorldPerspective extends Perspective implements IHasRotation, IHasP
         var aspectRatio = (float) Config.RESOLUTION.x / (float) Config.RESOLUTION.y;
         matrix.identity();
         matrix.perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return this.position;
-    }
-
-    @Override
-    public Vector3f getRotation() {
-        return this.rotation;
     }
 }

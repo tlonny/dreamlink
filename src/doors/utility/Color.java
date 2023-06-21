@@ -1,21 +1,16 @@
 package doors.utility;
 
-import org.joml.Vector3f;
+import doors.utility.geometry.Vector3fl;
 
 public class Color {
 
-    private static Vector3f fromHex(int r, int g, int b) {
-        return new Vector3f(r / 255f, g / 255f, b / 255f);
+    public static Vector3fl fromHex(int hexCode) {
+        var b = (hexCode & 0xFF) / 255f;
+        hexCode /= 0x100;
+        var g = (hexCode & 0xFF) / 255f;
+        hexCode /= 0x100;
+        var r = (hexCode & 0xFF) / 255f;
+        return new Vector3fl(r, g, b);
     }
-
-    public static Vector3f BLACK = fromHex(0x00, 0x00, 0x00);
-    public static Vector3f WHITE = fromHex(0xFF, 0xFF, 0xFF);
-
-    public static Vector3f TEXT = fromHex(0x2B, 0x27, 0x2E);
-
-    public static Vector3f BUTTON_ACTIVE = fromHex(0xDE, 0xC9, 0xB4);
-    public static Vector3f BUTTON_HOVER = fromHex(0xAD, 0x84, 0x5A);
-
-    public static Vector3f MENU_BACKGROUND_PRIMARY = fromHex(0xF5, 0xE0, 0xCB);
 
 }

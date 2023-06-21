@@ -1,10 +1,8 @@
 package doors.io;
 
-import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-
 import doors.Config;
-import doors.Game;
+import doors.utility.geometry.Vector2in;
 
 public class Mouse {
 
@@ -16,11 +14,10 @@ public class Mouse {
     private long rightReleased;
 
     private boolean centerLock;
-
     private double[] xBuffer = new double[1];
     private double[] yBuffer = new double[1];
 
-    public Vector2i position = new Vector2i();
+    public Vector2in position = new Vector2in();
 
     public void setCenterLock(boolean centerLock) {
         this.centerLock = centerLock;
@@ -34,15 +31,15 @@ public class Mouse {
     private void onMouseButtonEvent(long window, int button, int action, int mode) {
         if (action == GLFW.GLFW_PRESS) {
             if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-                this.leftPressed = Game.GAME.currentTick;
+                this.leftPressed = Window.WINDOW.currentTick;
             } else if(button == GLFW.GLFW_MOUSE_BUTTON_2) {
-                this.rightPressed = Game.GAME.currentTick;
+                this.rightPressed = Window.WINDOW.currentTick;
             }
         } else if (action == GLFW.GLFW_RELEASE) {
             if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-                this.leftReleased = Game.GAME.currentTick;
+                this.leftReleased = Window.WINDOW.currentTick;
             } else if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
-                this.rightReleased = Game.GAME.currentTick;
+                this.rightReleased = Window.WINDOW.currentTick;
             }
         }
     }
@@ -55,15 +52,23 @@ public class Mouse {
         return this.rightPressed > rightReleased;
     }
 
+    public boolean isLeftMouseButtonReleased() {
+        return this.leftReleased == Window.WINDOW.currentTick;
+    }
+
+    public boolean isRightButtonReleased() {
+        return this.rightReleased == Window.WINDOW.currentTick;
+    }
+
     public boolean isLeftMouseButtonPressed() {
-        return this.leftPressed == Game.GAME.currentTick;
+        return this.leftPressed == Window.WINDOW.currentTick;
     }
 
     public boolean isRightMouseButtonPressed() {
-        return this.rightPressed == Game.GAME.currentTick;
+        return this.rightPressed == Window.WINDOW.currentTick;
     }
 
-    public void refresh() {
+    public void update() {
         GLFW.glfwGetCursorPos(Window.WINDOW.windowID, this.xBuffer, this.yBuffer);
         this.position.set(
             (int)(this.xBuffer[0] / Window.WINDOW.dimensions.x * Config.RESOLUTION.x),

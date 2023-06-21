@@ -1,10 +1,11 @@
 package doors.io;
 
-import org.joml.Vector2i;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
+
+import doors.utility.geometry.Vector2in;
 
 public class Window {
 
@@ -13,10 +14,11 @@ public class Window {
     public static Window WINDOW = new Window();
 
     public long windowID;
-    public Vector2i dimensions;
+    public long currentTick;
+    public Vector2in dimensions;
 
     public Window() {
-        this.dimensions = new Vector2i();
+        this.dimensions = new Vector2in();
     }
 
     public boolean isFocused() {
@@ -46,16 +48,18 @@ public class Window {
         GLFW.glfwMakeContextCurrent(this.windowID);
         GLFW.glfwSwapInterval(1);
         GLFW.glfwShowWindow(this.windowID);
+        //GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
         GL.createCapabilities();
         GL42.glClearColor(0f, 0f, 0f, 1f);
-        GL42.glEnable(GL42.GL_CULL_FACE);
         GL42.glEnable(GL42.GL_BLEND);
+        GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
         GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
     }
 
-    public void refresh() {
+    public void update() {
+        this.currentTick = System.currentTimeMillis();
         GLFW.glfwSwapBuffers(this.windowID);
         GLFW.glfwPollEvents();
     }

@@ -2,8 +2,6 @@ package doors.io;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.Game;
-
 public class Keyboard {
 
     public static Keyboard KEYBOARD = new Keyboard();
@@ -13,9 +11,9 @@ public class Keyboard {
 
     private void onKeyEvent(long window, int key, int scancode, int action, int mode) {
         if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
-            this.pressedKeys[key] = Game.GAME.currentTick;
+            this.pressedKeys[key] = Window.WINDOW.currentTick;
         } else if (action == GLFW.GLFW_RELEASE) {
-            this.releasedKeys[key] = Game.GAME.currentTick;
+            this.releasedKeys[key] = Window.WINDOW.currentTick;
         }
     }
 
@@ -26,10 +24,11 @@ public class Keyboard {
     }
 
     public boolean isKeyPressed(int key) {
-        return this.pressedKeys[key] == Game.GAME.currentTick;
+        return this.pressedKeys[key] == Window.WINDOW.currentTick;
     }
 
     public void setup() {
         GLFW.glfwSetKeyCallback(Window.WINDOW.windowID, this::onKeyEvent);
+
     }
 }

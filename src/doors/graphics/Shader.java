@@ -1,11 +1,12 @@
 package doors.graphics;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
+import doors.graphics.texture.TextureChannel;
 import doors.utility.FileIO;
+import doors.utility.geometry.Vector3fl;
 
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
@@ -13,14 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Shader {
+    
+    private static String SHADER_DIRECTORY = "data/shader";
 
-    public static Shader SHADER = new Shader("data/shader/core");
+    public static Shader SHADER = new Shader();
 
     private FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
     private Matrix4f workingMatrix = new Matrix4f();
 
     private int programID;
-    private String shaderDirectory;
 
     private int viewRotationMatrixUniformID;
     private int viewTranslationMatrixUniformID;
@@ -30,19 +32,19 @@ public class Shader {
 
     private Map<String,Integer> samplerUniformIDMap;
 
-    public Shader(String shaderDirectory) {
-        this.shaderDirectory = shaderDirectory;
+    public Shader() {
+        this.samplerUniformIDMap = new HashMap<>();
     }
 
     public void setup() {
         this.programID = GL42.glCreateProgram();
 
         var vertexID = GL42.glCreateShader(GL42.GL_VERTEX_SHADER);
-        var vertexShaderPath = Paths.get(this.shaderDirectory, "vertex.glsl").toString();
+        var vertexShaderPath = Paths.get(SHADER_DIRECTORY, "vertex.glsl").toString();
         this.attachShader(vertexID, FileIO.loadText(vertexShaderPath));
 
         var fragmentID = GL42.glCreateShader(GL42.GL_FRAGMENT_SHADER);
-        var fragmentShaderPath = Paths.get(this.shaderDirectory, "fragment.glsl").toString();
+        var fragmentShaderPath = Paths.get(SHADER_DIRECTORY, "fragment.glsl").toString();
         this.attachShader(fragmentID, FileIO.loadText(fragmentShaderPath));
 
         GL42.glLinkProgram(this.programID);
@@ -54,7 +56,6 @@ public class Shader {
         this.modelMatrixUniformID = this.createUniform("model_matrix");
         this.colorUniformID = this.createUniform("color");
 
-        this.samplerUniformIDMap = new HashMap<>();
         for(var entry : TextureChannel.TEXTURE_CHANNEL_LOOKUP.entrySet()) {
             var channelName = entry.getKey();
             var uniformName = entry.getValue().getSamplerUniformName();
@@ -89,14 +90,14 @@ public class Shader {
         }
     }
 
-    public void setModelMatrix(Vector3f position, Vector3f rotation, Vector3f scale) {
+    public void setModelMatrix(Vector3fl position, Vector3fl rotation, Vector3fl scale) {
         workingMatrix
             .identity()
-            .translate(position)
+            .translate(position.x, position.y, position.z)
             .rotateY(rotation.y)
             .rotateX(rotation.x)
             .rotateZ(rotation.z)
-            .scale(scale);
+            .scale(scale.x, scale.y, scale.z);
 
         this.setUniform(this.modelMatrixUniformID, workingMatrix);
     }
@@ -113,7 +114,7 @@ public class Shader {
         this.setUniform(this.viewProjectionMatrixUniformID, matrix);
     }
 
-    public void setColor(Vector3f color) {
+    public void setColor(Vector3fl color) {
         this.setUniform(this.colorUniformID, color);
     }
 
@@ -121,7 +122,7 @@ public class Shader {
         GL42.glUniform1i(uniformID, value);
     }
 
-    private void setUniform(int uniformID, Vector3f value) {
+    private void setUniform(int uniformID, Vector3fl value) {
         GL42.glUniform3f(uniformID, value.x, value.y, value.z);
     }
 
