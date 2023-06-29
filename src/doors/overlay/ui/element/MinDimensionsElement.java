@@ -5,15 +5,18 @@ import doors.utility.geometry.Vector2in;
 public class MinDimensionsElement implements IUIElement {
 
     public AlignmentElement child;
-    public Vector2in dimensions;
+    public Vector2in minDimensions;
     public boolean overflow;
 
     private Vector2in position;
+    private Vector2in dimensions;
 
     public MinDimensionsElement(AlignmentElement child, Vector2in dimensions) {
         this.child = child;
-        this.dimensions = new Vector2in(dimensions);
+        this.minDimensions = new Vector2in(dimensions);
+
         this.position = new Vector2in();
+        this.dimensions = new Vector2in();
     }
 
     @Override
@@ -27,13 +30,14 @@ public class MinDimensionsElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
-        this.child.rebuild();
+    public void setDimensions() {
+        this.child.setDimensions();
+        this.dimensions.set(this.minDimensions);
         this.dimensions.max(this.child.getDimensions());
     }
 
     @Override
-    public void orient(Vector2in origin) {
+    public void setPosition(Vector2in origin) {
         this.position.set(origin);
         var newOrigin = new Vector2in(origin);
         var childDims = this.child.getDimensions();
@@ -54,7 +58,7 @@ public class MinDimensionsElement implements IUIElement {
             newOrigin.y = origin.y + (this.dimensions.y - childDims.y) / 2;
         }
 
-        this.child.orient(newOrigin);
+        this.child.setPosition(newOrigin);
     }
 
     @Override

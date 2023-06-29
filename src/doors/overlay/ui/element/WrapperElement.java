@@ -4,6 +4,16 @@ import doors.utility.geometry.Vector2in;
 
 public class WrapperElement implements IUIElement {
 
+    /* N.B.
+     * Please don't try and get every element sub-classing from this
+     * Lets only limit ourselves to using a WrapperElement for subclasses
+     * that need *at most* to override the writeElement() method
+     *
+     * If we're starting to do overrides for setDimensions/setPositions,
+     * we should probably just implement the interface cleanly from scratch.
+     * Always prefer verbosity over terseness!
+     */
+
     protected IUIElement child;
 
     @Override
@@ -17,13 +27,13 @@ public class WrapperElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
-        this.child.rebuild();
+    public void setDimensions() {
+        this.child.setDimensions();
     }
 
     @Override
-    public void orient(Vector2in origin) {
-        this.child.orient(origin);
+    public void setPosition(Vector2in origin) {
+        this.child.setPosition(origin);
     }
 
     @Override

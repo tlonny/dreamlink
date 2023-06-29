@@ -8,9 +8,9 @@ public interface IUIElement {
 
     public Vector2in getPosition();
 
-    public void rebuild();
+    public void setDimensions();
 
-    public void orient(Vector2in origin);
+    public void setPosition(Vector2in origin);
 
     public void update();
 

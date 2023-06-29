@@ -26,17 +26,17 @@ public class ButtonElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
-        this.paddingChild.rebuild();
+    public void setDimensions() {
+        this.paddingChild.setDimensions();
     }
 
     @Override
-    public void orient(Vector2in origin) {
+    public void setPosition(Vector2in origin) {
         // Because we're re-orienting the child, we need to have an explicit position
         // otherwise the parent is also re-oriented as the position is passed
         // directly from the child...
         this.position.set(origin);
-        this.paddingChild.orient(origin);
+        this.paddingChild.setPosition(origin);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ButtonElement implements IUIElement {
 
         if(this.isDown) {
             var newOrigin = new Vector2in(position).add(1, 1);
-            this.paddingChild.orient(newOrigin);
+            this.paddingChild.setPosition(newOrigin);
         }
     }
 

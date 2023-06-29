@@ -40,9 +40,9 @@ public class MainMenuExploreGameState extends GameState {
 
     @Override
     public void update() {
-        this.root.rebuild();
+        this.root.setDimensions();
         var origin = new Vector2in(Config.RESOLUTION).sub(this.root.getDimensions()).div(2);
-        this.root.orient(origin);
+        this.root.setPosition(origin);
         this.root.update();
         this.root.writeElement();
 

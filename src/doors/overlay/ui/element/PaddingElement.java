@@ -29,18 +29,18 @@ public class PaddingElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
-        this.child.rebuild();
+    public void setDimensions() {
+        this.child.setDimensions();
 
         var extraDims = this.padding * 2;
         this.dimensions.set(this.child.getDimensions()).add(extraDims, extraDims);
     }
 
     @Override
-    public void orient(Vector2in origin) {
+    public void setPosition(Vector2in origin) {
         this.position.set(origin);
         var childOrigin = new Vector2in(origin).add(this.padding, this.padding);
-        this.child.orient(childOrigin);
+        this.child.setPosition(childOrigin);
     }
 
     @Override

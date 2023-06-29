@@ -35,11 +35,11 @@ public class IconElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
+    public void setDimensions() {
     }
 
     @Override
-    public void orient(Vector2in origin) {
+    public void setPosition(Vector2in origin) {
         this.position.set(origin);
     }
 

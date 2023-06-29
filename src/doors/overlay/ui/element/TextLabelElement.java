@@ -37,7 +37,7 @@ public class TextLabelElement implements IUIElement {
     }
 
     @Override
-    public void rebuild() {
+    public void setDimensions() {
         this.dimensions.set(0);
         for(var line : this.linesOfText) {
             this.dimensions.x = Math.max(this.dimensions.x, FontTextureAtlas.CHARACTER_DIMENSIONS.x * line.length());
@@ -46,7 +46,7 @@ public class TextLabelElement implements IUIElement {
     }
 
     @Override
-    public void orient(Vector2in origin) {
+    public void setPosition(Vector2in origin) {
         this.position.set(origin);
     }
 
