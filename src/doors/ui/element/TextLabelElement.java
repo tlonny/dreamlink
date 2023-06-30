@@ -1,7 +1,7 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
-import doors.overlay.SpriteBatch;
-import doors.overlay.font.FontTextureAtlas;
+import doors.graphics.sprite.SpriteBatch;
+import doors.graphics.sprite.font.FontTextureAtlas;
 import doors.utility.geometry.Vector2in;
 import doors.utility.geometry.Vector3fl;
 
@@ -37,7 +37,7 @@ public class TextLabelElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
+    public void calculateDimensions() {
         this.dimensions.set(0);
         for(var line : this.linesOfText) {
             this.dimensions.x = Math.max(this.dimensions.x, FontTextureAtlas.CHARACTER_DIMENSIONS.x * line.length());
@@ -46,7 +46,7 @@ public class TextLabelElement implements IUIElement {
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
+    public void calculatePosition(Vector2in origin) {
         this.position.set(origin);
     }
 

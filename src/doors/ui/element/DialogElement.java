@@ -1,6 +1,6 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
-import doors.overlay.ui.BoxDesign;
+import doors.ui.BoxDesign;
 
 public class DialogElement extends WrapperElement {
 

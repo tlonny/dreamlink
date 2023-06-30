@@ -1,4 +1,4 @@
-package doors.overlay.ui;
+package doors.ui;
 
 import doors.graphics.texture.TextureSample;
 import doors.graphics.texture.TextureSampler;
@@ -11,6 +11,7 @@ public class UITextureAtlas {
     private static TextureSampler SAMPLER = new TextureSampler(TEXTURE_DIMENSIONS, TEXTURE_SCALE);
 
     public static TextureSample BACKGROUND = SAMPLER.createTextureSample(new Vector2in(0, 0));
+    public static TextureSample TITLE_BAR = SAMPLER.createTextureSample(new Vector2in(1, 0));
 
     public static TextureSample WINDOW_TOP_LEFT = SAMPLER.createTextureSample(new Vector2in(1, 6));
     public static TextureSample WINDOW_LEFT = SAMPLER.createTextureSample(new Vector2in(1, 7));
@@ -81,4 +82,5 @@ public class UITextureAtlas {
     public static TextureSample ICON_SETTINGS = SAMPLER.createTextureSample(new Vector2in(29, 11), new Vector2in(2, 2));
     public static TextureSample ICON_QUIT = SAMPLER.createTextureSample(new Vector2in(29, 14), new Vector2in(2, 2));
     public static TextureSample ICON_LOGO = SAMPLER.createTextureSample(new Vector2in(29, 17), new Vector2in(2, 2));
+    public static TextureSample ICON_TICK = SAMPLER.createTextureSample(new Vector2in(29, 20), new Vector2in(2, 2));
 }

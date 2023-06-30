@@ -7,15 +7,15 @@ import org.lwjgl.opengl.GL42;
 import doors.Config;
 import doors.graphics.rendertarget.PhysicalRenderTarget;
 import doors.io.Window;
-import doors.overlay.SpriteBatch;
-import doors.overlay.ui.UITextureAtlas;
-import doors.overlay.ui.element.AlignmentElement;
-import doors.overlay.ui.element.ContainerElement;
-import doors.overlay.ui.element.IUIElement;
-import doors.overlay.ui.element.MenuButtonElement;
-import doors.overlay.ui.element.MenuTitleElement;
-import doors.overlay.ui.element.VerticalSpanElement;
-import doors.overlay.ui.element.WindowElement;
+import doors.graphics.sprite.SpriteBatch;
+import doors.ui.UITextureAtlas;
+import doors.ui.element.AlignmentElement;
+import doors.ui.element.ContainerElement;
+import doors.ui.element.IUIElement;
+import doors.ui.element.MenuButtonElement;
+import doors.ui.element.MenuTitleElement;
+import doors.ui.element.VerticalSpanElement;
+import doors.ui.element.WindowElement;
 import doors.perspective.FlatPerspective;
 import doors.utility.geometry.Vector2in;
 
@@ -46,9 +46,9 @@ public class MainMenuRootGameState extends GameState {
 
     @Override
     public void update() {
-        this.root.setDimensions();
+        this.root.calculateDimensions();
         var origin = new Vector2in(Config.RESOLUTION).sub(this.root.getDimensions()).div(2);
-        this.root.setPosition(origin);
+        this.root.calculatePosition(origin);
         this.root.update();
         this.root.writeElement();
 

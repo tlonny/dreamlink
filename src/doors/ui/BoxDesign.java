@@ -1,8 +1,8 @@
-package doors.overlay.ui;
+package doors.ui;
 
+import doors.graphics.sprite.SpriteBatch;
 import doors.graphics.texture.TextureChannel;
 import doors.graphics.texture.TextureSample;
-import doors.overlay.SpriteBatch;
 import doors.utility.geometry.Vector2in;
 import doors.utility.geometry.Vector3fl;
 

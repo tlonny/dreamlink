@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 public class AlignmentElement extends WrapperElement {
 

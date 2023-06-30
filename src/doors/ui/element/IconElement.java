@@ -1,8 +1,8 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.graphics.texture.TextureChannel;
 import doors.graphics.texture.TextureSample;
-import doors.overlay.SpriteBatch;
+import doors.graphics.sprite.SpriteBatch;
 import doors.utility.geometry.Vector2in;
 import doors.utility.geometry.Vector3fl;
 
@@ -35,11 +35,11 @@ public class IconElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
+    public void calculateDimensions() {
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
+    public void calculatePosition(Vector2in origin) {
         this.position.set(origin);
     }
 

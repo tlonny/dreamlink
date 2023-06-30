@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import java.util.Collection;
 
@@ -31,10 +31,10 @@ public class HorizontalSpanElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
+    public void calculateDimensions() {
         this.dimensions.set(0);
         for(var child : this.children) {
-            child.setDimensions();
+            child.calculateDimensions();
             this.dimensions.x += child.getDimensions().x;
             this.dimensions.y = Math.max(this.dimensions.y, child.getDimensions().y);
         }
@@ -42,7 +42,7 @@ public class HorizontalSpanElement implements IUIElement {
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
+    public void calculatePosition(Vector2in origin) {
         this.position.set(origin);
         var originCursor = new Vector2in(origin);
         for(var child : this.children) {
@@ -55,7 +55,7 @@ public class HorizontalSpanElement implements IUIElement {
             } else {
                 originCursor.y = origin.y + (this.dimensions.y - childDimensions.y) / 2;
             }
-            child.setPosition(originCursor);
+            child.calculatePosition(originCursor);
             originCursor.x += childDimensions.x + this.childPadding;
         }
     }

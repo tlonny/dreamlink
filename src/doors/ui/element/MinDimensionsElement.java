@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.utility.geometry.Vector2in;
 
@@ -30,14 +30,14 @@ public class MinDimensionsElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
-        this.child.setDimensions();
+    public void calculateDimensions() {
+        this.child.calculateDimensions();
         this.dimensions.set(this.minDimensions);
         this.dimensions.max(this.child.getDimensions());
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
+    public void calculatePosition(Vector2in origin) {
         this.position.set(origin);
         var newOrigin = new Vector2in(origin);
         var childDims = this.child.getDimensions();
@@ -58,7 +58,7 @@ public class MinDimensionsElement implements IUIElement {
             newOrigin.y = origin.y + (this.dimensions.y - childDims.y) / 2;
         }
 
-        this.child.setPosition(newOrigin);
+        this.child.calculatePosition(newOrigin);
     }
 
     @Override

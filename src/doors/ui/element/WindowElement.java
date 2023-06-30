@@ -1,10 +1,10 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
-import doors.overlay.ui.BoxDesign;
+import doors.ui.BoxDesign;
 
 public class WindowElement extends WrapperElement {
 
-    private static int WINDOW_PADDING = 2;
+    private static int WINDOW_PADDING = 3;
 
     private PaddingElement paddingChild;
 

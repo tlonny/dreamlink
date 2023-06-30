@@ -1,8 +1,8 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.Config;
 import doors.graphics.texture.TextureChannel;
-import doors.overlay.ui.UITextureAtlas;
+import doors.ui.UITextureAtlas;
 import doors.utility.geometry.Vector2in;
 
 public class ContainerElement extends WrapperElement {

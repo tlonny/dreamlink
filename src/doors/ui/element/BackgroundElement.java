@@ -1,8 +1,8 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.graphics.texture.TextureChannel;
 import doors.graphics.texture.TextureSample;
-import doors.overlay.SpriteBatch;
+import doors.graphics.sprite.SpriteBatch;
 import doors.utility.geometry.Vector3fl;
 
 public class BackgroundElement extends WrapperElement {

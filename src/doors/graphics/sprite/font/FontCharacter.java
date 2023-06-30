@@ -1,4 +1,4 @@
-package doors.overlay.font;
+package doors.graphics.sprite.font;
 
 import java.util.HashMap;
 import java.util.Map;

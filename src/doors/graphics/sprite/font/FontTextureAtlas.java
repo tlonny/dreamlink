@@ -1,4 +1,4 @@
-package doors.overlay.font;
+package doors.graphics.sprite.font;
 
 import doors.graphics.texture.TextureSample;
 import doors.graphics.texture.TextureSampler;

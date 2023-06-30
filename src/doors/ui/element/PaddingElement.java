@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.utility.geometry.Vector2in;
 
@@ -29,18 +29,18 @@ public class PaddingElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
-        this.child.setDimensions();
+    public void calculateDimensions() {
+        this.child.calculateDimensions();
 
         var extraDims = this.padding * 2;
         this.dimensions.set(this.child.getDimensions()).add(extraDims, extraDims);
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
+    public void calculatePosition(Vector2in origin) {
         this.position.set(origin);
         var childOrigin = new Vector2in(origin).add(this.padding, this.padding);
-        this.child.setPosition(childOrigin);
+        this.child.calculatePosition(childOrigin);
     }
 
     @Override

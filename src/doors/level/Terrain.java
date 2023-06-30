@@ -50,22 +50,15 @@ public class Terrain {
         return CURRENT_TERRAIN == this;
     }
 
-    private void setupBlocks() {
-        var blockConfigPath = Paths.get(this.terrainDirectory, "blocks/blocks.json").toString();
-        var blockConfigString = FileIO.loadText(blockConfigPath);
-        var blocksJSON = new JSONObject(blockConfigString);
-
-        var texturePath = Paths.get(this.terrainDirectory, "blocks/atlas.png").toString();
+    private void setupBlocks(JSONObject rootConfig) {
+        var texturePath = Paths.get(this.terrainDirectory, "atlas.png").toString();
         this.texture = new ImageTexture(texturePath);
         WorkQueue.WORK_QUEUE.addWorkUnit(() -> this.texture.setup());
 
-        var textureDimensions = blocksJSON.getJSONArray("texture_dimensions");
-        var textureSampler = new TextureSampler(new Vector2in(
-            textureDimensions.getInt(0),
-            textureDimensions.getInt(1)
-        ));
+        var textureDimensions = rootConfig.getJSONArray("textureDimensions");
+        var textureSampler = new TextureSampler(Vector2in.fromJSONArray(textureDimensions));
 
-        var blocks = blocksJSON.getJSONArray("blocks");
+        var blocks = rootConfig.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
             var block = blocks.getJSONObject(ix);
             var textureSample = block.getJSONArray("texture_sample");
@@ -86,22 +79,12 @@ public class Terrain {
         }
     }
 
-    public void setup() {
-        this.setupBlocks();
-
-        var configPath = Paths.get(this.terrainDirectory, "config.json").toString();
-        var configString = FileIO.loadText(configPath);
-        var json = new JSONObject(configString);
-
-        var dimensions = json.getJSONArray("chunk_dimensions");
-        this.chunkDimensions = new Vector3in(
-            dimensions.getInt(0),
-            dimensions.getInt(1),
-            dimensions.getInt(2)
-        );
+    private void setupChunks(JSONObject rootConfig) {
+        var dimensions = rootConfig.getJSONArray("chunkDimensions");
+        this.chunkDimensions = Vector3in.fromJSONArray(dimensions);
         this.blockDimensions = new Vector3in(this.chunkDimensions).mul(Chunk.DIMENSIONS);
-
         this.chunks = new Chunk[this.chunkDimensions.volume()];
+
         for(var ix = 0; ix < this.chunks.length; ix += 1) {
             var chunkPosition = new Vector3in(ix, this.chunkDimensions).mul(Chunk.DIMENSIONS);
             var chunkPath = Paths.get(this.terrainDirectory, String.format("level/chunk-%03d.blob", ix));
@@ -115,10 +98,12 @@ public class Terrain {
         for(var chunk : this.chunks) {
             WorkQueue.WORK_QUEUE.addWorkUnit(() -> this.processDirtyChunk(chunk));
         }
+    }
 
-        var doors = json.getJSONObject("doors");
-        for(var doorName : doors.keySet()) {
-            var doorConfig = doors.getJSONObject(doorName);
+    private void setupEntities(JSONObject entitiesConfig) {
+        var doorsConfig = entitiesConfig.getJSONObject("doors");
+        for(var doorName : doorsConfig.keySet()) {
+            var doorConfig = doorsConfig.getJSONObject(doorName);
             var position = doorConfig.getJSONArray("position");
             var target = doorConfig.getJSONObject("target");
             var door = new Door(
@@ -134,6 +119,20 @@ public class Terrain {
             );
             this.doors.put(doorName, door);
         }
+    }
+
+    public void setup() {
+        var configPath = Paths.get(this.terrainDirectory, "config.json").toString();
+        var configString = FileIO.loadText(configPath);
+        var rootConfig = new JSONObject(configString);
+
+        var entitiesPath = Paths.get(this.terrainDirectory, "entities.json").toString();
+        var entitiesString = FileIO.loadText(entitiesPath);
+        var entitiesConfig = new JSONObject(entitiesString);
+        
+        this.setupBlocks(rootConfig);
+        this.setupChunks(rootConfig);
+        this.setupEntities(entitiesConfig);
     }
 
     public Block getBlock(Vector3in position) {

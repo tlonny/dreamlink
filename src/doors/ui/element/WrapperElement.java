@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.utility.geometry.Vector2in;
 
@@ -27,13 +27,13 @@ public class WrapperElement implements IUIElement {
     }
 
     @Override
-    public void setDimensions() {
-        this.child.setDimensions();
+    public void calculateDimensions() {
+        this.child.calculateDimensions();
     }
 
     @Override
-    public void setPosition(Vector2in origin) {
-        this.child.setPosition(origin);
+    public void calculatePosition(Vector2in origin) {
+        this.child.calculatePosition(origin);
     }
 
     @Override

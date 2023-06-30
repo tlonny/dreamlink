@@ -1,11 +1,11 @@
-package doors.overlay;
+package doors.graphics.sprite;
 
 import doors.Config;
 import doors.graphics.mesh.Mesh;
 import doors.graphics.mesh.MeshBuffer;
 import doors.graphics.texture.TextureChannel;
 import doors.graphics.texture.TextureSample;
-import doors.overlay.font.FontCharacter;
+import doors.graphics.sprite.font.FontCharacter;
 import doors.utility.CubeFace;
 import doors.utility.geometry.IVector2fl;
 import doors.utility.geometry.Vector2fl;

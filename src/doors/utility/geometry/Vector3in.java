@@ -1,5 +1,7 @@
 package doors.utility.geometry;
 
+import org.json.JSONArray;
+
 public class Vector3in implements IVector3fl, IVector2fl {
 
     public static Vector3in ZERO = new Vector3in(0, 0, 0);
@@ -150,6 +152,14 @@ public class Vector3in implements IVector3fl, IVector2fl {
 
     public String toString() {
         return String.format("Vector3in(%d, %d, %d)", this.x, this.y, this.z);
+    }
+
+    public static Vector3in fromJSONArray(JSONArray array) {
+        return new Vector3in(
+            array.getInt(0),
+            array.getInt(1),
+            array.getInt(2)
+        );
     }
 
 }

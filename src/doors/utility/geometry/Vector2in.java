@@ -1,5 +1,7 @@
 package doors.utility.geometry;
 
+import org.json.JSONArray;
+
 public class Vector2in implements IVector2fl {
 
     public static Vector2in ZERO = new Vector2in(0, 0);
@@ -116,6 +118,13 @@ public class Vector2in implements IVector2fl {
             return false;
         }
         return true;
+    }
+
+    public static Vector2in fromJSONArray(JSONArray array) {
+        return new Vector2in(
+            array.getInt(0),
+            array.getInt(1)
+        );
     }
 
 }

@@ -1,4 +1,4 @@
-package doors.overlay.ui.element;
+package doors.ui.element;
 
 import doors.utility.geometry.Vector2in;
 
@@ -8,9 +8,9 @@ public interface IUIElement {
 
     public Vector2in getPosition();
 
-    public void setDimensions();
+    public void calculateDimensions();
 
-    public void setPosition(Vector2in origin);
+    public void calculatePosition(Vector2in origin);
 
     public void update();
 
