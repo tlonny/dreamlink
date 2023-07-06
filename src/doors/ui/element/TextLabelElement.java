@@ -1,22 +1,24 @@
 package doors.ui.element;
 
-import doors.graphics.sprite.SpriteBatch;
-import doors.graphics.sprite.font.FontTextureAtlas;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.Doors;
+import doors.core.graphics.sprite.FontDecoration;
+import doors.core.ui.IUIElement;
+import doors.core.utility.vector.Vector3fl;
+import doors.graphics.sprite.StandardFont;
+import doors.core.utility.vector.Vector2in;
 
 public class TextLabelElement implements IUIElement {
 
     private String[] linesOfText;
-    public boolean isUnderlined;
+    public FontDecoration fontDecoration;
     public Vector3fl color;
 
     private Vector2in position;
     private Vector2in dimensions;
 
-    public TextLabelElement(String text, boolean isUnderlined, Vector3fl color) {
+    public TextLabelElement(String text, FontDecoration fontDecoration, Vector3fl color) {
         this.setText(text);
-        this.isUnderlined = isUnderlined;
+        this.fontDecoration = fontDecoration;
         this.color = color;
         this.position = new Vector2in();
         this.dimensions = new Vector2in();
@@ -37,16 +39,16 @@ public class TextLabelElement implements IUIElement {
     }
 
     @Override
-    public void calculateDimensions() {
+    public void determineDimensions() {
         this.dimensions.set(0);
         for(var line : this.linesOfText) {
-            this.dimensions.x = Math.max(this.dimensions.x, FontTextureAtlas.CHARACTER_DIMENSIONS.x * line.length());
-            this.dimensions.y += FontTextureAtlas.CHARACTER_DIMENSIONS.y;
+            this.dimensions.x = Math.max(this.dimensions.x, StandardFont.CHARACTER_DIMENSIONS.x * line.length());
+            this.dimensions.y += StandardFont.CHARACTER_DIMENSIONS.y;
         }
     }
 
     @Override
-    public void calculatePosition(Vector2in origin) {
+    public void determinePosition(Vector2in origin) {
         this.position.set(origin);
     }
 
@@ -59,8 +61,8 @@ public class TextLabelElement implements IUIElement {
     public void writeElement() {
         var originCursor = new Vector2in(this.position);
         for(var line : this.linesOfText) {
-            SpriteBatch.SPRITE_BATCH.writeText(line, originCursor, this.isUnderlined, this.color);
-            originCursor.y += FontTextureAtlas.CHARACTER_DIMENSIONS.y;
+            StandardFont.STANDARD_FONT.writeText(Doors.TEXTURE_CHANNEL_FONT, line, originCursor, this.fontDecoration, this.color);
+            originCursor.y += StandardFont.CHARACTER_DIMENSIONS.y;
         }
     }
 

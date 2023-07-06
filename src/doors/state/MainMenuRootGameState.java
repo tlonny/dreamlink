@@ -2,22 +2,18 @@ package doors.state;
 
 import java.util.Arrays;
 
-import org.lwjgl.opengl.GL42;
-
 import doors.Config;
-import doors.graphics.rendertarget.PhysicalRenderTarget;
-import doors.io.Window;
-import doors.graphics.sprite.SpriteBatch;
+import doors.core.io.Mouse;
+import doors.core.io.Window;
+import doors.core.ui.IUIElement;
+import doors.core.ui.VerticalSpanElement;
+import doors.core.ui.alignment.HorizontalAlignmentWrapper;
 import doors.ui.UITextureAtlas;
-import doors.ui.element.AlignmentElement;
 import doors.ui.element.ContainerElement;
-import doors.ui.element.IUIElement;
 import doors.ui.element.MenuButtonElement;
 import doors.ui.element.MenuTitleElement;
-import doors.ui.element.VerticalSpanElement;
 import doors.ui.element.WindowElement;
-import doors.perspective.FlatPerspective;
-import doors.utility.geometry.Vector2in;
+import doors.core.utility.vector.Vector2in;
 
 public class MainMenuRootGameState extends GameState {
 
@@ -31,33 +27,33 @@ public class MainMenuRootGameState extends GameState {
         this.root = new ContainerElement(this.buildWindow());
     }
 
+    @Override
+    public void use() {
+        super.use();
+        Mouse.MOUSE.centerLock = false;
+        Window.WINDOW.setCursorVisibility(true);
+    }
+
     private IUIElement buildWindow() {
         return new WindowElement(
             new VerticalSpanElement(Arrays.asList(
-                new AlignmentElement(new MenuTitleElement(UITextureAtlas.ICON_LOGO, "Doors")),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_EXPLORE, "Explore", MainMenuExploreGameState.MAIN_MENU_EXPLORE_GAME_STATE::use)),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_EDITOR, "Editor", () -> {})),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_SETTINGS, "Settings", () -> {})),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_HELP, "Help", () -> {})),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_QUIT, "Quit", Window.WINDOW::setShouldClose))
+                new HorizontalAlignmentWrapper(new MenuTitleElement(UITextureAtlas.ICON_LOGO, "Doors")),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_EXPLORE, "Explore", MainMenuExploreGameState.MAIN_MENU_EXPLORE_GAME_STATE::use)),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_EDITOR, "Editor", () -> {})),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_SETTINGS, "Settings", () -> {})),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_HELP, "Help", () -> {})),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_QUIT, "Quit", Window.WINDOW::setShouldClose))
             ), 0)
         );
     }
 
     @Override
     public void update() {
-        this.root.calculateDimensions();
+        this.root.determineDimensions();
         var origin = new Vector2in(Config.RESOLUTION).sub(this.root.getDimensions()).div(2);
-        this.root.calculatePosition(origin);
+        this.root.determinePosition(origin);
+
         this.root.update();
         this.root.writeElement();
-
-        PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
-        GL42.glDisable(GL42.GL_DEPTH_TEST);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-        FlatPerspective.FLAT_PERSPECTIVE.apply();
-
-        SpriteBatch.SPRITE_BATCH.updateMesh();
-        SpriteBatch.SPRITE_BATCH.render();
     }
 }

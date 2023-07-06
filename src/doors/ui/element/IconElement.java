@@ -1,10 +1,11 @@
 package doors.ui.element;
 
-import doors.graphics.texture.TextureChannel;
-import doors.graphics.texture.TextureSample;
-import doors.graphics.sprite.SpriteBatch;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.core.graphics.texture.TextureChannel;
+import doors.core.graphics.texture.TextureSample;
+import doors.core.ui.IUIElement;
+import doors.Doors;
+import doors.core.utility.vector.Vector3fl;
+import doors.core.utility.vector.Vector2in;
 
 public class IconElement implements IUIElement {
 
@@ -35,11 +36,11 @@ public class IconElement implements IUIElement {
     }
 
     @Override
-    public void calculateDimensions() {
+    public void determineDimensions() {
     }
 
     @Override
-    public void calculatePosition(Vector2in origin) {
+    public void determinePosition(Vector2in origin) {
         this.position.set(origin);
     }
 
@@ -49,12 +50,12 @@ public class IconElement implements IUIElement {
 
     @Override
     public void writeElement() {
-        SpriteBatch.SPRITE_BATCH.writeSprite(
+        Doors.SPRITE_BATCH.writeSprite(
             this.textureChannel,
             this.textureSample,
             this.position,
             this.dimensions,
-            Vector3fl.ONE
+            Vector3fl.WHITE
         );
     }
     

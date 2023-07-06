@@ -14,7 +14,7 @@
         <joml.version>1.9.22</joml.version>
         <pngdecoder.version>1.0</pngdecoder.version>
         <sponge.version>2.0.0-SNAPSHOT</sponge.version>
-        <exec.mainClass>doors.Game</exec.mainClass>
+        <exec.mainClass>doors.Doors</exec.mainClass>
     </properties>
 
     <build>

@@ -1,10 +1,9 @@
 package doors.ui;
 
-import doors.graphics.sprite.SpriteBatch;
-import doors.graphics.texture.TextureChannel;
-import doors.graphics.texture.TextureSample;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.Doors;
+import doors.core.graphics.texture.TextureSample;
+import doors.core.utility.vector.Vector3fl;
+import doors.core.utility.vector.Vector2in;
 
 public class BoxDesign {
 
@@ -117,91 +116,99 @@ public class BoxDesign {
         var positionCursor = new Vector2in();
         var dimensionsCursor = new Vector2in();
 
-        SpriteBatch.SPRITE_BATCH.writeSprite(
-            TextureChannel.UI_TEXTURE_CHANNEL,
+        Doors.SPRITE_BATCH.writeSprite(
+            Doors.TEXTURE_CHANNEL_UI,
             this.centerTextureSample,
             positionCursor.set(position),
             dimensionsCursor.set(dimensions),
-            Vector3fl.ONE
+            Vector3fl.WHITE
         );
 
         if(renderTop) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var topDimensions = this.topTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.topTextureSample,
                 positionCursor.set(position),
-                dimensionsCursor.set(dimensions.x, this.topTextureSample.dimensions.y),
-                Vector3fl.ONE
+                dimensionsCursor.set(dimensions.x, topDimensions.y),
+                Vector3fl.WHITE
             );
         }
 
         if(renderBottom) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var bottomDimensions = this.bottomTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.bottomTextureSample,
-                positionCursor.set(position).add(0, dimensions.y - this.bottomTextureSample.dimensions.y),
-                dimensionsCursor.set(dimensions.x, this.bottomTextureSample.dimensions.y),
-                Vector3fl.ONE
+                positionCursor.set(position).add(0, dimensions.y - bottomDimensions.y),
+                dimensionsCursor.set(dimensions.x, bottomDimensions.y),
+                Vector3fl.WHITE
             );
         }
 
         if(renderLeft) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var leftDimensions = this.leftTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.leftTextureSample,
                 positionCursor.set(position),
-                dimensionsCursor.set(this.leftTextureSample.dimensions.x, dimensions.y),
-                Vector3fl.ONE
+                dimensionsCursor.set(leftDimensions.x, dimensions.y),
+                Vector3fl.WHITE
             );
         }
 
         if(renderRight) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var rightDimensions = this.rightTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.rightTextureSample,
-                positionCursor.set(position).add(dimensions.x - this.rightTextureSample.dimensions.x, 0),
-                dimensionsCursor.set(this.rightTextureSample.dimensions.x, dimensions.y),
-                Vector3fl.ONE
+                positionCursor.set(position).add(dimensions.x - rightDimensions.x, 0),
+                dimensionsCursor.set(rightDimensions.x, dimensions.y),
+                Vector3fl.WHITE
             );
         }
 
         if(renderTop && renderLeft) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var topLeftDimensions = this.topLeftTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.topLeftTextureSample,
                 positionCursor.set(position),
-                dimensionsCursor.set(this.topLeftTextureSample.dimensions),
-                Vector3fl.ONE
+                dimensionsCursor.set(topLeftDimensions),
+                Vector3fl.WHITE
             );
         }
 
         if(renderTop && renderRight) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var topRightDimensions = this.topRightTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.topRightTextureSample,
-                positionCursor.set(position).add(dimensions.x - this.topRightTextureSample.dimensions.x, 0),
-                dimensionsCursor.set(this.topRightTextureSample.dimensions),
-                Vector3fl.ONE
+                positionCursor.set(position).add(dimensions.x - topRightDimensions.x, 0),
+                dimensionsCursor.set(topRightDimensions),
+                Vector3fl.WHITE
             );
         }
 
         if(renderBottom && renderLeft) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var bottomLeftDimensions = this.bottomLeftTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.bottomLeftTextureSample,
-                positionCursor.set(position).add(0, dimensions.y - this.bottomLeftTextureSample.dimensions.y),
-                dimensionsCursor.set(this.bottomLeftTextureSample.dimensions),
-                Vector3fl.ONE
+                positionCursor.set(position).add(0, dimensions.y - bottomLeftDimensions.y),
+                dimensionsCursor.set(bottomLeftDimensions),
+                Vector3fl.WHITE
             );
         }
 
         if(renderBottom && renderRight) {
-            SpriteBatch.SPRITE_BATCH.writeSprite(
-                TextureChannel.UI_TEXTURE_CHANNEL,
+            var bottomRightDimensions = this.bottomRightTextureSample.dimensions;
+            Doors.SPRITE_BATCH.writeSprite(
+                Doors.TEXTURE_CHANNEL_UI,
                 this.bottomRightTextureSample,
-                positionCursor.set(position).add(dimensions).sub(this.bottomRightTextureSample.dimensions),
-                dimensionsCursor.set(this.bottomRightTextureSample.dimensions),
-                Vector3fl.ONE
+                positionCursor.set(position).add(dimensions).sub(bottomRightDimensions),
+                dimensionsCursor.set(bottomRightDimensions),
+                Vector3fl.WHITE
             );
         }
 

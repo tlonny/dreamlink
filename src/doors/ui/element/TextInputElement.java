@@ -2,33 +2,35 @@ package doors.ui.element;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.io.Keyboard;
-import doors.io.Mouse;
-import doors.io.TypedCharacters;
-import doors.graphics.sprite.SpriteBatch;
-import doors.graphics.sprite.font.FontTextureAtlas;
+import doors.core.io.Keyboard;
+import doors.core.io.TypedCharacters;
+import doors.core.ui.IUIElement;
+import doors.core.ui.EventState;
+import doors.Doors;
+import doors.core.graphics.sprite.FontDecoration;
 import doors.ui.BoxDesign;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.core.utility.vector.Vector3fl;
+import doors.graphics.sprite.StandardFont;
+import doors.core.utility.vector.Vector2in;
 
 public class TextInputElement implements IUIElement {
 
     private static Vector2in CHARACTER_PADDING = new Vector2in(3,2);
 
-    private StringBuilder text;
+    public StringBuilder text;
 
     private int maxLength;
     private long pressTime;
-
-    private boolean isFocus;
     private Vector2in position;
     private Vector2in dimensions;
+    private EventState eventState;
 
     public TextInputElement(int maxLength) {
         this.text = new StringBuilder();
         this.maxLength = maxLength;
         this.position = new Vector2in();
         this.dimensions = new Vector2in();
+        this.eventState = new EventState(this);
         this.setMaxLength(maxLength);
     }
 
@@ -36,13 +38,9 @@ public class TextInputElement implements IUIElement {
         this.maxLength = maxLength;
         this.dimensions.set(
             // We add 1 to the max length to account for the blinking cursor
-            FontTextureAtlas.CHARACTER_DIMENSIONS.x * (maxLength + 1) + CHARACTER_PADDING.x * 2,
-            FontTextureAtlas.CHARACTER_DIMENSIONS.y + CHARACTER_PADDING.y * 2
+            StandardFont.CHARACTER_DIMENSIONS.x * (maxLength + 1) + CHARACTER_PADDING.x * 2,
+            StandardFont.CHARACTER_DIMENSIONS.y + CHARACTER_PADDING.y * 2
         );
-    }
-
-    public String getText() {
-        return this.text.toString();
     }
 
     @Override
@@ -56,52 +54,53 @@ public class TextInputElement implements IUIElement {
     }
 
     @Override
-    public void calculateDimensions() {
+    public void determineDimensions() {
 
     }
 
     @Override
-    public void calculatePosition(Vector2in origin) {
+    public void determinePosition(Vector2in origin) {
         this.position.set(origin);
     }
 
     @Override
     public void update() {
-        var mousePosition = Mouse.MOUSE.position;
-        var position = this.getPosition();
-        var dimensions = this.getDimensions();
-        if(Mouse.MOUSE.isLeftMouseButtonPressed()) {
-            this.isFocus = mousePosition.isWithinBounds(position, dimensions);
+        this.eventState.update();
+
+        if(!this.eventState.isFocused) {
+            return;
+        }
+
+        for(var character : TypedCharacters.TYPED_CHARACTERS.characters) {
+            if(this.text.length() >= this.maxLength) {
+                break;
+            }
+
             this.pressTime = System.currentTimeMillis();
+            this.text.append(character);
         }
 
-        if(this.isFocus) {
-            for(var character : TypedCharacters.TYPED_CHARACTERS.characters) {
-                if(this.text.length() >= this.maxLength) {
-                    break;
-                }
-
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_BACKSPACE)) {
+            if(this.text.length() > 0) {
                 this.pressTime = System.currentTimeMillis();
-                this.text.append(character);
+                this.text.deleteCharAt(this.text.length() - 1);
             }
-
-            if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_BACKSPACE)) {
-                if(this.text.length() > 0) {
-                    this.pressTime = System.currentTimeMillis();
-                    this.text.deleteCharAt(this.text.length() - 1);
-                }
-            }
-
         }
-
     }
 
     @Override
     public void writeElement() {
         var cursor = new Vector2in(this.getPosition()).add(CHARACTER_PADDING);
-        BoxDesign.DIALOG.writeBox(this.getPosition(), this.getDimensions());
-        var isBlinkingCursor = (System.currentTimeMillis() - this.pressTime) % 1000 < 500 && this.isFocus;
-        var toRender = this.getText() + (isBlinkingCursor ? "|" : "");
-        SpriteBatch.SPRITE_BATCH.writeText(toRender, cursor, false, Vector3fl.ZERO);
+        var boxDesign = this.eventState.isFocused ? BoxDesign.DIALOG : BoxDesign.BUTTON_PRESSED;
+        boxDesign.writeBox(this.getPosition(), this.getDimensions());
+        var isBlinkingCursor = (System.currentTimeMillis() - this.pressTime) % 1000 < 500 && this.eventState.isFocused;
+        var toRender = this.text.toString() + (isBlinkingCursor ? "|" : "");
+        StandardFont.STANDARD_FONT.writeText(
+            Doors.TEXTURE_CHANNEL_FONT,
+            toRender, 
+            cursor, 
+            FontDecoration.NORMAL, 
+            Vector3fl.BLACK
+        );
     }
 }

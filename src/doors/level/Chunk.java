@@ -3,23 +3,26 @@ package doors.level;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import doors.graphics.mesh.Mesh;
-import doors.utility.geometry.Vector3in;
+import doors.core.graphics.mesh.Mesh;
+import doors.core.utility.vector.Vector3in;
 
 public class Chunk {
 
     public static Vector3in DIMENSIONS = new Vector3in(16, 16, 16);
 
-    public Mesh mesh = new Mesh();
-    public Vector3in position;
+    public final Mesh mesh;
+    public final Vector3in position;
+
     public boolean isDirty;
-    public int[] blockData;
+
+    private int[] blockData;
     private String path;
 
     public Chunk(Vector3in position, String path) {
+        this.mesh = new Mesh();
         this.position = position;
         this.path = path;
-        this.blockData = new int[DIMENSIONS.volume()];
+        this.blockData = new int[DIMENSIONS.getIntVolume()];
     }
 
     public void setup() {

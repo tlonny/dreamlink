@@ -1,8 +1,8 @@
 package doors.ui;
 
-import doors.graphics.texture.TextureSample;
-import doors.graphics.texture.TextureSampler;
-import doors.utility.geometry.Vector2in;
+import doors.core.graphics.texture.TextureSample;
+import doors.core.graphics.texture.TextureSampler;
+import doors.core.utility.vector.Vector2in;
 
 public class UITextureAtlas {
 
@@ -72,9 +72,6 @@ public class UITextureAtlas {
     public static TextureSample DIALOG_TOP_RIGHT = SAMPLER.createTextureSample(new Vector2in(12, 6));
     public static TextureSample DIALOG_RIGHT = SAMPLER.createTextureSample(new Vector2in(12, 7));
     public static TextureSample DIALOG_BOTTOM_RIGHT = SAMPLER.createTextureSample(new Vector2in(12, 8));
-
-    public static TextureSample CURSOR_ARROW = SAMPLER.createTextureSample(new Vector2in(1, 3), new Vector2in(2, 2));
-    public static TextureSample CURSOR_POINTER = SAMPLER.createTextureSample(new Vector2in(1, 1), new Vector2in(2, 2));
 
     public static TextureSample ICON_EXPLORE = SAMPLER.createTextureSample(new Vector2in(29, 2), new Vector2in(2, 2));
     public static TextureSample ICON_EDITOR = SAMPLER.createTextureSample(new Vector2in(29, 5), new Vector2in(2, 2));

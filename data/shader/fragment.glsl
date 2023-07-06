@@ -10,17 +10,17 @@ out vec4 frag_color;
 uniform sampler2D font_sampler;
 uniform sampler2D ui_sampler;
 uniform sampler2D entity_sampler;
-uniform sampler2D terrain_sampler;
+uniform sampler2D block_sampler;
 uniform sampler2D portal_sampler;
-uniform sampler2D world_sampler;
+uniform sampler2D current_sampler;
 uniform vec3 color;
 
 const int FONT_TEXTURE_UNIT = 1;
 const int UI_TEXTURE_UNIT = 2;
 const int ENTITY_TEXTURE_UNIT = 3;
-const int TERRAIN_TEXTURE_UNIT = 4;
+const int BLOCK_TEXTURE_UNIT = 4;
 const int PORTAL_TEXTURE_UNIT = 5;
-const int WORLD_TEXTURE_UNIT = 6;
+const int CURRENT_TEXTURE_UNIT = 6;
 
 vec4 sample(vec2 offset)
 {
@@ -32,12 +32,12 @@ vec4 sample(vec2 offset)
             return texture(ui_sampler, offset);
         case ENTITY_TEXTURE_UNIT:
             return texture(entity_sampler, offset);
-        case TERRAIN_TEXTURE_UNIT:
-            return texture(terrain_sampler, offset);
+        case BLOCK_TEXTURE_UNIT:
+            return texture(block_sampler, offset);
         case PORTAL_TEXTURE_UNIT:
             return texture(portal_sampler, offset);
-        case WORLD_TEXTURE_UNIT:
-            return texture(world_sampler, offset);
+        case CURRENT_TEXTURE_UNIT:
+            return texture(current_sampler, offset);
         default:
             return vec4(1.0, 0.0, 0.0, 1.0);
     }

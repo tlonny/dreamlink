@@ -1,6 +1,6 @@
 {
     "cullFaces": false,
-    "origin": [1.0, 1.0, 0.0],
+    "origin": [1.0, 0.0, 0.0],
     "fragments": [{
         "texture": {
             "channel": "portal",

@@ -1,0 +1,100 @@
+package doors.core.graphics.mesh;
+
+import org.lwjgl.opengl.GL42;
+
+import doors.core.graphics.Shader;
+import doors.core.utility.vector.IVector3fl;
+import doors.core.utility.vector.Vector3fl;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+public class Mesh {
+
+    private static Mesh USED_MESH = null;
+
+    private int POSITION_LOCATION = 0;
+    private int NORMAL_LOCATION = 1;
+    private int TEXTURE_OFFSET_LOCATION = 2;
+    private int PACKED_COLOR_TEXTURE_UNIT_LOCATION = 3;
+
+    private int vertexArrayID;
+    private int indexVertexBufferID;
+    private int positionVertexBufferID;
+    private int normalVertexBufferID;
+    private int textureOffsetVertexBufferID;
+    private int packedColorTextureUnitBufferID;
+    private int numIndices;
+
+    public boolean cullFaces;
+
+    public Mesh() {
+        this.cullFaces = true;
+    }
+
+    public void setup() {
+        this.vertexArrayID = GL42.glGenVertexArrays();
+        this.useMesh();
+
+        this.indexVertexBufferID = GL42.glGenBuffers();
+        this.positionVertexBufferID = GL42.glGenBuffers();
+        this.normalVertexBufferID = GL42.glGenBuffers();
+        this.textureOffsetVertexBufferID = GL42.glGenBuffers();
+        this.packedColorTextureUnitBufferID = GL42.glGenBuffers();
+    }
+
+
+    private void useMesh() {
+        if(this == USED_MESH || this.vertexArrayID == 0) {
+            return;
+        }
+
+        if(this.cullFaces) {
+            GL42.glEnable(GL42.GL_CULL_FACE);
+        } else {
+            GL42.glDisable(GL42.GL_CULL_FACE);
+        }
+
+        GL42.glBindVertexArray(this.vertexArrayID);
+
+        USED_MESH = this;
+    }
+
+    public void loadIndexData(int vertexBufferID, IntBuffer buffer) {
+        GL42.glBindBuffer(GL42.GL_ELEMENT_ARRAY_BUFFER, vertexBufferID);
+        GL42.glBufferData(GL42.GL_ELEMENT_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
+    }
+
+    public void loadIntData(int location, int size, int vertexBufferID, IntBuffer buffer) {
+        GL42.glBindBuffer(GL42.GL_ARRAY_BUFFER, vertexBufferID);
+        GL42.glBufferData(GL42.GL_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
+        GL42.glVertexAttribIPointer(location, size, GL42.GL_INT, 0, 0);
+        GL42.glEnableVertexAttribArray(location);
+    }
+
+    public void loadFloatData(int location, int size, int vertexBufferID, FloatBuffer buffer) {
+        GL42.glBindBuffer(GL42.GL_ARRAY_BUFFER, vertexBufferID);
+        GL42.glBufferData(GL42.GL_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
+        GL42.glVertexAttribPointer(location, size, GL42.GL_FLOAT, false, 0, 0);
+        GL42.glEnableVertexAttribArray(location);
+    }
+
+    public void loadDataFromMeshBuffer(MeshBuffer meshBuffer) {
+        this.useMesh();
+        this.numIndices = meshBuffer.indexBuffer.remaining();
+        this.loadIndexData(this.indexVertexBufferID, meshBuffer.indexBuffer);
+        this.loadFloatData(POSITION_LOCATION, 3, this.positionVertexBufferID, meshBuffer.positionBuffer);
+        this.loadFloatData(NORMAL_LOCATION, 3, this.normalVertexBufferID, meshBuffer.normalBuffer);
+        this.loadFloatData(TEXTURE_OFFSET_LOCATION, 2, this.textureOffsetVertexBufferID, meshBuffer.textureOffsetBuffer);
+        this.loadIntData(PACKED_COLOR_TEXTURE_UNIT_LOCATION, 1, this.packedColorTextureUnitBufferID, meshBuffer.packedColorTextureUnitBuffer);
+    }
+
+    public void render(IVector3fl position, Vector3fl rotation, Vector3fl scale, Vector3fl color) {
+        this.useMesh();
+        Shader.SHADER.setModelMatrix(position, rotation, scale);
+        Shader.SHADER.setColor(color);
+        GL42.glDrawElements(GL42.GL_TRIANGLES, this.numIndices, GL42.GL_UNSIGNED_INT, 0);
+    }
+
+}
+

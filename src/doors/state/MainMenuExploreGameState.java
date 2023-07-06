@@ -2,29 +2,26 @@ package doors.state;
 
 import java.util.Arrays;
 
-import org.lwjgl.opengl.GL42;
-
 import doors.Config;
-import doors.graphics.rendertarget.PhysicalRenderTarget;
-import doors.graphics.texture.TextureChannel;
-import doors.graphics.sprite.SpriteBatch;
+import doors.core.graphics.sprite.FontDecoration;
+import doors.core.io.Mouse;
+import doors.core.io.Window;
+import doors.core.ui.IUIElement;
+import doors.core.ui.PaddingElement;
+import doors.core.ui.VerticalSpanElement;
+import doors.core.ui.alignment.HorizontalAlignment;
+import doors.core.ui.alignment.HorizontalAlignmentWrapper;
+import doors.state.explore.ExploreGameState;
 import doors.ui.UITextureAtlas;
-import doors.ui.element.AlignmentElement;
+import doors.ui.element.BorderElement;
 import doors.ui.element.ContainerElement;
-import doors.ui.element.HorizontalSpanElement;
-import doors.ui.element.IUIElement;
-import doors.ui.element.IconElement;
 import doors.ui.element.MenuButtonElement;
 import doors.ui.element.MenuTitleElement;
 import doors.ui.element.TextInputElement;
 import doors.ui.element.TextLabelElement;
-import doors.ui.element.VerticalSpanElement;
 import doors.ui.element.WindowElement;
-import doors.ui.element.AlignmentElement.HorizontalAlignment;
-import doors.ui.element.ButtonElement;
-import doors.perspective.FlatPerspective;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.core.utility.vector.Vector3fl;
+import doors.core.utility.vector.Vector2in;
 
 public class MainMenuExploreGameState extends GameState {
 
@@ -38,46 +35,52 @@ public class MainMenuExploreGameState extends GameState {
         this.root = new ContainerElement(this.buildWindow());
     }
 
+    @Override
+    public void use() {
+        super.use();
+        Mouse.MOUSE.centerLock = false;
+        Window.WINDOW.setCursorVisibility(true);
+    }
+
     public MainMenuExploreGameState() {
         this.levelInput = new TextInputElement(20);
+        this.levelInput.text.append("scratch/sphere_2");
     }
 
     private void explore() {
-        ExploreGameState.EXPLORE_GAME_STATE.use(this.levelInput.getText());
+        ExploreGameState.EXPLORE_GAME_STATE.use(this.levelInput.text.toString());
     }
 
     private IUIElement buildWindow() {
         return new WindowElement(
             new VerticalSpanElement(Arrays.asList(
-                new AlignmentElement(new MenuTitleElement(UITextureAtlas.ICON_EXPLORE, "Doors.Explore")),
-                new AlignmentElement(new VerticalSpanElement(Arrays.asList(
-                    new AlignmentElement(new TextLabelElement("Level:", false, Vector3fl.ZERO), HorizontalAlignment.LEFT),
-                    new AlignmentElement(
-                        new HorizontalSpanElement(Arrays.asList(
-                            new AlignmentElement(this.levelInput),
-                            new AlignmentElement(new ButtonElement(new IconElement(TextureChannel.UI_TEXTURE_CHANNEL, UITextureAtlas.ICON_TICK), this::explore))
-                        ),4)
+                new HorizontalAlignmentWrapper(
+                    new BorderElement(
+                        new PaddingElement(
+                            new VerticalSpanElement(Arrays.asList(
+                                new HorizontalAlignmentWrapper(new MenuTitleElement(UITextureAtlas.ICON_EXPLORE, "Doors.Explore")),
+                                new HorizontalAlignmentWrapper(new VerticalSpanElement(Arrays.asList(
+                                    new HorizontalAlignmentWrapper(new TextLabelElement("Level:", FontDecoration.NORMAL, Vector3fl.BLACK), HorizontalAlignment.LEFT),
+                                    new HorizontalAlignmentWrapper(this.levelInput)
+                                ), 0))
+                            ), 0),
+                            0, 10, 0, 0
+                        ),
+                        false, true, false, false
                     )
-                ), 0)),
-                new AlignmentElement(new MenuButtonElement(UITextureAtlas.ICON_QUIT, "Back", MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE::use))
+                ),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_TICK, "Go", this::explore)),
+                new HorizontalAlignmentWrapper(new MenuButtonElement(UITextureAtlas.ICON_QUIT, "Back", MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE::use))
             ), 4)
         );
     }
 
     @Override
     public void update() {
-        this.root.calculateDimensions();
+        this.root.determineDimensions();
         var origin = new Vector2in(Config.RESOLUTION).sub(this.root.getDimensions()).div(2);
-        this.root.calculatePosition(origin);
+        this.root.determinePosition(origin);
         this.root.update();
         this.root.writeElement();
-
-        PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
-        GL42.glDisable(GL42.GL_DEPTH_TEST);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-        FlatPerspective.FLAT_PERSPECTIVE.apply();
-
-        SpriteBatch.SPRITE_BATCH.updateMesh();
-        SpriteBatch.SPRITE_BATCH.render();
     }
 }

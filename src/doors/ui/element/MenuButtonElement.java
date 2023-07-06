@@ -2,11 +2,18 @@ package doors.ui.element;
 
 import java.util.Arrays;
 
-import doors.graphics.texture.TextureChannel;
-import doors.graphics.texture.TextureSample;
-import doors.utility.Functional.IAction;
-import doors.utility.geometry.Vector2in;
-import doors.utility.geometry.Vector3fl;
+import doors.Doors;
+import doors.core.graphics.sprite.FontDecoration;
+import doors.core.graphics.texture.TextureSample;
+import doors.core.ui.HorizontalSpanElement;
+import doors.core.ui.MinDimensionsElement;
+import doors.core.ui.PaddingElement;
+import doors.core.ui.WrapperElement;
+import doors.core.ui.alignment.BoxAlignmentWrapper;
+import doors.core.ui.alignment.VerticalAlignmentWrapper;
+import doors.core.utility.Functional.IAction;
+import doors.core.utility.vector.Vector3fl;
+import doors.core.utility.vector.Vector2in;
 
 public class MenuButtonElement extends WrapperElement {
 
@@ -16,11 +23,11 @@ public class MenuButtonElement extends WrapperElement {
         this.child = new PaddingElement(
             new ButtonElement(
                 new MinDimensionsElement(
-                    new AlignmentElement(
+                    new BoxAlignmentWrapper(
                         new HorizontalSpanElement(
                             Arrays.asList(
-                                new AlignmentElement(new IconElement(TextureChannel.UI_TEXTURE_CHANNEL, icon)),
-                                new AlignmentElement(new TextLabelElement(text, false, Vector3fl.ZERO))
+                                new VerticalAlignmentWrapper(new IconElement(Doors.TEXTURE_CHANNEL_UI, icon)),
+                                new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.NORMAL, Vector3fl.BLACK))
                             ), 4
                         )
                     ),

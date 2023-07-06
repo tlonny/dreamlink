@@ -1,7 +1,7 @@
 package doors;
 
-import doors.io.TypedCharacters;
-import doors.io.Window;
+import doors.core.io.TypedCharacters;
+import doors.core.io.Window;
 
 public class ExitListener {
 

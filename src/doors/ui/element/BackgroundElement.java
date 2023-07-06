@@ -1,9 +1,11 @@
 package doors.ui.element;
 
-import doors.graphics.texture.TextureChannel;
-import doors.graphics.texture.TextureSample;
-import doors.graphics.sprite.SpriteBatch;
-import doors.utility.geometry.Vector3fl;
+import doors.core.graphics.texture.TextureChannel;
+import doors.core.graphics.texture.TextureSample;
+import doors.core.ui.IUIElement;
+import doors.core.ui.WrapperElement;
+import doors.Doors;
+import doors.core.utility.vector.Vector3fl;
 
 public class BackgroundElement extends WrapperElement {
 
@@ -18,12 +20,12 @@ public class BackgroundElement extends WrapperElement {
 
     @Override
     public void writeElement() {
-        SpriteBatch.SPRITE_BATCH.writeSprite(
+        Doors.SPRITE_BATCH.writeSprite(
             this.textureChannel,
             this.textureSample,
             this.getPosition(),
             this.getDimensions(),
-            Vector3fl.ONE
+            Vector3fl.WHITE
         );
         super.writeElement();
     }
