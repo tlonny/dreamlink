@@ -76,7 +76,7 @@ public class Camera {
 
         for(var door : ExploreGameState.EXPLORE_GAME_STATE.currentLevel.doors.values()) {
             var distance = door.position.getDistance(this.position);
-            if(distance < distanceToTarget && ExploreGameState.EXPLORE_GAME_STATE.openDoor != door) {
+            if(distance < distanceToTarget) {
                 target = door;
                 distanceToTarget = distance;
             }

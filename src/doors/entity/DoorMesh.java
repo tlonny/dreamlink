@@ -1,10 +1,7 @@
 package doors.entity;
 
 import doors.core.graphics.cube.CubeMesh;
-import doors.core.graphics.cube.CubeMeshBufferWriter;
 import doors.core.graphics.cube.CubeSchema;
-import doors.core.graphics.mesh.Mesh;
-import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.utility.vector.Vector3fl;
 
 public class DoorMesh extends CubeMesh {
@@ -39,9 +36,23 @@ public class DoorMesh extends CubeMesh {
         2
     );
 
+    private static CubeSchema LOCKED_SCHEMA = new CubeSchema(
+        new Vector3fl(-1f, 0f, 0f),
+        new Vector3fl(0f, 0f, 0f),
+        new Vector3fl(2f, 2f, 0.25f),
+        EntityTextureAtlas.DOOR_LOCKED_FACE,
+        EntityTextureAtlas.DOOR_LOCKED_FACE,
+        EntityTextureAtlas.DOOR_END,
+        EntityTextureAtlas.DOOR_END,
+        EntityTextureAtlas.DOOR_SIDE,
+        EntityTextureAtlas.DOOR_SIDE,
+        3
+    );
+
     private static CubeSchema[] CUBE_SCHEMAS = new CubeSchema[] {
         LEFT_DOOR_SCHEMA,
-        RIGHT_DOOR_SCHEMA
+        RIGHT_DOOR_SCHEMA,
+        LOCKED_SCHEMA
     };
 
     public static DoorMesh DOOR_MESH = new DoorMesh();
@@ -53,6 +64,13 @@ public class DoorMesh extends CubeMesh {
         this.rotationBuffer = new Vector3fl();
     }
 
+    public void renderLocked(Vector3fl position, Vector3fl rotation) {
+        LOCKED_SCHEMA.transform(Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ONE);
+        LEFT_DOOR_SCHEMA.transform(Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ZERO);
+        RIGHT_DOOR_SCHEMA.transform(Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ZERO);
+        super.render(position, rotation);
+    }
+
     public void render(Vector3fl position, Vector3fl rotation, float openFactor) {
         var modulated = 1f / (1f + (float)Math.exp((0.5f - openFactor) * 10f));
         if(modulated < 0.01f) {
@@ -60,10 +78,12 @@ public class DoorMesh extends CubeMesh {
         }
 
         var doorRotation = modulated * DOOR_OPEN_ROTATION;
+
+        LOCKED_SCHEMA.transform(Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ZERO);
         this.rotationBuffer.set(0f, doorRotation, 0f);
-        RIGHT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer);
+        RIGHT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer, Vector3fl.ONE);
         this.rotationBuffer.mul(-1f);
-        LEFT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer);
+        LEFT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer, Vector3fl.ONE);
         super.render(position, rotation);
     }
 

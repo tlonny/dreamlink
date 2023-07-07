@@ -43,7 +43,8 @@ public class ExploreGameState extends GameState {
     }
 
     public void openDoor(Door door) {
-        if(this.openDoor == door) {
+        var targetLevel = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
+        if(this.openDoor == door || !targetLevel.isReady) {
             return;
         }
 
@@ -115,6 +116,15 @@ public class ExploreGameState extends GameState {
         this.portalLevel.render();
 
         for(var door : this.portalLevel.doors.values()) {
+            var level = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
+            if(!level.isReady) {
+                DoorMesh.DOOR_MESH.renderLocked(
+                    door.position,
+                    door.orientation.rotation
+                );
+                continue;
+            }
+
             DoorMesh.DOOR_MESH.render(
                 door.position,
                 door.orientation.rotation,
@@ -145,25 +155,38 @@ public class ExploreGameState extends GameState {
         }
 
         for(var door : this.currentLevel.doors.values()) {
+            var level = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
+            if(!level.isReady) {
+                DoorMesh.DOOR_MESH.renderLocked(
+                    door.position,
+                    door.orientation.rotation
+                );
+                continue;
+            }
+
             if(door == this.openDoor) {
                 DoorMesh.DOOR_MESH.render(
                     door.position,
                     door.orientation.rotation,
                     this.openFactor
                 );
-            } else if (door == this.shutDoor) {
+                continue;
+            } 
+
+            if (door == this.shutDoor) {
                 DoorMesh.DOOR_MESH.render(
                     door.position,
                     door.orientation.rotation,
                     1f - this.openFactor
                 );
-            } else {
-                DoorMesh.DOOR_MESH.render(
-                    door.position,
-                    door.orientation.rotation,
-                    0f
-                );
+                continue;
             }
+
+            DoorMesh.DOOR_MESH.render(
+                door.position,
+                door.orientation.rotation,
+                0f
+            );
         }
     }
 

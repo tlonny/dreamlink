@@ -97,9 +97,9 @@ public class CubeSchema {
         return this.leftSample;
     }
 
-    public void transform(Vector3fl position, Vector3fl rotation) {
+    public void transform(Vector3fl position, Vector3fl rotation, Vector3fl scale) {
         this.positionBuffer.set(position).add(this.origin);
-        Shader.SHADER.setCubeTransformer(this.cubeID, this.positionBuffer, rotation);
+        Shader.SHADER.setCubeTransformer(this.cubeID, this.positionBuffer, rotation, scale);
     }
 
 }

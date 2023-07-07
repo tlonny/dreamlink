@@ -27,12 +27,17 @@ public class Level {
     public String levelDirectory;
     public Map<Integer, Block> blockMap;
     public Map<String, Door> doors;
+    public boolean isReady;
 
     public Level(String levelDirectory) {
         this.levelDirectory = levelDirectory;
         this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
         this.blockWriter = new BlockFaceMeshBufferWriter(MeshBuffer.DEFAULT_MESH_BUFFER);
+    }
+
+    private void markAsReady() {
+        this.isReady = true;
     }
 
     private void setupBlocks(JSONObject rootConfig) {
@@ -116,6 +121,7 @@ public class Level {
         this.setupBlocks(rootConfig);
         this.setupChunks(rootConfig);
         this.setupEntities(entitiesConfig);
+        WorkQueue.WORK_QUEUE.addWorkUnit(this::markAsReady);
     }
 
     public Block getBlock(Vector3in position) {

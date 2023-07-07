@@ -77,7 +77,7 @@ public class Doors extends Game {
 
         Camera.CAMERA.position.set(10,2,12);
         MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE.use();
-        ExploreGameState.EXPLORE_GAME_STATE.use("scratch/sphere_2");
+        //ExploreGameState.EXPLORE_GAME_STATE.use("scratch/sphere_2");
     }
 
     @Override

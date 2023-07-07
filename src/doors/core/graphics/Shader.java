@@ -97,7 +97,7 @@ public class Shader {
         }
 
         this.workingMatrix.identity();
-        this.setCubeTransformer(DEFAULT_CUBE_ID, Vector3fl.ZERO, Vector3fl.ZERO);
+        this.setCubeTransformer(DEFAULT_CUBE_ID, Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ONE);
     }
 
     public void setTextureSampleMode(TextureSampleMode mode) {
@@ -134,9 +134,10 @@ public class Shader {
         this.setUniform(this.uniformViewProjectionMatrixID, this.workingMatrix);
     }
 
-    public void setCubeTransformer(int cubeID, Vector3fl position, Vector3fl rotation) {
+    public void setCubeTransformer(int cubeID, Vector3fl position, Vector3fl rotation, Vector3fl scale) {
         this.workingMatrix.identity()
             .translate(position.getFloatX(), position.getFloatY(), position.getFloatZ())
+            .scale(scale.getFloatX(), scale.getFloatY(), scale.getFloatZ())
             .rotateY(rotation.getFloatY())
             .rotateX(rotation.getFloatX());
         var offsetID = this.uniformCubeTransformerMatricesID + cubeID;
