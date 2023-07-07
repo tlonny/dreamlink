@@ -10,7 +10,6 @@ import doors.Doors;
 import doors.core.WorkQueue;
 import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.graphics.texture.ImageTexture;
-import doors.core.graphics.texture.TextureSampler;
 import doors.core.utility.CubeFace;
 import doors.core.utility.FileIO;
 import doors.core.utility.vector.Vector3fl;
@@ -23,7 +22,7 @@ public class Level {
     private Vector3in chunkDimensions;
     private Vector3in blockDimensions;
     private Chunk[] chunks;
-    private MeshBuffer meshBuffer;
+    private BlockFaceMeshBufferWriter blockWriter;
 
     public String levelDirectory;
     public Map<Integer, Block> blockMap;
@@ -33,16 +32,15 @@ public class Level {
         this.levelDirectory = levelDirectory;
         this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
-        this.meshBuffer = new MeshBuffer(Chunk.DIMENSIONS.getIntVolume() * 6);
+        this.blockWriter = new BlockFaceMeshBufferWriter(MeshBuffer.DEFAULT_MESH_BUFFER);
     }
 
     private void setupBlocks(JSONObject rootConfig) {
         var texturePath = Paths.get(this.levelDirectory, "atlas.png").toString();
-        this.texture = new ImageTexture(texturePath);
-        WorkQueue.WORK_QUEUE.addWorkUnit(() -> this.texture.setup());
+        var textureDimensions = new Vector2in(rootConfig.getJSONArray("textureDimensions"));
 
-        var textureDimensions = rootConfig.getJSONArray("textureDimensions");
-        var textureSampler = new TextureSampler(new Vector2in(textureDimensions));
+        this.texture = new ImageTexture(Doors.TEXTURE_CHANNEL_BLOCK, textureDimensions, texturePath);
+        WorkQueue.WORK_QUEUE.addWorkUnit(() -> this.texture.setup());
 
         var blocks = rootConfig.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
@@ -51,7 +49,7 @@ public class Level {
             this.blockMap.put(ix + 1, new Block(
                 ix + 1,
                 block.getString("name"),
-                textureSampler.createTextureSample(
+                this.texture.createTextureSample(
                     new Vector2in(
                         textureSample.getInt(0),
                         textureSample.getInt(1)
@@ -118,8 +116,6 @@ public class Level {
         this.setupBlocks(rootConfig);
         this.setupChunks(rootConfig);
         this.setupEntities(entitiesConfig);
-
-        WorkQueue.WORK_QUEUE.addWorkUnit(() -> System.out.println("DONE"));
     }
 
     public Block getBlock(Vector3in position) {
@@ -159,6 +155,8 @@ public class Level {
     private void processDirtyChunk(Chunk chunk) {
         var maxIndex = Chunk.DIMENSIONS.getIntVolume();
         var position = new Vector3fl();
+
+        MeshBuffer.DEFAULT_MESH_BUFFER.clear();
         for(var blockIndex = 0; blockIndex < maxIndex; blockIndex += 1) {
             var localBlockPosition = new Vector3in(blockIndex, Chunk.DIMENSIONS);
             var globalBlockPosition = new Vector3in(localBlockPosition).add(chunk.position);
@@ -177,13 +175,12 @@ public class Level {
                 }
             
                 position.set(localBlockPosition);
-                block.writeBlockFace(this.meshBuffer, position, cubeFace, block);
+                this.blockWriter.writeBlockFace(position, cubeFace, block);
             }
         }
 
-        this.meshBuffer.flip();
-        chunk.mesh.loadDataFromMeshBuffer(this.meshBuffer);
-        this.meshBuffer.clear();
+        MeshBuffer.DEFAULT_MESH_BUFFER.flip();
+        chunk.mesh.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
         chunk.isDirty = false;
     }
 
@@ -197,7 +194,7 @@ public class Level {
     }
 
     public void render() {
-        Doors.BLOCK_TEXTURE_CHANNEL.useTexture(this.texture);
+        this.texture.useTexture();
         this.renderChunks();
     }
 

@@ -1,9 +1,10 @@
 package doors.state.explore;
 
-import doors.Doors;
+import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
+import doors.core.graphics.sprite.FontMeshBufferWriter;
 import doors.core.utility.vector.Vector3fl;
-import doors.graphics.sprite.StandardFont;
+import doors.ui.StandardFont;
 import doors.core.utility.vector.Vector2in;
 
 public class DebugInformation {
@@ -12,6 +13,7 @@ public class DebugInformation {
 
     private static long SAMPLE_FRAMES = 20;
 
+    private FontMeshBufferWriter fontWriter;
     private Vector2in positionCursor;
     private long previousTime;
     private long count;
@@ -19,11 +21,13 @@ public class DebugInformation {
 
     public DebugInformation() {
         this.positionCursor = new Vector2in();
+        this.fontWriter = new FontMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
     private void writeLine(String text) {
-        StandardFont.STANDARD_FONT.writeText(
-            Doors.TEXTURE_CHANNEL_FONT,
+
+        this.fontWriter.writeText(
+            StandardFont.STANDARD_FONT,
             text,
             this.positionCursor,
             FontDecoration.NORMAL,

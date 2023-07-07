@@ -2,7 +2,6 @@ package doors.ui.element;
 
 import java.util.Arrays;
 
-import doors.Doors;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.ui.HorizontalSpanElement;
@@ -26,7 +25,7 @@ public class MenuButtonElement extends WrapperElement {
                     new BoxAlignmentWrapper(
                         new HorizontalSpanElement(
                             Arrays.asList(
-                                new VerticalAlignmentWrapper(new IconElement(Doors.TEXTURE_CHANNEL_UI, icon)),
+                                new VerticalAlignmentWrapper(new IconElement(icon)),
                                 new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.NORMAL, Vector3fl.BLACK))
                             ), 4
                         )

@@ -1,6 +1,7 @@
 package doors.ui;
 
-import doors.Doors;
+import doors.Screen;
+import doors.core.graphics.sprite.SpriteMeshBufferWriter;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
@@ -79,6 +80,8 @@ public class BoxDesign {
     private TextureSample rightTextureSample;
     private TextureSample bottomRightTextureSample;
 
+    private SpriteMeshBufferWriter spriteWriter;
+
     public BoxDesign(
         TextureSample topLeftTextureSample, 
         TextureSample leftTextureSample, 
@@ -99,6 +102,7 @@ public class BoxDesign {
         this.topRightTextureSample = topRightTextureSample;
         this.rightTextureSample = rightTextureSample;
         this.bottomRightTextureSample = bottomRightTextureSample;
+        this.spriteWriter = new SpriteMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
     public void writeBox(Vector2in position, Vector2in dimensions) {
@@ -116,8 +120,7 @@ public class BoxDesign {
         var positionCursor = new Vector2in();
         var dimensionsCursor = new Vector2in();
 
-        Doors.SPRITE_BATCH.writeSprite(
-            Doors.TEXTURE_CHANNEL_UI,
+        this.spriteWriter.writeSprite(
             this.centerTextureSample,
             positionCursor.set(position),
             dimensionsCursor.set(dimensions),
@@ -126,8 +129,7 @@ public class BoxDesign {
 
         if(renderTop) {
             var topDimensions = this.topTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.topTextureSample,
                 positionCursor.set(position),
                 dimensionsCursor.set(dimensions.x, topDimensions.y),
@@ -137,8 +139,7 @@ public class BoxDesign {
 
         if(renderBottom) {
             var bottomDimensions = this.bottomTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.bottomTextureSample,
                 positionCursor.set(position).add(0, dimensions.y - bottomDimensions.y),
                 dimensionsCursor.set(dimensions.x, bottomDimensions.y),
@@ -148,8 +149,7 @@ public class BoxDesign {
 
         if(renderLeft) {
             var leftDimensions = this.leftTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.leftTextureSample,
                 positionCursor.set(position),
                 dimensionsCursor.set(leftDimensions.x, dimensions.y),
@@ -159,8 +159,7 @@ public class BoxDesign {
 
         if(renderRight) {
             var rightDimensions = this.rightTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.rightTextureSample,
                 positionCursor.set(position).add(dimensions.x - rightDimensions.x, 0),
                 dimensionsCursor.set(rightDimensions.x, dimensions.y),
@@ -170,8 +169,7 @@ public class BoxDesign {
 
         if(renderTop && renderLeft) {
             var topLeftDimensions = this.topLeftTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.topLeftTextureSample,
                 positionCursor.set(position),
                 dimensionsCursor.set(topLeftDimensions),
@@ -181,8 +179,7 @@ public class BoxDesign {
 
         if(renderTop && renderRight) {
             var topRightDimensions = this.topRightTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.topRightTextureSample,
                 positionCursor.set(position).add(dimensions.x - topRightDimensions.x, 0),
                 dimensionsCursor.set(topRightDimensions),
@@ -192,8 +189,7 @@ public class BoxDesign {
 
         if(renderBottom && renderLeft) {
             var bottomLeftDimensions = this.bottomLeftTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.bottomLeftTextureSample,
                 positionCursor.set(position).add(0, dimensions.y - bottomLeftDimensions.y),
                 dimensionsCursor.set(bottomLeftDimensions),
@@ -203,8 +199,7 @@ public class BoxDesign {
 
         if(renderBottom && renderRight) {
             var bottomRightDimensions = this.bottomRightTextureSample.dimensions;
-            Doors.SPRITE_BATCH.writeSprite(
-                Doors.TEXTURE_CHANNEL_UI,
+            this.spriteWriter.writeSprite(
                 this.bottomRightTextureSample,
                 positionCursor.set(position).add(dimensions).sub(bottomRightDimensions),
                 dimensionsCursor.set(bottomRightDimensions),

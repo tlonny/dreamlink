@@ -4,15 +4,18 @@ import org.lwjgl.opengl.GL42;
 
 import doors.Config;
 import doors.Doors;
+import doors.Screen;
 import doors.state.GameState;
-import doors.core.graphics.camera.WorldCamera;
-import doors.core.graphics.texture.TextureSample;
+import doors.core.graphics.Shader;
+import doors.core.graphics.sprite.SpriteMeshBufferWriter;
 import doors.core.io.Mouse;
 import doors.core.io.Window;
 import doors.level.Door;
 import doors.level.Level;
 import doors.level.LevelCache;
 import doors.core.utility.vector.Vector3fl;
+import doors.entity.DoorMesh;
+import doors.entity.PortalMesh;
 import doors.core.utility.vector.Vector2in;
 
 public class ExploreGameState extends GameState {
@@ -23,15 +26,30 @@ public class ExploreGameState extends GameState {
 
     public Level currentLevel;
     public Door openDoor;
+    public Door shutDoor;
+
+    private float openFactor;
 
     private Level portalLevel;
     private Door portalDoor;
     private float portalRotation;
+    private SpriteMeshBufferWriter spriteWriter;
 
     private Vector3fl previousCameraPosition;
 
     public ExploreGameState() {
         this.previousCameraPosition = new Vector3fl();
+        this.spriteWriter = new SpriteMeshBufferWriter(Screen.SCREEN.meshBuffer);
+    }
+
+    public void openDoor(Door door) {
+        if(this.openDoor == door) {
+            return;
+        }
+
+        this.shutDoor = this.openDoor;
+        this.openDoor = door;
+        this.openFactor = 0f;
     }
 
     public void use(String level) {
@@ -84,26 +102,23 @@ public class ExploreGameState extends GameState {
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
-        WorldCamera.WORLD_CAMERA.position.set(Camera.CAMERA.position)
+        var cameraPosition = new Vector3fl(Camera.CAMERA.position)
             .sub(this.openDoor.position)
             .rotateY(this.portalRotation)
             .add(this.portalDoor.position);
 
-        WorldCamera.WORLD_CAMERA.rotation.set(Camera.CAMERA.rotation)
+        var cameraRotation = new Vector3fl(Camera.CAMERA.rotation)
             .add(0f, this.portalRotation, 0f);
 
-        WorldCamera.WORLD_CAMERA.apply();
+        Shader.SHADER.setPerspectiveViewMatrices(cameraPosition, cameraRotation);
+
         this.portalLevel.render();
 
         for(var door : this.portalLevel.doors.values()) {
-            if(door == this.portalDoor) {
-                continue;
-            }
-            Doors.MESH_DOOR.render(
+            DoorMesh.DOOR_MESH.render(
                 door.position,
                 door.orientation.rotation,
-                Vector3fl.ONE,
-                Vector3fl.WHITE
+                door == this.portalDoor ? 1f : 0f
             );
         }
     }
@@ -113,14 +128,15 @@ public class ExploreGameState extends GameState {
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
-        WorldCamera.WORLD_CAMERA.position.set(Camera.CAMERA.position);
-        WorldCamera.WORLD_CAMERA.rotation.set(Camera.CAMERA.rotation);
-        WorldCamera.WORLD_CAMERA.apply();
+        Shader.SHADER.setPerspectiveViewMatrices(
+            Camera.CAMERA.position, 
+            Camera.CAMERA.rotation
+        );
 
         this.currentLevel.render();
 
         if(this.openDoor != null) {
-            Doors.MESH_PORTAL.render(
+            PortalMesh.PORTAL_MESH.render(
                 this.openDoor.position,
                 this.openDoor.orientation.rotation,
                 Vector3fl.ONE,
@@ -130,20 +146,33 @@ public class ExploreGameState extends GameState {
 
         for(var door : this.currentLevel.doors.values()) {
             if(door == this.openDoor) {
-                continue;
+                DoorMesh.DOOR_MESH.render(
+                    door.position,
+                    door.orientation.rotation,
+                    this.openFactor
+                );
+            } else if (door == this.shutDoor) {
+                DoorMesh.DOOR_MESH.render(
+                    door.position,
+                    door.orientation.rotation,
+                    1f - this.openFactor
+                );
+            } else {
+                DoorMesh.DOOR_MESH.render(
+                    door.position,
+                    door.orientation.rotation,
+                    0f
+                );
             }
-            Doors.MESH_DOOR.render(
-                door.position,
-                door.orientation.rotation,
-                Vector3fl.ONE,
-                Vector3fl.WHITE
-            );
         }
     }
 
     @Override
     public void update() {
         Camera.CAMERA.update();
+
+        this.openFactor += 0.05f;
+        this.openFactor = Math.min(this.openFactor, 1f);
 
         if(this.openDoor != null) {
             this.portalLevel = LevelCache.LEVEL_CACHE.getLevel(this.openDoor.targetLevel);
@@ -157,9 +186,8 @@ public class ExploreGameState extends GameState {
 
         this.renderCurrent();
 
-        Doors.SPRITE_BATCH.writeSprite(
-            Doors.TEXTURE_CHANNEL_CURRENT, 
-            TextureSample.SCREEN_SAMPLE, 
+        this.spriteWriter.writeSprite(
+            Doors.RENDER_TARGET_CURRENT.screenSample,
             Vector2in.ZERO,
             Config.RESOLUTION,
             Vector3fl.WHITE

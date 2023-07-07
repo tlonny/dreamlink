@@ -7,37 +7,46 @@ flat in int vert_texture_unit;
 
 out vec4 frag_color;
 
-uniform sampler2D font_sampler;
-uniform sampler2D ui_sampler;
-uniform sampler2D entity_sampler;
-uniform sampler2D block_sampler;
-uniform sampler2D portal_sampler;
-uniform sampler2D current_sampler;
+uniform sampler2D sampler_0;
+uniform sampler2D sampler_1;
+uniform sampler2D sampler_2;
+uniform sampler2D sampler_3;
+uniform sampler2D sampler_4;
+uniform sampler2D sampler_5;
+uniform sampler2D sampler_6;
+uniform sampler2D sampler_7;
+uniform sampler2D sampler_8;
+uniform sampler2D sampler_9;
+uniform int texture_sample_mode;
 uniform vec3 color;
 
-const int FONT_TEXTURE_UNIT = 1;
-const int UI_TEXTURE_UNIT = 2;
-const int ENTITY_TEXTURE_UNIT = 3;
-const int BLOCK_TEXTURE_UNIT = 4;
-const int PORTAL_TEXTURE_UNIT = 5;
-const int CURRENT_TEXTURE_UNIT = 6;
+const int TEXTURE_SAMPLE_MODE_NORMAL = 0;
+const int TEXTURE_SAMPLE_MODE_SCREEN = 1;
 
 vec4 sample(vec2 offset)
 {
     switch(vert_texture_unit)
     {
-        case FONT_TEXTURE_UNIT:
-            return texture(font_sampler, offset);
-        case UI_TEXTURE_UNIT:
-            return texture(ui_sampler, offset);
-        case ENTITY_TEXTURE_UNIT:
-            return texture(entity_sampler, offset);
-        case BLOCK_TEXTURE_UNIT:
-            return texture(block_sampler, offset);
-        case PORTAL_TEXTURE_UNIT:
-            return texture(portal_sampler, offset);
-        case CURRENT_TEXTURE_UNIT:
-            return texture(current_sampler, offset);
+        case 0:
+            return texture(sampler_0, offset);
+        case 1:
+            return texture(sampler_1, offset);
+        case 2:
+            return texture(sampler_2, offset);
+        case 3:
+            return texture(sampler_3, offset);
+        case 4:
+            return texture(sampler_4, offset);
+        case 5:
+            return texture(sampler_5, offset);
+        case 6:
+            return texture(sampler_6, offset);
+        case 7:
+            return texture(sampler_7, offset);
+        case 8:
+            return texture(sampler_8, offset);
+        case 9:
+            return texture(sampler_9, offset);
         default:
             return vec4(1.0, 0.0, 0.0, 1.0);
     }
@@ -45,8 +54,12 @@ vec4 sample(vec2 offset)
 
 void main()
 {
-    vec2 tex_offset = vert_texture_offset;
-    if(vert_texture_unit == PORTAL_TEXTURE_UNIT)
+    vec2 tex_offset;
+    if(texture_sample_mode == TEXTURE_SAMPLE_MODE_NORMAL)
+    {
+        tex_offset = vert_texture_offset;
+    }
+    else
     {
         tex_offset = vert_position.xy / vert_position.w * 0.5 + 0.5;
     }

@@ -1,21 +1,17 @@
-package doors.graphics.sprite;
+package doors.ui;
 
 import doors.Doors;
 import doors.core.graphics.sprite.Font;
-import doors.core.graphics.sprite.FontDecoration;
-import doors.core.graphics.texture.TextureChannel;
 import doors.core.utility.vector.Vector2in;
-import doors.core.utility.vector.Vector3fl;
 
 public class StandardFont extends Font {
 
-    private static Vector2in TEXTURE_DIMENSIONS = new Vector2in(256, 96);
     public static Vector2in CHARACTER_DIMENSIONS = new Vector2in(8, 16);
 
     public static StandardFont STANDARD_FONT = new StandardFont();
 
     public StandardFont() {
-        super(TEXTURE_DIMENSIONS, CHARACTER_DIMENSIONS);
+        super(Doors.TEXTURE_FONT, CHARACTER_DIMENSIONS);
 
         this.registerCharacter(' ', new Vector2in(0, 0), new Vector2in(16, 0));
         this.registerCharacter('!', new Vector2in(1, 0), new Vector2in(17, 0));
@@ -118,24 +114,4 @@ public class StandardFont extends Font {
         this.registerCharacter('}', new Vector2in(13, 5), new Vector2in(29, 5));
         this.registerCharacter('~', new Vector2in(14, 5), new Vector2in(30, 5));
     }
-
-    public void writeText(TextureChannel textureChannel, String text, Vector2in position, FontDecoration fontDecoration, Vector3fl color) {
-        var cursor = new Vector2in(position);
-        for(var ix = 0; ix < text.length(); ix += 1) {
-            var character = text.charAt(ix);
-            var fontCharacter = this.getFontCharacter(character);
-            if (fontCharacter != null) {
-                var textureSample = fontCharacter.getTextureSample(fontDecoration);
-                Doors.SPRITE_BATCH.writeSprite(
-                    textureChannel,
-                    textureSample,
-                    cursor,
-                    textureSample.dimensions,
-                    color
-                );
-            }
-            cursor.x += this.getCharacterDimensions().x;
-        }
-    }
-
 }

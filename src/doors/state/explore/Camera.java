@@ -29,7 +29,7 @@ public class Camera {
         this.mouseDelta = new Vector2fl();
     }
 
-    private static float SPEED = 0.05f;
+    private static float SPEED = 0.2f;
     private static float FRICTION = 0.6f;
 
     public void update() {
@@ -76,7 +76,7 @@ public class Camera {
 
         for(var door : ExploreGameState.EXPLORE_GAME_STATE.currentLevel.doors.values()) {
             var distance = door.position.getDistance(this.position);
-            if(distance < distanceToTarget) {
+            if(distance < distanceToTarget && ExploreGameState.EXPLORE_GAME_STATE.openDoor != door) {
                 target = door;
                 distanceToTarget = distance;
             }
@@ -85,6 +85,6 @@ public class Camera {
         if(target == null)
             return;
 
-        ExploreGameState.EXPLORE_GAME_STATE.openDoor = target;
+        ExploreGameState.EXPLORE_GAME_STATE.openDoor(target);
     }
 }

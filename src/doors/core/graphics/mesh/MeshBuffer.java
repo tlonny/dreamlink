@@ -2,7 +2,6 @@ package doors.core.graphics.mesh;
 
 import org.lwjgl.system.MemoryUtil;
 
-import doors.core.graphics.texture.TextureChannel;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.CubeFace;
 import doors.core.utility.vector.Vector3fl;
@@ -17,6 +16,9 @@ public class MeshBuffer {
 
     private static int[] QUAD_INDICES = new int[] { 0, 1, 3, 3, 1, 2 };
 
+    private static int DEFAULT_MESH_BUFFER_MAX_QUADS = 50_000;
+    public static MeshBuffer DEFAULT_MESH_BUFFER = new MeshBuffer(DEFAULT_MESH_BUFFER_MAX_QUADS);
+
     private static IVector2fl[] WINDINGS = new IVector2fl[] {
         new Vector2fl(0f, 1f),
         new Vector2fl(0f, 0f),
@@ -28,7 +30,8 @@ public class MeshBuffer {
     public FloatBuffer positionBuffer;
     public FloatBuffer normalBuffer;
     public FloatBuffer textureOffsetBuffer;
-    public IntBuffer packedColorTextureUnitBuffer;
+    public IntBuffer packedColorBuffer;
+    public IntBuffer packedLookupIDsBuffer;
 
     private int vertexCount;
 
@@ -37,7 +40,8 @@ public class MeshBuffer {
         this.positionBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
         this.normalBuffer = MemoryUtil.memAllocFloat(quadCapacity * 12);
         this.textureOffsetBuffer = MemoryUtil.memAllocFloat(quadCapacity * 8);
-        this.packedColorTextureUnitBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
+        this.packedColorBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
+        this.packedLookupIDsBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
     }
 
     public void tearDown() {
@@ -45,12 +49,20 @@ public class MeshBuffer {
         MemoryUtil.memFree(this.positionBuffer);
         MemoryUtil.memFree(this.normalBuffer);
         MemoryUtil.memFree(this.textureOffsetBuffer);
-        MemoryUtil.memFree(this.packedColorTextureUnitBuffer);
+        MemoryUtil.memFree(this.packedColorBuffer);
+        MemoryUtil.memFree(this.packedLookupIDsBuffer);
     }
 
-    private int packColorTextureUnit(int normalisedTextureUnitID, Vector3fl color) {
-        var packed = normalisedTextureUnitID;
+    private int packLookupIDs(int normalisedTextureUnitID, int transformerID) {
+        var packed = 0;
+        packed += normalisedTextureUnitID;
         packed *= 0x100;
+        packed += transformerID;
+        return packed;
+    }
+
+    private int packColor(Vector3fl color) {
+        var packed = 0;
         packed += (int)(color.x * 0xFF);
         packed *= 0x100;
         packed += (int)(color.y * 0xFF);
@@ -59,8 +71,9 @@ public class MeshBuffer {
         return packed;
     }
 
-    public void addQuad(TextureSample textureSample, TextureChannel textureChannel, IVector3fl position, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
-        var packed = this.packColorTextureUnit(textureChannel.getSamplerUniformValue(), color);
+    public void writeQuad(TextureSample textureSample, int transformerID, IVector3fl position, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
+        var packedColor = this.packColor(color);
+        var packedLookupIDs = this.packLookupIDs(textureSample.textureChannel.textureChannelID, transformerID);
         var vertexPosition = new Vector3fl();
 
         for(var ix = 0; ix < 4; ix += 1) {
@@ -111,7 +124,8 @@ public class MeshBuffer {
             this.normalBuffer.put(cubeFace.normal.getFloatZ());
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].x);
             this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].y);
-            this.packedColorTextureUnitBuffer.put(packed);
+            this.packedColorBuffer.put(packedColor);
+            this.packedLookupIDsBuffer.put(packedLookupIDs);
         }
 
         for(var index : QUAD_INDICES)
@@ -124,7 +138,8 @@ public class MeshBuffer {
         this.positionBuffer.flip();
         this.normalBuffer.flip();
         this.textureOffsetBuffer.flip();
-        this.packedColorTextureUnitBuffer.flip();
+        this.packedColorBuffer.flip();
+        this.packedLookupIDsBuffer.flip();
     }
 
     public void rewind() {
@@ -132,7 +147,8 @@ public class MeshBuffer {
         this.positionBuffer.rewind();
         this.normalBuffer.rewind();
         this.textureOffsetBuffer.rewind();
-        this.packedColorTextureUnitBuffer.rewind();
+        this.packedColorBuffer.rewind();
+        this.packedLookupIDsBuffer.rewind();
     }
 
     public void clear() {
@@ -140,7 +156,8 @@ public class MeshBuffer {
         this.positionBuffer.clear();
         this.normalBuffer.clear();
         this.textureOffsetBuffer.clear();
-        this.packedColorTextureUnitBuffer.clear();
+        this.packedColorBuffer.clear();
+        this.packedLookupIDsBuffer.clear();
         this.vertexCount = 0;
     }
 

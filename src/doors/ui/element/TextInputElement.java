@@ -6,11 +6,12 @@ import doors.core.io.Keyboard;
 import doors.core.io.TypedCharacters;
 import doors.core.ui.IUIElement;
 import doors.core.ui.EventState;
-import doors.Doors;
+import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
+import doors.core.graphics.sprite.FontMeshBufferWriter;
 import doors.ui.BoxDesign;
+import doors.ui.StandardFont;
 import doors.core.utility.vector.Vector3fl;
-import doors.graphics.sprite.StandardFont;
 import doors.core.utility.vector.Vector2in;
 
 public class TextInputElement implements IUIElement {
@@ -24,6 +25,7 @@ public class TextInputElement implements IUIElement {
     private Vector2in position;
     private Vector2in dimensions;
     private EventState eventState;
+    private FontMeshBufferWriter fontWriter;
 
     public TextInputElement(int maxLength) {
         this.text = new StringBuilder();
@@ -32,6 +34,7 @@ public class TextInputElement implements IUIElement {
         this.dimensions = new Vector2in();
         this.eventState = new EventState(this);
         this.setMaxLength(maxLength);
+        this.fontWriter = new FontMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
     public void setMaxLength(int maxLength) {
@@ -95,8 +98,8 @@ public class TextInputElement implements IUIElement {
         boxDesign.writeBox(this.getPosition(), this.getDimensions());
         var isBlinkingCursor = (System.currentTimeMillis() - this.pressTime) % 1000 < 500 && this.eventState.isFocused;
         var toRender = this.text.toString() + (isBlinkingCursor ? "|" : "");
-        StandardFont.STANDARD_FONT.writeText(
-            Doors.TEXTURE_CHANNEL_FONT,
+        this.fontWriter.writeText(
+            StandardFont.STANDARD_FONT,
             toRender, 
             cursor, 
             FontDecoration.NORMAL, 

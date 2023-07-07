@@ -1,7 +1,6 @@
 package doors.ui.element;
 
 import doors.Config;
-import doors.Doors;
 import doors.core.ui.IUIElement;
 import doors.core.ui.MinDimensionsElement;
 import doors.core.ui.WrapperElement;
@@ -17,7 +16,6 @@ public class ContainerElement extends WrapperElement {
                 new BoxAlignmentWrapper(child),
                 new Vector2in(Config.RESOLUTION)
             ),
-            Doors.TEXTURE_CHANNEL_UI,
             UITextureAtlas.BACKGROUND
         );
     }

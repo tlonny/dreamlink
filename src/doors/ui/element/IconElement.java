@@ -1,9 +1,10 @@
 package doors.ui.element;
 
+import doors.core.graphics.sprite.SpriteMeshBufferWriter;
 import doors.core.graphics.texture.TextureChannel;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.ui.IUIElement;
-import doors.Doors;
+import doors.Screen;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
 
@@ -13,16 +14,17 @@ public class IconElement implements IUIElement {
     public TextureChannel textureChannel;
     public Vector2in dimensions;
     private Vector2in position;
+    private SpriteMeshBufferWriter spriteWriter;
 
-    public IconElement(TextureChannel textureChannel, TextureSample textureSample) {
-        this(textureChannel, textureSample, textureSample.dimensions);
+    public IconElement(TextureSample textureSample) {
+        this(textureSample, textureSample.dimensions);
     }
 
-    public IconElement(TextureChannel textureChannel, TextureSample textureSample, Vector2in dimensions) {
-        this.textureChannel = textureChannel;
+    public IconElement(TextureSample textureSample, Vector2in dimensions) {
         this.textureSample = textureSample;
         this.dimensions = new Vector2in(dimensions);
         this.position = new Vector2in();
+        this.spriteWriter = new SpriteMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
     @Override
@@ -50,8 +52,7 @@ public class IconElement implements IUIElement {
 
     @Override
     public void writeElement() {
-        Doors.SPRITE_BATCH.writeSprite(
-            this.textureChannel,
+        this.spriteWriter.writeSprite(
             this.textureSample,
             this.position,
             this.dimensions,

@@ -1,10 +1,11 @@
 package doors.ui.element;
 
-import doors.Doors;
+import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
+import doors.core.graphics.sprite.FontMeshBufferWriter;
 import doors.core.ui.IUIElement;
 import doors.core.utility.vector.Vector3fl;
-import doors.graphics.sprite.StandardFont;
+import doors.ui.StandardFont;
 import doors.core.utility.vector.Vector2in;
 
 public class TextLabelElement implements IUIElement {
@@ -15,6 +16,7 @@ public class TextLabelElement implements IUIElement {
 
     private Vector2in position;
     private Vector2in dimensions;
+    private FontMeshBufferWriter fontWriter;
 
     public TextLabelElement(String text, FontDecoration fontDecoration, Vector3fl color) {
         this.setText(text);
@@ -22,6 +24,7 @@ public class TextLabelElement implements IUIElement {
         this.color = color;
         this.position = new Vector2in();
         this.dimensions = new Vector2in();
+        this.fontWriter = new FontMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
     public void setText(String text) {
@@ -61,7 +64,12 @@ public class TextLabelElement implements IUIElement {
     public void writeElement() {
         var originCursor = new Vector2in(this.position);
         for(var line : this.linesOfText) {
-            StandardFont.STANDARD_FONT.writeText(Doors.TEXTURE_CHANNEL_FONT, line, originCursor, this.fontDecoration, this.color);
+            this.fontWriter.writeText(
+                StandardFont.STANDARD_FONT,
+                line, 
+                originCursor, 
+                this.fontDecoration, this.color
+            );
             originCursor.y += StandardFont.CHARACTER_DIMENSIONS.y;
         }
     }
