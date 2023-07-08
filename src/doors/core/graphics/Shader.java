@@ -4,7 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.graphics.mesh.TextureSampleMode;
 import doors.core.graphics.texture.TextureChannel;
 import doors.core.utility.FileIO;
@@ -122,7 +122,7 @@ public class Shader {
         this.workingMatrix.identity().rotateX(-rotation.x).rotateY(-rotation.y);
         this.setUniform(this.uniformViewRotationMatrixID, this.workingMatrix);
 
-        var aspectRatio = Config.RESOLUTION.getAspectRatio();
+        var aspectRatio = Config.CONFIG.getResolution().getAspectRatio();
         this.workingMatrix.identity().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
         this.setUniform(this.uniformViewProjectionMatrixID, this.workingMatrix);
     }

@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import java.util.Arrays;
 
@@ -9,32 +9,34 @@ import doors.core.ui.MinDimensionsElement;
 import doors.core.ui.PaddingElement;
 import doors.core.ui.WrapperElement;
 import doors.core.ui.alignment.BoxAlignmentWrapper;
+import doors.core.ui.alignment.HorizontalAlignment;
 import doors.core.ui.alignment.VerticalAlignmentWrapper;
-import doors.core.utility.Functional.IAction;
-import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
+import doors.core.utility.vector.Vector3fl;
+import doors.graphics.ui.UITextureAtlas;
 
-public class MenuButtonElement extends WrapperElement {
+public class MenuTitleElement extends WrapperElement {
 
-    private static Vector2in BUTTON_DIMENSIONS = new Vector2in(150, 0);
+    private static Vector2in BUTTON_DIMENSIONS = new Vector2in(250, 0);
 
-    public MenuButtonElement(TextureSample icon, String text, IAction action) {
-        this.child = new PaddingElement(
-            new ButtonElement(
+    public MenuTitleElement(TextureSample icon, String text) {
+        this.child = new BackgroundElement(
+            new PaddingElement(
                 new MinDimensionsElement(
                     new BoxAlignmentWrapper(
                         new HorizontalSpanElement(
                             Arrays.asList(
                                 new VerticalAlignmentWrapper(new IconElement(icon)),
-                                new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.NORMAL, Vector3fl.BLACK))
-                            ), 4
-                        )
+                                new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.UNDERLINE, Vector3fl.WHITE))
+                            ), 2
+                        ),
+                        HorizontalAlignment.LEFT
                     ),
                     BUTTON_DIMENSIONS
                 ),
-                action
+                2
             ),
-            5
+            UITextureAtlas.TITLE_BAR
         );
     }
 

@@ -45,7 +45,7 @@ public class Level {
         var textureDimensions = new Vector2in(rootConfig.getJSONArray("textureDimensions"));
 
         this.texture = new ImageTexture(Doors.TEXTURE_CHANNEL_BLOCK, textureDimensions, texturePath);
-        WorkQueue.WORK_QUEUE.addWorkUnit(() -> this.texture.setup());
+        WorkQueue.WORK_QUEUE.addWorkUnit(this.texture::setup);
 
         var blocks = rootConfig.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {

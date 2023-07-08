@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import doors.ui.BoxDesign;
 import doors.core.ui.IUIElement;
@@ -24,6 +24,10 @@ public class ButtonElement implements IUIElement {
         this.position = new Vector2in();
     }
 
+    private boolean isPressed() {
+        return this.eventState.isFocused && this.eventState.isDown;
+    }
+
     public void setChild(IUIElement child) {
         this.paddingChild.child = child;
     }
@@ -47,19 +51,19 @@ public class ButtonElement implements IUIElement {
         this.paddingChild.update();
         this.eventState.update();
 
-        if(this.eventState.isMouseClickStarted) {
+        if(this.isPressed()) {
             var newOrigin = new Vector2in(this.position).add(1,1);
             this.paddingChild.determinePosition(newOrigin);
         }
 
-        if(this.eventState.isMouseClicked) {
+        if(this.eventState.isOnClick) {
             this.onClick.invoke();
         }
     }
 
     @Override
     public void writeElement() {
-        var boxDesign = this.eventState.isMouseClickStarted ? BoxDesign.BUTTON_PRESSED : BoxDesign.BUTTON;
+        var boxDesign = this.isPressed() ? BoxDesign.BUTTON_PRESSED : BoxDesign.BUTTON;
         boxDesign.writeBox(this.position, this.getDimensions());
         this.paddingChild.writeElement();
     }

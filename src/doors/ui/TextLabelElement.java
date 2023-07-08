@@ -1,11 +1,11 @@
-package doors.ui.element;
+package doors.ui;
 
 import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.graphics.sprite.FontMeshBufferWriter;
 import doors.core.ui.IUIElement;
 import doors.core.utility.vector.Vector3fl;
-import doors.ui.StandardFont;
+import doors.graphics.ui.StandardFont;
 import doors.core.utility.vector.Vector2in;
 
 public class TextLabelElement implements IUIElement {

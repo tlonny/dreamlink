@@ -1,4 +1,4 @@
-package doors.entity;
+package doors.graphics.entity;
 
 import doors.Doors;
 import doors.core.graphics.cube.CubeMesh;

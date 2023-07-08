@@ -32,7 +32,6 @@ public class Texture {
             this.textureChannel.registeredTexture = this;
             GL42.glActiveTexture(GL42.GL_TEXTURE0 + this.textureChannel.getTextureUnitID());
             GL42.glBindTexture(GL42.GL_TEXTURE_2D, this.textureID);
-            System.out.println("Texture " + this.textureID + " bound to texture unit " + this.textureChannel.getTextureUnitID());
         }
     }
 

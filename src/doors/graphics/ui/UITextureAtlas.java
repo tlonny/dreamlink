@@ -1,4 +1,4 @@
-package doors.ui;
+package doors.graphics.ui;
 
 import doors.Doors;
 import doors.core.graphics.texture.TextureSample;

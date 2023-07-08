@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -9,8 +9,7 @@ import doors.core.ui.EventState;
 import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.graphics.sprite.FontMeshBufferWriter;
-import doors.ui.BoxDesign;
-import doors.ui.StandardFont;
+import doors.graphics.ui.StandardFont;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
 
@@ -21,7 +20,7 @@ public class TextInputElement implements IUIElement {
     public StringBuilder text;
 
     private int maxLength;
-    private long pressTime;
+    private long cursorBlinkOffsetTime;
     private Vector2in position;
     private Vector2in dimensions;
     private EventState eventState;
@@ -35,6 +34,10 @@ public class TextInputElement implements IUIElement {
         this.eventState = new EventState(this);
         this.setMaxLength(maxLength);
         this.fontWriter = new FontMeshBufferWriter(Screen.SCREEN.meshBuffer);
+    }
+
+    private void resetCursorBlinkOffset() {
+        this.cursorBlinkOffsetTime = System.currentTimeMillis();
     }
 
     public void setMaxLength(int maxLength) {
@@ -74,18 +77,22 @@ public class TextInputElement implements IUIElement {
             return;
         }
 
+        if(this.eventState.isOnFocus) {
+            this.resetCursorBlinkOffset();
+        }
+
         for(var character : TypedCharacters.TYPED_CHARACTERS.characters) {
             if(this.text.length() >= this.maxLength) {
                 break;
             }
 
-            this.pressTime = System.currentTimeMillis();
+            this.resetCursorBlinkOffset();
             this.text.append(character);
         }
 
         if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_BACKSPACE)) {
             if(this.text.length() > 0) {
-                this.pressTime = System.currentTimeMillis();
+            this.resetCursorBlinkOffset();
                 this.text.deleteCharAt(this.text.length() - 1);
             }
         }
@@ -96,7 +103,7 @@ public class TextInputElement implements IUIElement {
         var cursor = new Vector2in(this.getPosition()).add(CHARACTER_PADDING);
         var boxDesign = this.eventState.isFocused ? BoxDesign.DIALOG : BoxDesign.BUTTON_PRESSED;
         boxDesign.writeBox(this.getPosition(), this.getDimensions());
-        var isBlinkingCursor = (System.currentTimeMillis() - this.pressTime) % 1000 < 500 && this.eventState.isFocused;
+        var isBlinkingCursor = (System.currentTimeMillis() - this.cursorBlinkOffsetTime) % 1000 < 500 && this.eventState.isFocused;
         var toRender = this.text.toString() + (isBlinkingCursor ? "|" : "");
         this.fontWriter.writeText(
             StandardFont.STANDARD_FONT,

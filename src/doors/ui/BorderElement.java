@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import doors.core.ui.IUIElement;
 import doors.core.ui.PaddingElement;

@@ -6,37 +6,43 @@ public class EventState {
 
     private IUIElement element;
 
-    public boolean isMouseOver;
-    public boolean isMouseClickStarted;
-    public boolean isMouseClicked;
+    public boolean isOver;
+    public boolean isDown;
     public boolean isFocused;
+
+    public boolean isOnClick;
+    public boolean isOnPress;
+    public boolean isOnRelease;
+    public boolean isOnFocus;
+    public boolean isOnBlur;
 
     public EventState(IUIElement element) {
         this.element = element;
     }
 
     public void update() {
-        this.isMouseOver = Mouse.MOUSE.position.isWithinBounds(
+        // Reset the single frame events
+        this.isOnClick = false;
+        this.isOnPress = false;
+        this.isOnRelease = false;
+        this.isOnFocus = false;
+        this.isOnBlur = false;
+
+        this.isOver = Mouse.MOUSE.position.isWithinBounds(
             this.element.getPosition(), 
             this.element.getDimensions()
         );
 
-        if(Mouse.MOUSE.isLeftMouseButtonPressed()) {
-            if(this.isMouseOver) {
-                this.isFocused = true;
-                this.isMouseClickStarted = true;
-            } else {
-                this.isFocused = false;
-            }
-        }
+        this.isDown = Mouse.MOUSE.isLeftMouseButtonDown() && this.isOver;
 
-        if(Mouse.MOUSE.isLeftMouseButtonReleased()) {
-            if(this.isMouseOver) {
-                this.isMouseClicked = true;
-            }
-            this.isMouseClickStarted = false;
-        } else {
-            this.isMouseClicked = false;
+        if(Mouse.MOUSE.isLeftMouseButtonPressed()) {
+            this.isOnFocus = this.isOver && !this.isFocused;
+            this.isOnBlur = !this.isOver && this.isFocused;
+            this.isOnPress = this.isOver;
+            this.isFocused = this.isOver;
+        } else if(Mouse.MOUSE.isLeftMouseButtonReleased()) {
+            this.isOnRelease = this.isOver;
+            this.isOnClick = this.isOver && this.isFocused;
         }
     }
 

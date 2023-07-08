@@ -5,6 +5,7 @@ import doors.core.graphics.sprite.SpriteMeshBufferWriter;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
+import doors.graphics.ui.UITextureAtlas;
 
 public class BoxDesign {
 

@@ -1,11 +1,11 @@
-package doors.ui.element;
+package doors.ui;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.ui.IUIElement;
 import doors.core.ui.MinDimensionsElement;
 import doors.core.ui.WrapperElement;
 import doors.core.ui.alignment.BoxAlignmentWrapper;
-import doors.ui.UITextureAtlas;
+import doors.graphics.ui.UITextureAtlas;
 import doors.core.utility.vector.Vector2in;
 
 public class ContainerElement extends WrapperElement {
@@ -14,7 +14,7 @@ public class ContainerElement extends WrapperElement {
         this.child = new BackgroundElement(
             new MinDimensionsElement(
                 new BoxAlignmentWrapper(child),
-                new Vector2in(Config.RESOLUTION)
+                new Vector2in(Config.CONFIG.getResolution())
             ),
             UITextureAtlas.BACKGROUND
         );

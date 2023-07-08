@@ -1,6 +1,6 @@
 package doors.core.graphics.sprite;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.CubeFace;
@@ -21,14 +21,14 @@ public class SpriteMeshBufferWriter {
 
     public void writeSprite(TextureSample textureSample, IVector2fl position, IVector2fl dimensions, Vector3fl color) {
         this.positionBuffer.set(
-            position.getFloatX() / Config.RESOLUTION.x * 2f - 1f,
-            (Config.RESOLUTION.y - position.getFloatY() - dimensions.getFloatY()) / Config.RESOLUTION.y * 2f - 1f, 
+            position.getFloatX() / Config.CONFIG.getResolution().x * 2f - 1f,
+            (Config.CONFIG.getResolution().y - position.getFloatY() - dimensions.getFloatY()) / Config.CONFIG.getResolution().y * 2f - 1f, 
             1f
         );
 
         this.dimensionsBuffer.set(
-            dimensions.getFloatX() / Config.RESOLUTION.x * 2f, 
-            dimensions.getFloatY() / Config.RESOLUTION.y * 2f,
+            dimensions.getFloatX() / Config.CONFIG.getResolution().x * 2f, 
+            dimensions.getFloatY() / Config.CONFIG.getResolution().y * 2f,
             0f
         );
 

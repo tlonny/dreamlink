@@ -2,7 +2,7 @@ package doors.core.graphics.rendertarget;
 
 import org.lwjgl.opengl.GL42;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.graphics.texture.EmptyTexture;
 import doors.core.graphics.texture.TextureChannel;
 import doors.core.graphics.texture.TextureSample;
@@ -17,8 +17,8 @@ public class VirtualRenderTarget extends RenderTarget {
     public TextureSample screenSample;
 
     public VirtualRenderTarget(TextureChannel textureChannel) {
-         this.texture = new EmptyTexture(textureChannel, Config.RESOLUTION);
-         this.screenSample = this.texture.createTextureSample(Vector2in.ZERO, Config.RESOLUTION);
+         this.texture = new EmptyTexture(textureChannel, Config.CONFIG.getResolution());
+         this.screenSample = this.texture.createTextureSample(Vector2in.ZERO, Config.CONFIG.getResolution());
     }
 
     public void setup() {        
@@ -31,7 +31,7 @@ public class VirtualRenderTarget extends RenderTarget {
 
         this.depthBufferID = GL42.glGenRenderbuffers();
         GL42.glBindRenderbuffer(GL42.GL_RENDERBUFFER, this.depthBufferID);
-        GL42.glRenderbufferStorage(GL42.GL_RENDERBUFFER, GL42.GL_DEPTH_COMPONENT, Config.RESOLUTION.x, Config.RESOLUTION.y);
+        GL42.glRenderbufferStorage(GL42.GL_RENDERBUFFER, GL42.GL_DEPTH_COMPONENT, Config.CONFIG.getResolution().x, Config.CONFIG.getResolution().y);
         GL42.glFramebufferRenderbuffer(GL42.GL_FRAMEBUFFER, GL42.GL_DEPTH_ATTACHMENT, GL42.GL_RENDERBUFFER, this.depthBufferID);
     }
 
@@ -42,6 +42,6 @@ public class VirtualRenderTarget extends RenderTarget {
 
     @Override
     protected Vector2in getViewport() {
-        return Config.RESOLUTION;
+        return Config.CONFIG.getResolution();
     }
 }

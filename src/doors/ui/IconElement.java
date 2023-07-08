@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import doors.core.graphics.sprite.SpriteMeshBufferWriter;
 import doors.core.graphics.texture.TextureChannel;

@@ -1,4 +1,4 @@
-package doors.ui.element;
+package doors.ui;
 
 import java.util.Arrays;
 
@@ -9,34 +9,32 @@ import doors.core.ui.MinDimensionsElement;
 import doors.core.ui.PaddingElement;
 import doors.core.ui.WrapperElement;
 import doors.core.ui.alignment.BoxAlignmentWrapper;
-import doors.core.ui.alignment.HorizontalAlignment;
 import doors.core.ui.alignment.VerticalAlignmentWrapper;
-import doors.ui.UITextureAtlas;
+import doors.core.utility.Functional.IAction;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
 
-public class MenuTitleElement extends WrapperElement {
+public class MenuButtonElement extends WrapperElement {
 
-    private static Vector2in BUTTON_DIMENSIONS = new Vector2in(250, 0);
+    private static Vector2in BUTTON_DIMENSIONS = new Vector2in(150, 0);
 
-    public MenuTitleElement(TextureSample icon, String text) {
-        this.child = new BackgroundElement(
-            new PaddingElement(
+    public MenuButtonElement(TextureSample icon, String text, IAction action) {
+        this.child = new PaddingElement(
+            new ButtonElement(
                 new MinDimensionsElement(
                     new BoxAlignmentWrapper(
                         new HorizontalSpanElement(
                             Arrays.asList(
                                 new VerticalAlignmentWrapper(new IconElement(icon)),
-                                new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.UNDERLINE, Vector3fl.WHITE))
-                            ), 2
-                        ),
-                        HorizontalAlignment.LEFT
+                                new VerticalAlignmentWrapper(new TextLabelElement(text, FontDecoration.NORMAL, Vector3fl.BLACK))
+                            ), 4
+                        )
                     ),
                     BUTTON_DIMENSIONS
                 ),
-                2
+                action
             ),
-            UITextureAtlas.TITLE_BAR
+            5
         );
     }
 

@@ -1,7 +1,7 @@
 package doors.core.io;
 
 import org.lwjgl.glfw.GLFW;
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.Tick;
 import doors.core.utility.vector.Vector2in;
 
@@ -63,8 +63,8 @@ public class Mouse {
 
     public void update() {
         this.position.set(
-            (int)(Window.WINDOW.getCursorPosition().getFloatX() * Config.RESOLUTION.x),
-            (int)(Window.WINDOW.getCursorPosition().getFloatY() * Config.RESOLUTION.y)
+            (int)(Window.WINDOW.getCursorPosition().getFloatX() * Config.CONFIG.getResolution().x),
+            (int)(Window.WINDOW.getCursorPosition().getFloatY() * Config.CONFIG.getResolution().y)
         );
 
         if(this.centerLock) {

@@ -2,7 +2,7 @@ package doors.state;
 
 import java.util.Arrays;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.io.Mouse;
 import doors.core.io.Window;
@@ -12,14 +12,14 @@ import doors.core.ui.VerticalSpanElement;
 import doors.core.ui.alignment.HorizontalAlignment;
 import doors.core.ui.alignment.HorizontalAlignmentWrapper;
 import doors.state.explore.ExploreGameState;
-import doors.ui.UITextureAtlas;
-import doors.ui.element.BorderElement;
-import doors.ui.element.ContainerElement;
-import doors.ui.element.MenuButtonElement;
-import doors.ui.element.MenuTitleElement;
-import doors.ui.element.TextInputElement;
-import doors.ui.element.TextLabelElement;
-import doors.ui.element.WindowElement;
+import doors.graphics.ui.UITextureAtlas;
+import doors.ui.BorderElement;
+import doors.ui.ContainerElement;
+import doors.ui.MenuButtonElement;
+import doors.ui.MenuTitleElement;
+import doors.ui.TextInputElement;
+import doors.ui.TextLabelElement;
+import doors.ui.WindowElement;
 import doors.core.utility.vector.Vector3fl;
 import doors.core.utility.vector.Vector2in;
 
@@ -44,7 +44,7 @@ public class MainMenuExploreGameState extends GameState {
 
     public MainMenuExploreGameState() {
         this.levelInput = new TextInputElement(20);
-        this.levelInput.text.append("scratch/sphere_2");
+        this.levelInput.text.append("");
     }
 
     private void explore() {
@@ -78,7 +78,7 @@ public class MainMenuExploreGameState extends GameState {
     @Override
     public void update() {
         this.root.determineDimensions();
-        var origin = new Vector2in(Config.RESOLUTION).sub(this.root.getDimensions()).div(2);
+        var origin = new Vector2in(Config.CONFIG.getResolution()).sub(this.root.getDimensions()).div(2);
         this.root.determinePosition(origin);
         this.root.update();
         this.root.writeElement();

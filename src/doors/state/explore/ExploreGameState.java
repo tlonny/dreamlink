@@ -1,21 +1,24 @@
 package doors.state.explore;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL42;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.Doors;
 import doors.Screen;
 import doors.state.GameState;
 import doors.core.graphics.Shader;
 import doors.core.graphics.sprite.SpriteMeshBufferWriter;
+import doors.core.io.Keyboard;
 import doors.core.io.Mouse;
 import doors.core.io.Window;
 import doors.level.Door;
 import doors.level.Level;
 import doors.level.LevelCache;
 import doors.core.utility.vector.Vector3fl;
-import doors.entity.DoorMesh;
-import doors.entity.PortalMesh;
+import doors.entity.Camera;
+import doors.graphics.entity.DoorMesh;
+import doors.graphics.entity.PortalMesh;
 import doors.core.utility.vector.Vector2in;
 
 public class ExploreGameState extends GameState {
@@ -42,23 +45,40 @@ public class ExploreGameState extends GameState {
         this.spriteWriter = new SpriteMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }
 
-    public void openDoor(Door door) {
-        var targetLevel = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
-        if(this.openDoor == door || !targetLevel.isReady) {
+    public void tryOpenDoor() {
+        Door target = null;
+        float distanceToTarget = Float.MAX_VALUE;
+
+        for(var door : this.currentLevel.doors.values()) {
+            var distance = door.position.getDistance(Camera.CAMERA.position);
+            if(distance < distanceToTarget) {
+                target = door;
+                distanceToTarget = distance;
+            }
+        }
+
+        if(target == null)
+            return;
+
+        var targetLevel = LevelCache.LEVEL_CACHE.getLevel(target.targetLevel);
+        if(this.openDoor == target || !targetLevel.isReady) {
             return;
         }
 
         this.shutDoor = this.openDoor;
-        this.openDoor = door;
+        this.openDoor = target;
         this.openFactor = 0f;
     }
 
     public void use(String level) {
         super.use();
         this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
-        this.currentLevel.setup();
         Mouse.MOUSE.centerLock = true;
         Window.WINDOW.setCursorVisibility(false);
+
+        var mainDoor = this.currentLevel.doors.get("main");
+        Camera.CAMERA.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
+        Camera.CAMERA.rotation.set(mainDoor.orientation.rotation);
     }
 
     private float getPortalRotation() {
@@ -192,6 +212,10 @@ public class ExploreGameState extends GameState {
 
     @Override
     public void update() {
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
+            this.tryOpenDoor();
+        }
+
         Camera.CAMERA.update();
 
         this.openFactor += 0.05f;
@@ -212,7 +236,7 @@ public class ExploreGameState extends GameState {
         this.spriteWriter.writeSprite(
             Doors.RENDER_TARGET_CURRENT.screenSample,
             Vector2in.ZERO,
-            Config.RESOLUTION,
+            Config.CONFIG.getResolution(),
             Vector3fl.WHITE
         );
 

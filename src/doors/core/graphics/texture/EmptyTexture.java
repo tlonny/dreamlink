@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL42;
 
-import doors.Config;
+import doors.core.config.Config;
 import doors.core.utility.vector.Vector2in;
 
 public class EmptyTexture extends Texture {
@@ -19,8 +19,8 @@ public class EmptyTexture extends Texture {
             GL42.GL_TEXTURE_2D, 
             0, 
             GL42.GL_RGBA, 
-            Config.RESOLUTION.x, 
-            Config.RESOLUTION.y, 
+            Config.CONFIG.getResolution().x, 
+            Config.CONFIG.getResolution().y, 
             0, 
             GL42.GL_RGBA, 
             GL42.GL_UNSIGNED_BYTE, 

@@ -29,6 +29,10 @@ public class Keyboard {
         return this.pressedKeys[key] == Tick.TICK.getCurrentTick();
     }
 
+    public boolean isKeyReleased(int key) {
+        return this.releasedKeys[key] == Tick.TICK.getCurrentTick();
+    }
+
     public void setup() {
         Window.WINDOW.setKeyCallback(this::onKeyEvent);
 

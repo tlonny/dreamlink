@@ -1,5 +1,8 @@
 package doors;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL42;
 
 import doors.core.graphics.mesh.MeshBuffer;
@@ -8,12 +11,11 @@ import doors.core.graphics.rendertarget.VirtualRenderTarget;
 import doors.core.graphics.texture.ImageTexture;
 import doors.core.graphics.texture.TextureChannel;
 import doors.core.utility.vector.Vector2in;
-import doors.entity.DoorMesh;
-import doors.entity.PortalMesh;
-import doors.state.explore.Camera;
-import doors.state.explore.ExploreGameState;
+import doors.graphics.entity.DoorMesh;
+import doors.graphics.entity.PortalMesh;
 import doors.state.MainMenuExploreGameState;
 import doors.state.MainMenuRootGameState;
+import doors.state.explore.ExploreGameState;
 import doors.core.graphics.Shader;
 import doors.core.Game;
 import doors.state.GameState;
@@ -75,7 +77,6 @@ public class Doors extends Game {
         MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE.setup();
         MainMenuExploreGameState.MAIN_MENU_EXPLORE_GAME_STATE.setup();
 
-        Camera.CAMERA.position.set(10,2,12);
         MainMenuRootGameState.MAIN_MENU_ROOT_GAME_STATE.use();
         //ExploreGameState.EXPLORE_GAME_STATE.use("scratch/sphere_2");
     }
