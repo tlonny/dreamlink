@@ -90,13 +90,13 @@ public class MeshBuffer {
                     position.getFloatY() + dimensions.getFloatY() * winding.getFloatY(),
                     position.getFloatZ()
                 );
-            } else if (cubeFace == CubeFace.LEFT) {
+            } else if (cubeFace == CubeFace.RIGHT) {
                 vertexPosition.set(
                     position.getFloatX(),
                     position.getFloatY() + dimensions.getFloatY() * winding.getFloatY(),
                     position.getFloatZ() + dimensions.getFloatZ() * winding.getFloatX()
                 );
-            } else if (cubeFace == CubeFace.RIGHT) {
+            } else if (cubeFace == CubeFace.LEFT) {
                 vertexPosition.set(
                     position.getFloatX() + dimensions.getFloatX(),
                     position.getFloatY() + dimensions.getFloatY() * winding.getFloatY(),

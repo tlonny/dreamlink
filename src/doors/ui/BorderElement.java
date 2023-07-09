@@ -3,7 +3,6 @@ package doors.ui;
 import doors.core.ui.IUIElement;
 import doors.core.ui.PaddingElement;
 import doors.core.ui.WrapperElement;
-import doors.ui.BoxDesign;
 
 public class BorderElement extends WrapperElement {
 

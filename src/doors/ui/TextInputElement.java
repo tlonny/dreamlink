@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import doors.core.io.Keyboard;
 import doors.core.io.TypedCharacters;
 import doors.core.ui.IUIElement;
-import doors.core.ui.EventState;
+import doors.core.ui.ElementState;
 import doors.Screen;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.graphics.sprite.FontMeshBufferWriter;
@@ -23,7 +23,7 @@ public class TextInputElement implements IUIElement {
     private long cursorBlinkOffsetTime;
     private Vector2in position;
     private Vector2in dimensions;
-    private EventState eventState;
+    private ElementState eventState;
     private FontMeshBufferWriter fontWriter;
 
     public TextInputElement(int maxLength) {
@@ -31,7 +31,7 @@ public class TextInputElement implements IUIElement {
         this.maxLength = maxLength;
         this.position = new Vector2in();
         this.dimensions = new Vector2in();
-        this.eventState = new EventState(this);
+        this.eventState = new ElementState(this);
         this.setMaxLength(maxLength);
         this.fontWriter = new FontMeshBufferWriter(Screen.SCREEN.meshBuffer);
     }

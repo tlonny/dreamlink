@@ -17,7 +17,6 @@ import doors.core.utility.vector.Vector2in;
 
 public class MainMenuRootGameState extends GameState {
 
-
     public static MainMenuRootGameState MAIN_MENU_ROOT_GAME_STATE = new MainMenuRootGameState();
 
     private IUIElement root;

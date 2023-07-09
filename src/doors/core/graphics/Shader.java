@@ -119,7 +119,10 @@ public class Shader {
         this.workingMatrix.identity().translate(-position.getFloatX(), -position.getFloatY(), -position.getFloatZ());
         this.setUniform(this.uniformViewTranslationMatrixID, this.workingMatrix);
 
-        this.workingMatrix.identity().rotateX(-rotation.x).rotateY(-rotation.y);
+        // By default openGL looks down the negative Z axis [BACK]. Our "default" orientation is [FRONT],
+        // thus ontop of the standard camera view translations, we want to finish by rotating the world
+        // by 180 degrees to ensure the camera is looking in the [FRONT] direction.
+        this.workingMatrix.identity().rotateY((float)Math.PI).rotateX(-rotation.x).rotateY(-rotation.y);
         this.setUniform(this.uniformViewRotationMatrixID, this.workingMatrix);
 
         var aspectRatio = Config.CONFIG.getResolution().getAspectRatio();

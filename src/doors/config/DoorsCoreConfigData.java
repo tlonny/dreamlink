@@ -7,7 +7,7 @@ public class DoorsCoreConfigData implements IConfigData {
 
     @Override
     public Vector2in getResolution() {
-        return new Vector2in(1280, 720);
+        return new Vector2in(1280, 720).div(2);
     }
 
     @Override

@@ -2,7 +2,7 @@ package doors.core.ui;
 
 import doors.core.io.Mouse;
 
-public class EventState {
+public class ElementState {
 
     private IUIElement element;
 
@@ -16,7 +16,7 @@ public class EventState {
     public boolean isOnFocus;
     public boolean isOnBlur;
 
-    public EventState(IUIElement element) {
+    public ElementState(IUIElement element) {
         this.element = element;
     }
 

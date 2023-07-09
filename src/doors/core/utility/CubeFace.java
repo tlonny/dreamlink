@@ -25,14 +25,14 @@ public class CubeFace {
 
     public static CubeFace LEFT = new CubeFace(
         "left",
-        new Vector3in(-1, 0, 0),
-        new Vector3fl(0f, -0.5f, 0f).mul(Math.PI)
+        new Vector3in(1, 0, 0),
+        new Vector3fl(0f, 0.5f, 0f).mul(Math.PI)
     );
 
     public static CubeFace RIGHT = new CubeFace(
         "right",
-        new Vector3in(1, 0, 0),
-        new Vector3fl(0f, 0.5f, 0f).mul(Math.PI)
+        new Vector3in(-1, 0, 0),
+        new Vector3fl(0f, -0.5f, 0f).mul(Math.PI)
     );
 
     public static CubeFace TOP = new CubeFace(

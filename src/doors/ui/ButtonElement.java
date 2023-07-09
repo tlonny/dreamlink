@@ -3,7 +3,7 @@ package doors.ui;
 import doors.ui.BoxDesign;
 import doors.core.ui.IUIElement;
 import doors.core.ui.PaddingElement;
-import doors.core.ui.EventState;
+import doors.core.ui.ElementState;
 import doors.core.utility.Functional.IAction;
 import doors.core.utility.vector.Vector2in;
 
@@ -12,7 +12,7 @@ public class ButtonElement implements IUIElement {
     private static int BUTTON_PADDING = 2;
 
     private PaddingElement paddingChild;
-    private EventState eventState;
+    private ElementState eventState;
     public IAction onClick;
 
     private Vector2in position;
@@ -20,7 +20,7 @@ public class ButtonElement implements IUIElement {
     public ButtonElement(IUIElement child, IAction onClick) {
         this.paddingChild = new PaddingElement(child, BUTTON_PADDING);
         this.onClick = onClick;
-        this.eventState = new EventState(this);
+        this.eventState = new ElementState(this);
         this.position = new Vector2in();
     }
 
