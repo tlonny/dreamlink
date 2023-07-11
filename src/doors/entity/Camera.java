@@ -75,6 +75,11 @@ public class Camera {
         this.rotation.x -= this.mouseDelta.y;
 
         this.rotation.x = Math.min(Math.max(this.rotation.x, - PITCH_LIMIT), PITCH_LIMIT);
+
+        this.rotation.y %= 2 * Math.PI;
+        if(this.rotation.y < 0) {
+            this.rotation.y += 2 * Math.PI;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package doors.core.graphics.cube;
 
 import doors.core.graphics.Shader;
+import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.CubeFace;
 import doors.core.utility.vector.Vector3fl;
@@ -73,7 +74,7 @@ public class CubeSchema {
         );
     }
 
-    public TextureSample getTextureSample(CubeFace cubeFace) {
+    private TextureSample getTextureSample(CubeFace cubeFace) {
         if(cubeFace == CubeFace.FRONT) {
             return this.frontSample;
         }
@@ -100,6 +101,20 @@ public class CubeSchema {
     public void transform(Vector3fl position, Vector3fl rotation, Vector3fl scale) {
         this.positionBuffer.set(position).add(this.origin);
         Shader.SHADER.setCubeTransformer(this.cubeID, this.positionBuffer, rotation, scale);
+    }
+
+    public void writeCubeSchema(MeshBuffer meshBuffer) {
+        for(var cubeFace : CubeFace.CUBE_FACES) {
+            var textureSample = this.getTextureSample(cubeFace);
+            meshBuffer.writeQuad(
+                textureSample,
+                this.cubeID,
+                this.position,
+                this.dimensions,
+                cubeFace,
+                Vector3fl.WHITE
+            );
+        }
     }
 
 }

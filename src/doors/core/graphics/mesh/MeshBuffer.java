@@ -2,6 +2,7 @@ package doors.core.graphics.mesh;
 
 import org.lwjgl.system.MemoryUtil;
 
+import doors.core.config.Config;
 import doors.core.graphics.texture.TextureSample;
 import doors.core.utility.CubeFace;
 import doors.core.utility.vector.Vector3fl;
@@ -33,7 +34,7 @@ public class MeshBuffer {
     public IntBuffer packedColorBuffer;
     public IntBuffer packedLookupIDsBuffer;
 
-    private int vertexCount;
+    private int numQuads;
 
     public MeshBuffer(int quadCapacity) {
         this.indexBuffer = MemoryUtil.memAllocInt(quadCapacity * 6);
@@ -42,6 +43,10 @@ public class MeshBuffer {
         this.textureOffsetBuffer = MemoryUtil.memAllocFloat(quadCapacity * 8);
         this.packedColorBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
         this.packedLookupIDsBuffer = MemoryUtil.memAllocInt(quadCapacity * 4); 
+    }
+
+    public int getNumIndices() {
+        return this.numQuads * 6;
     }
 
     public void tearDown() {
@@ -128,27 +133,34 @@ public class MeshBuffer {
             this.packedLookupIDsBuffer.put(packedLookupIDs);
         }
 
-        for(var index : QUAD_INDICES)
-            this.indexBuffer.put(index + this.vertexCount);
-        this.vertexCount += 4;
+        for(var index : QUAD_INDICES) {
+            this.indexBuffer.put(index + this.numQuads * 4);
+        }
+
+        this.numQuads += 1;
     }
 
-    public void flip() {
-        this.indexBuffer.flip();
-        this.positionBuffer.flip();
-        this.normalBuffer.flip();
-        this.textureOffsetBuffer.flip();
-        this.packedColorBuffer.flip();
-        this.packedLookupIDsBuffer.flip();
-    }
+    public void writeQuad(TextureSample textureSample, IVector2fl position, IVector2fl dimensions, Vector3fl color) {
+        var worldPosition = new Vector3fl(
+            position.getFloatX() / Config.CONFIG.getResolution().x * 2f - 1f,
+            (Config.CONFIG.getResolution().y - position.getFloatY() - dimensions.getFloatY()) / Config.CONFIG.getResolution().y * 2f - 1f, 
+            1f
+        );
 
-    public void rewind() {
-        this.indexBuffer.rewind();
-        this.positionBuffer.rewind();
-        this.normalBuffer.rewind();
-        this.textureOffsetBuffer.rewind();
-        this.packedColorBuffer.rewind();
-        this.packedLookupIDsBuffer.rewind();
+        var worldDimensions = new Vector3fl(
+            dimensions.getFloatX() / Config.CONFIG.getResolution().x * 2f, 
+            dimensions.getFloatY() / Config.CONFIG.getResolution().y * 2f,
+            0f
+        );
+
+        this.writeQuad(
+            textureSample, 
+            0,
+            worldPosition,
+            worldDimensions,
+            CubeFace.FRONT, 
+            color
+        );
     }
 
     public void clear() {
@@ -158,7 +170,7 @@ public class MeshBuffer {
         this.textureOffsetBuffer.clear();
         this.packedColorBuffer.clear();
         this.packedLookupIDsBuffer.clear();
-        this.vertexCount = 0;
+        this.numQuads = 0;
     }
 
 }

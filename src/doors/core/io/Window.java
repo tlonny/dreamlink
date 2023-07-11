@@ -38,10 +38,6 @@ public class Window {
         GLFW.glfwSetWindowShouldClose(this.windowID, true);
     }
 
-    public void setCursorVisibility(boolean visibility) {
-        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, visibility ? GLFW.GLFW_CURSOR_NORMAL : GLFW.GLFW_CURSOR_HIDDEN);
-    }
-
     public boolean shouldClose() {
         return GLFW.glfwWindowShouldClose(this.windowID);
     }
@@ -93,7 +89,7 @@ public class Window {
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
         GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
-        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     }
 
     public void update() {

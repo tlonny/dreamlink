@@ -22,6 +22,7 @@ public class Game {
     protected void update() {
         Tick.TICK.update();
         TypedCharacters.TYPED_CHARACTERS.update();
+        Keyboard.KEYBOARD.update();
         Window.WINDOW.update();
         Mouse.MOUSE.update();
         WorkQueue.WORK_QUEUE.update();

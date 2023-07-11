@@ -13,12 +13,10 @@ public class CubeMesh extends Mesh {
 
     public void setup() {
         super.setup();
-        var cubeWriter = new CubeMeshBufferWriter(MeshBuffer.DEFAULT_MESH_BUFFER);
         MeshBuffer.DEFAULT_MESH_BUFFER.clear();
         for(var cubeSchema : this.schema) {
-            cubeWriter.writeCubeSchema(cubeSchema);
+            cubeSchema.writeCubeSchema(MeshBuffer.DEFAULT_MESH_BUFFER);
         }
-        MeshBuffer.DEFAULT_MESH_BUFFER.flip();
         this.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
     }
 

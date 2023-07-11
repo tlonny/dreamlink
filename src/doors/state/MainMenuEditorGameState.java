@@ -7,16 +7,16 @@ import doors.core.ui.UIDocument;
 import doors.core.utility.vector.Vector2in;
 import doors.core.utility.vector.Vector3fl;
 import doors.ui.UITextureAtlas;
-import doors.ui.MainMenuExploreComponent;
+import doors.ui.MainMenuEditorComponent;
 
-public class MainMenuExploreGameState extends GameState {
+public class MainMenuEditorGameState extends GameState {
 
-    public static MainMenuExploreGameState MAIN_MENU_EXPLORE_GAME_STATE = new MainMenuExploreGameState();
+    public static MainMenuEditorGameState MAIN_MENU_EDITOR_GAME_STATE = new MainMenuEditorGameState();
 
     private UIDocument document;
 
-    public MainMenuExploreGameState() {
-        this.document = new UIDocument(new MainMenuExploreComponent());
+    public MainMenuEditorGameState() {
+        this.document = new UIDocument(new MainMenuEditorComponent());
     }
 
     @Override

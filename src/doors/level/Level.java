@@ -22,7 +22,6 @@ public class Level {
     private Vector3in chunkDimensions;
     private Vector3in blockDimensions;
     private Chunk[] chunks;
-    private BlockFaceMeshBufferWriter blockWriter;
 
     public String levelDirectory;
     public Map<Integer, Block> blockMap;
@@ -33,7 +32,6 @@ public class Level {
         this.levelDirectory = levelDirectory;
         this.doors = new HashMap<>();
         this.blockMap = new HashMap<>();
-        this.blockWriter = new BlockFaceMeshBufferWriter(MeshBuffer.DEFAULT_MESH_BUFFER);
     }
 
     private void markAsReady() {
@@ -181,11 +179,10 @@ public class Level {
                 }
             
                 position.set(localBlockPosition);
-                this.blockWriter.writeBlockFace(position, cubeFace, block);
+                block.writeBlockFace(MeshBuffer.DEFAULT_MESH_BUFFER, position, cubeFace);
             }
         }
 
-        MeshBuffer.DEFAULT_MESH_BUFFER.flip();
         chunk.mesh.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
         chunk.isDirty = false;
     }

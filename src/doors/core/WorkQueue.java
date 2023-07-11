@@ -3,7 +3,7 @@ package doors.core;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import doors.core.utility.Functional.IAction;
+import doors.core.utility.Functional.IAction0;
 
 public class WorkQueue {
 
@@ -11,9 +11,9 @@ public class WorkQueue {
 
     public static WorkQueue WORK_QUEUE = new WorkQueue();
 
-    private Queue<IAction> workQueue = new LinkedList<>();
+    private Queue<IAction0> workQueue = new LinkedList<>();
 
-    public void addWorkUnit(IAction action) {
+    public void addWorkUnit(IAction0 action) {
         this.workQueue.add(action);
     }
 

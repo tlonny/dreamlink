@@ -50,7 +50,7 @@ public class Mesh {
 
 
     private void useMesh() {
-        if(this == USED_MESH || this.vertexArrayID == 0) {
+        if(this == USED_MESH) {
             return;
         }
 
@@ -61,23 +61,25 @@ public class Mesh {
         }
 
         GL42.glBindVertexArray(this.vertexArrayID);
-
         USED_MESH = this;
     }
 
-    public void loadIndexData(int vertexBufferID, IntBuffer buffer) {
+    private void loadIndexData(int vertexBufferID, IntBuffer buffer) {
+        buffer.flip();
         GL42.glBindBuffer(GL42.GL_ELEMENT_ARRAY_BUFFER, vertexBufferID);
         GL42.glBufferData(GL42.GL_ELEMENT_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
     }
 
-    public void loadIntData(int location, int size, int vertexBufferID, IntBuffer buffer) {
+    private void loadIntData(int location, int size, int vertexBufferID, IntBuffer buffer) {
+        buffer.flip();
         GL42.glBindBuffer(GL42.GL_ARRAY_BUFFER, vertexBufferID);
         GL42.glBufferData(GL42.GL_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
         GL42.glVertexAttribIPointer(location, size, GL42.GL_INT, 0, 0);
         GL42.glEnableVertexAttribArray(location);
     }
 
-    public void loadFloatData(int location, int size, int vertexBufferID, FloatBuffer buffer) {
+    private void loadFloatData(int location, int size, int vertexBufferID, FloatBuffer buffer) {
+        buffer.flip();
         GL42.glBindBuffer(GL42.GL_ARRAY_BUFFER, vertexBufferID);
         GL42.glBufferData(GL42.GL_ARRAY_BUFFER, buffer, GL42.GL_DYNAMIC_DRAW);
         GL42.glVertexAttribPointer(location, size, GL42.GL_FLOAT, false, 0, 0);
@@ -86,7 +88,7 @@ public class Mesh {
 
     public void loadDataFromMeshBuffer(MeshBuffer meshBuffer) {
         this.useMesh();
-        this.numIndices = meshBuffer.indexBuffer.remaining();
+        this.numIndices = meshBuffer.getNumIndices();
         this.loadIndexData(this.indexVertexBufferID, meshBuffer.indexBuffer);
         this.loadFloatData(POSITION_LOCATION, 3, this.positionVertexBufferID, meshBuffer.positionBuffer);
         this.loadFloatData(NORMAL_LOCATION, 3, this.normalVertexBufferID, meshBuffer.normalBuffer);
@@ -109,6 +111,15 @@ public class Mesh {
 
     public void render(IVector3fl position, Vector3fl rotation) {
         this.render(position, rotation, Vector3fl.ONE);
+    }
+
+    public void render() {
+        this.render(
+            Vector3fl.ZERO,
+            Vector3fl.ZERO,
+            Vector3fl.ONE,
+            Vector3fl.WHITE
+        );
     }
 }
 

@@ -139,5 +139,4 @@ public class Vector2in implements IVector2fl {
         return this.x * this.y;
     }
 
-
 }
