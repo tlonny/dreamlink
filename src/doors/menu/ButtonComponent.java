@@ -15,7 +15,7 @@ public class ButtonComponent extends BaseMenuComponent {
         this.onClick = onClick;
         this.dimensions.set(dimensions);
         this.child = this.addChild(child);
-        this.layer = MenuLayer.INTERACTIVE;
+        this.componentLayer = ComponentLayer.INTERACTIVE;
     }
 
     private BoxSchema getBoxSchema() {

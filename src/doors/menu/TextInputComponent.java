@@ -24,7 +24,7 @@ public class TextInputComponent extends BaseMenuComponent {
         this.stringBuilder = new StringBuilder();
         this.maxLength = maxLength;
         this.onChange = onChange;
-        this.layer = MenuLayer.INTERACTIVE;
+        this.componentLayer = ComponentLayer.INTERACTIVE;
     }
 
     @Override

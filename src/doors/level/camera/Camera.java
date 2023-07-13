@@ -1,20 +1,12 @@
-package doors.level;
+package doors.level.camera;
 
 import doors.core.Config;
-import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.utility.CubeFace;
 import doors.utility.vector.Vector2fl;
 import doors.utility.vector.Vector3fl;
 
-import org.lwjgl.glfw.GLFW;
-
 public class Camera {
 
-    public static Camera CAMERA = new Camera();
-
-    private static float SPEED = 0.04f;
-    private static float FRICTION = 0.6f;
     private static float PITCH_LIMIT = (float)Math.toRadians(85f);
     private static float MOUSE_SENSITIVITY = 0.9f;
 
@@ -23,29 +15,14 @@ public class Camera {
     public Vector3fl velocity = new Vector3fl();
     public Vector2fl mouseDelta = new Vector2fl();
 
+    public ICameraMovementSystem movementSystem;
+
+    public Camera(ICameraMovementSystem movementSystem) {
+        this.movementSystem = movementSystem;
+    }
+
     public void update() {
-        this.velocity.zeroFuzz();
-        this.position.add(this.velocity);
-
-        var extraVelocity = new Vector3fl();
-
-        if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_W))
-            extraVelocity.add(CubeFace.FRONT.normal);
-
-        if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_S))
-            extraVelocity.add(CubeFace.BACK.normal);
-
-        if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_D))
-            extraVelocity.add(CubeFace.RIGHT.normal);
-
-        if(Keyboard.KEYBOARD.isKeyDown(GLFW.GLFW_KEY_A))
-            extraVelocity.add(CubeFace.LEFT.normal);
-
-        extraVelocity.mul(SPEED);
-        extraVelocity.rotateX(this.rotation.x);
-        extraVelocity.rotateY(this.rotation.y);
-        this.velocity.mul(1 - FRICTION);
-        this.velocity.add(extraVelocity);
+        this.movementSystem.update(this);
 
         this.mouseDelta
             .set(Mouse.MOUSE.position)
@@ -72,5 +49,6 @@ public class Camera {
             this.rotation.y += 2 * Math.PI;
         }
     }
+
 
 }

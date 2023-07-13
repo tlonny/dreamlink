@@ -1,6 +1,5 @@
 package doors.state;
 
-import doors.core.GameState;
 import doors.core.Config;
 import doors.io.Mouse;
 import doors.menu.MenuContext;
@@ -19,7 +18,7 @@ public class MainMenuExploreGameState extends GameState {
     @Override
     public void use() {
         super.use();
-        Mouse.MOUSE.centerLock = false;
+        Mouse.MOUSE.unlockMouse();
     }
 
     @Override

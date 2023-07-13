@@ -1,7 +1,6 @@
 package doors.state;
 
 import doors.core.Config;
-import doors.core.GameState;
 import doors.graphics.mesh.SpriteBatch;
 import doors.graphics.texture.MenuTextureAtlas;
 import doors.io.Mouse;
@@ -14,16 +13,12 @@ public class MainMenuGameState extends GameState {
 
     public static MainMenuGameState MAIN_MENU_GAME_STATE = new MainMenuGameState();
 
-    private MenuContext context;
-
-    public MainMenuGameState() {
-        this.context = new MenuContext(new MainMenuComponent());
-    }
+    private MenuContext context = new MenuContext(new MainMenuComponent());
 
     @Override
     public void use() {
         super.use();
-        Mouse.MOUSE.centerLock = false;
+        Mouse.MOUSE.unlockMouse();
     }
 
     @Override

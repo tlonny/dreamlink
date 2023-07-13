@@ -11,7 +11,7 @@ public class BaseMenuComponent {
     public Vector2in offset;
     public Vector2in dimensions;
     public Vector2in globalPosition;
-    public MenuLayer layer;
+    public ComponentLayer componentLayer;
     private Collection<BaseMenuComponent> children;
 
     protected boolean isFocused;
@@ -22,7 +22,7 @@ public class BaseMenuComponent {
         this.offset = new Vector2in();
         this.dimensions = new Vector2in();
         this.globalPosition = new Vector2in();
-        this.layer = MenuLayer.NORMAL;
+        this.componentLayer = ComponentLayer.NORMAL;
         this.children = new ArrayList<>();
     }
 
@@ -59,7 +59,7 @@ public class BaseMenuComponent {
             return element;
         }
 
-        if(element != null && element.layer.height > accumulator.layer.height) {
+        if(element != null && element.componentLayer.height > accumulator.componentLayer.height) {
             return element;
         } 
 
@@ -78,6 +78,10 @@ public class BaseMenuComponent {
         }
 
         return hoveredElement;
+    }
+
+    public void getFocusableComponents(Collection<BaseMenuComponent> componentList) {
+
     }
 
     public void onMouseEnter() {

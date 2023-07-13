@@ -6,6 +6,8 @@ import doors.utility.vector.Vector2in;
 
 public class Mouse {
 
+    private static Vector2in LOCK_POSITION = new Vector2in(Config.RESOLUTION).div(2);
+
     public static Mouse MOUSE = new Mouse();
 
     private long leftPressed;
@@ -14,7 +16,38 @@ public class Mouse {
     private long rightReleased;
 
     public Vector2in position = new Vector2in();
-    public boolean centerLock = false;
+    private boolean isMouseLocked = true;
+
+    private void writeMousePosition(Vector2in position) {
+        GLFW.glfwSetCursorPos(
+            Window.WINDOW.windowID,
+            (float) position.x / Config.RESOLUTION.x * Window.WINDOW.dimensions.x,
+            (float) position.y / Config.RESOLUTION.y * Window.WINDOW.dimensions.y
+        );
+    }
+
+    private Vector2in readMousePosition() {
+        return new Vector2in(
+            (int)(Window.WINDOW.cursorPosition.x * Config.RESOLUTION.x),
+            (int)(Window.WINDOW.cursorPosition.y * Config.RESOLUTION.y)
+        );
+    }
+
+    public void lockMouse() {
+        if(this.isMouseLocked) {
+            return;
+        }
+        this.writeMousePosition(LOCK_POSITION);
+        this.position.set(LOCK_POSITION);
+        this.isMouseLocked = true;
+    }
+
+    public void unlockMouse() {
+        if(!this.isMouseLocked) {
+            return;
+        }
+        this.isMouseLocked = false;
+    }
 
     private void onMouseButtonEvent(long window, int button, int action, int mode) {
         if (action == GLFW.GLFW_PRESS) {
@@ -57,17 +90,9 @@ public class Mouse {
     }
 
     public void update() {
-        this.position.set(
-            (int)(Window.WINDOW.getCursorPosition().getFloatX() * Config.RESOLUTION.x),
-            (int)(Window.WINDOW.getCursorPosition().getFloatY() * Config.RESOLUTION.y)
-        );
-
-        if(this.centerLock) {
-            GLFW.glfwSetCursorPos(
-                Window.WINDOW.windowID,
-                Window.WINDOW.dimensions.x / 2,
-                Window.WINDOW.dimensions.y / 2
-            );
+        this.position.set(this.readMousePosition());
+        if(this.isMouseLocked) {
+            this.writeMousePosition(LOCK_POSITION);
         }
     }
 

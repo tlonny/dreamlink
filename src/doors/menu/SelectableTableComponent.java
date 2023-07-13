@@ -26,7 +26,7 @@ public class SelectableTableComponent<T extends BaseMenuComponent> extends BaseM
         this.highlightDimensions = new Vector2in();
         this.onChange = onChange;
         this.selectedEntry = null;
-        this.layer = MenuLayer.INTERACTIVE;
+        this.componentLayer = ComponentLayer.INTERACTIVE;
 
         for(var entry : this.entries) {
             this.addChild(entry);

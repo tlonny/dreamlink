@@ -6,6 +6,7 @@ import doors.utility.vector.Vector3fl;
 
 public class DoorMesh extends Mesh {
 
+    // TODO: scaling for the top/bottom faces is a bit wrong. Need to tweak texture atlas...
     private static Vector3fl DOOR_FACE_DIMENSIONS = new Vector3fl(1f, 2f, 0.25f);
     private static float DOOR_OPEN_ROTATION = (float)Math.PI * 0.6f;
 

@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
-import doors.utility.vector.IVector2fl;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector2fl;
 
@@ -18,7 +17,7 @@ public class Window {
     public Vector2in dimensions = new Vector2in();
     public long windowID;
     
-    private Vector2fl cursorPosition = new Vector2fl();
+    public Vector2fl cursorPosition = new Vector2fl();
     private double[] cursorXPositionBuffer = new double[1];
     private double[] cursorYPositionBuffer = new double[1];
 
@@ -44,19 +43,6 @@ public class Window {
 
     public void setMouseButtonCallback(GLFWMouseButtonCallbackI callback) {
         GLFW.glfwSetMouseButtonCallback(this.windowID, callback);
-    }
-
-    public IVector2fl getCursorPosition() {
-        return this.cursorPosition;
-    }
-
-    public void setCursorPosition(IVector2fl cursorPosition) {
-        this.cursorPosition.set(cursorPosition);
-        GLFW.glfwSetCursorPos(
-            this.windowID,
-            cursorPosition.getFloatX() * this.dimensions.x,
-            cursorPosition.getFloatY() * this.dimensions.y
-        );
     }
 
     public void setup() {

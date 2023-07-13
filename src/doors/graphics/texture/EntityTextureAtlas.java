@@ -15,7 +15,7 @@ public class EntityTextureAtlas extends ImageTexture {
     public TextureSample doorRightFace = this.createTextureSample(new Vector2in(3, 0), new Vector2in(2, 4), TEXTURE_SCALE);
     public TextureSample doorLockedDoubleFace = this.createTextureSample(new Vector2in(1, 4), new Vector2in(4, 4), TEXTURE_SCALE);
     public TextureSample doorSide = this.createTextureSample(new Vector2in(5, 0), new Vector2in(1, 4), TEXTURE_SCALE);
-    public TextureSample doorEnd = this.createTextureSample(new Vector2in(5, 4), new Vector2in(1, 2), TEXTURE_SCALE);
+    public TextureSample doorEnd = this.createTextureSample(new Vector2in(6, 0), new Vector2in(2, 1), TEXTURE_SCALE);
 
     public EntityTextureAtlas() {
         super(

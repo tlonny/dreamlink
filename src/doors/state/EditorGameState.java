@@ -3,14 +3,14 @@ package doors.state;
 import org.lwjgl.opengl.GL42;
 
 import doors.core.Config;
-import doors.core.GameState;
 import doors.graphics.Shader;
 import doors.graphics.mesh.DoorMesh;
 import doors.graphics.mesh.SpriteBatch;
 import doors.graphics.rendertarget.VirtualRenderTarget;
 import doors.graphics.texture.EntityTextureAtlas;
 import doors.io.Mouse;
-import doors.level.Camera;
+import doors.level.camera.Camera;
+import doors.level.camera.NoClipMovementSystem;
 import doors.level.DebugInformation;
 import doors.level.Level;
 import doors.level.LevelCache;
@@ -27,15 +27,20 @@ public class EditorGameState extends GameState {
         .div(2);
 
     private Level currentLevel;
+    private Camera camera;
+
+    public EditorGameState() {
+        this.camera = new Camera(new NoClipMovementSystem());
+    }
 
     public void use(String level) {
         super.use();
         this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
-        Mouse.MOUSE.centerLock = true;
+        Mouse.MOUSE.lockMouse();
 
         var mainDoor = this.currentLevel.doors.get("main");
-        Camera.CAMERA.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
-        Camera.CAMERA.rotation.set(mainDoor.orientation.rotation);
+        this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
+        this.camera.rotation.set(mainDoor.orientation.rotation);
     }
 
     private void renderCurrent() {
@@ -44,8 +49,8 @@ public class EditorGameState extends GameState {
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
         Shader.SHADER.setPerspectiveViewMatrices(
-            Camera.CAMERA.position, 
-            Camera.CAMERA.rotation
+            this.camera.position, 
+            this.camera.rotation
         );
 
         this.currentLevel.terrain.render();
@@ -61,7 +66,7 @@ public class EditorGameState extends GameState {
 
     @Override
     public void update() {
-        Camera.CAMERA.update();
+        this.camera.update();
 
         SpriteBatch.SPRITE_BATCH.writeSprite(
             VirtualRenderTarget.RENDER_TARGET_CURRENT.screenSample,
@@ -77,7 +82,7 @@ public class EditorGameState extends GameState {
             Vector3fl.WHITE
         );
 
-        DebugInformation.DEBUG_INFORMATION.update();
+        DebugInformation.DEBUG_INFORMATION.update(this.camera);
 
         this.renderCurrent();
     }

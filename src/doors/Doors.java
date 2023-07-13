@@ -2,7 +2,6 @@ package doors;
 
 import org.lwjgl.opengl.GL42;
 
-import doors.core.GameState;
 import doors.core.WorkQueue;
 import doors.graphics.Shader;
 import doors.graphics.mesh.DoorMesh;
@@ -19,6 +18,9 @@ import doors.io.Mouse;
 import doors.io.Tick;
 import doors.io.TypedCharacters;
 import doors.io.Window;
+import doors.state.EditorGameState;
+import doors.state.ExploreGameState;
+import doors.state.GameState;
 import doors.state.MainMenuGameState;
 
 public class Doors {
@@ -45,6 +47,8 @@ public class Doors {
         VirtualRenderTarget.RENDER_TARGET_PORTAL.texture.useTexture();
 
         MainMenuGameState.MAIN_MENU_GAME_STATE.use();
+        //ExploreGameState.EXPLORE_GAME_STATE.use("sphere_2");
+        //EditorGameState.EDITOR_GAME_STATE.use("sphere_2");
     }
 
     private void update() {

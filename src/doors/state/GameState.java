@@ -1,4 +1,4 @@
-package doors.core;
+package doors.state;
 
 public abstract class GameState {
 

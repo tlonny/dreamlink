@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL42;
 
 import doors.core.Config;
-import doors.core.GameState;
 import doors.graphics.Shader;
 import doors.graphics.mesh.DoorMesh;
 import doors.graphics.mesh.PortalMesh;
@@ -13,7 +12,10 @@ import doors.graphics.rendertarget.VirtualRenderTarget;
 import doors.graphics.texture.EntityTextureAtlas;
 import doors.io.Keyboard;
 import doors.io.Mouse;
-import doors.level.Camera;
+import doors.level.camera.Camera;
+import doors.level.camera.PlayerMovementSystem;
+import doors.level.terrain.IHasTerrain;
+import doors.level.terrain.Terrain;
 import doors.level.DebugInformation;
 import doors.level.Door;
 import doors.level.Level;
@@ -21,7 +23,7 @@ import doors.level.LevelCache;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class ExploreGameState extends GameState {
+public class ExploreGameState extends GameState implements IHasTerrain {
 
     private static Vector3fl COLLIDER_DIMENSIONS = new Vector3fl(2f,2f,2f);
 
@@ -35,8 +37,9 @@ public class ExploreGameState extends GameState {
     private Level currentLevel;
     private Door openDoor;
     private Door shutDoor;
+    private Camera camera;
 
-    private float openFactor;
+    private float doorOpenFactor;
 
     private Level portalLevel;
     private Door portalDoor;
@@ -44,12 +47,26 @@ public class ExploreGameState extends GameState {
 
     private Vector3fl previousCameraPosition = new Vector3fl();
 
-    public void tryOpenDoor() {
+    public ExploreGameState() {
+        this.camera = new Camera(new PlayerMovementSystem(this));
+    }
+
+    public void use(String level) {
+        super.use();
+        this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
+        Mouse.MOUSE.lockMouse();
+
+        var mainDoor = this.currentLevel.doors.get("main");
+        this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 5f, 0f);
+        this.camera.rotation.set(mainDoor.orientation.rotation);
+    }
+
+    private void tryOpenDoor() {
         Door target = null;
         float distanceToTarget = Float.MAX_VALUE;
 
         for(var door : this.currentLevel.doors.values()) {
-            var distance = door.position.getDistance(Camera.CAMERA.position);
+            var distance = door.position.getDistance(this.camera.position);
             if(distance < distanceToTarget) {
                 target = door;
                 distanceToTarget = distance;
@@ -66,17 +83,7 @@ public class ExploreGameState extends GameState {
 
         this.shutDoor = this.openDoor;
         this.openDoor = target;
-        this.openFactor = 0f;
-    }
-
-    public void use(String level) {
-        super.use();
-        this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
-        Mouse.MOUSE.centerLock = true;
-
-        var mainDoor = this.currentLevel.doors.get("main");
-        Camera.CAMERA.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
-        Camera.CAMERA.rotation.set(mainDoor.orientation.rotation);
+        this.doorOpenFactor = 0f;
     }
 
     private float getPortalRotation() {
@@ -84,7 +91,7 @@ public class ExploreGameState extends GameState {
     }
 
     private void teleport() {
-        var currentDot = new Vector3fl(Camera.CAMERA.position)
+        var currentDot = new Vector3fl(this.camera.position)
             .sub(this.openDoor.position)
             .getDot(this.openDoor.orientation.normal);
 
@@ -97,15 +104,15 @@ public class ExploreGameState extends GameState {
         }
 
         var adjustedCollider = new Vector3fl(this.openDoor.position).sub(1f, 0f, 1f);
-        if(!Camera.CAMERA.position.isWithinBounds(adjustedCollider, COLLIDER_DIMENSIONS)) {
+        if(!this.camera.position.isWithinBounds(adjustedCollider, COLLIDER_DIMENSIONS)) {
             return;
         }
 
-        Camera.CAMERA.position.sub(this.openDoor.position);
-        Camera.CAMERA.position.rotateY(this.portalRotation);
-        Camera.CAMERA.position.add(this.portalDoor.position);
-        Camera.CAMERA.rotation.y += this.portalRotation;
-        Camera.CAMERA.velocity.rotateY(this.portalRotation);
+        this.camera.position.sub(this.openDoor.position);
+        this.camera.position.rotateY(this.portalRotation);
+        this.camera.position.add(this.portalDoor.position);
+        this.camera.rotation.y += this.portalRotation;
+        this.camera.velocity.rotateY(this.portalRotation);
 
         var currentLevel = this.currentLevel;
         this.currentLevel = this.portalLevel;
@@ -121,12 +128,12 @@ public class ExploreGameState extends GameState {
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
-        var cameraPosition = new Vector3fl(Camera.CAMERA.position)
+        var cameraPosition = new Vector3fl(this.camera.position)
             .sub(this.openDoor.position)
             .rotateY(this.portalRotation)
             .add(this.portalDoor.position);
 
-        var cameraRotation = new Vector3fl(Camera.CAMERA.rotation)
+        var cameraRotation = new Vector3fl(this.camera.rotation)
             .add(0f, this.portalRotation, 0f);
 
         Shader.SHADER.setPerspectiveViewMatrices(cameraPosition, cameraRotation);
@@ -157,8 +164,8 @@ public class ExploreGameState extends GameState {
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
 
         Shader.SHADER.setPerspectiveViewMatrices(
-            Camera.CAMERA.position, 
-            Camera.CAMERA.rotation
+            this.camera.position, 
+            this.camera.rotation
         );
 
         this.currentLevel.terrain.render();
@@ -186,7 +193,7 @@ public class ExploreGameState extends GameState {
                 DoorMesh.DOOR_MESH.render(
                     door.position,
                     door.orientation.rotation,
-                    this.openFactor
+                    this.doorOpenFactor
                 );
                 continue;
             } 
@@ -195,7 +202,7 @@ public class ExploreGameState extends GameState {
                 DoorMesh.DOOR_MESH.render(
                     door.position,
                     door.orientation.rotation,
-                    1f - this.openFactor
+                    1f - this.doorOpenFactor
                 );
                 continue;
             }
@@ -214,21 +221,6 @@ public class ExploreGameState extends GameState {
             this.tryOpenDoor();
         }
 
-        Camera.CAMERA.update();
-
-        this.openFactor += 0.05f;
-        this.openFactor = Math.min(this.openFactor, 1f);
-
-        if(this.openDoor != null) {
-            this.portalLevel = LevelCache.LEVEL_CACHE.getLevel(this.openDoor.targetLevel);
-            this.portalDoor = portalLevel.doors.get(this.openDoor.targetDoor);
-            this.portalRotation = this.getPortalRotation();
-
-            this.teleport();
-            this.renderPortal();
-            this.previousCameraPosition.set(Camera.CAMERA.position);
-        }
-
         SpriteBatch.SPRITE_BATCH.writeSprite(
             VirtualRenderTarget.RENDER_TARGET_CURRENT.screenSample,
             Vector2in.ZERO,
@@ -243,9 +235,30 @@ public class ExploreGameState extends GameState {
             Vector3fl.WHITE
         );
 
-        DebugInformation.DEBUG_INFORMATION.update();
+        DebugInformation.DEBUG_INFORMATION.update(this.camera);
+
+        this.camera.update();
+
+        this.doorOpenFactor += 0.05f;
+        this.doorOpenFactor = Math.min(this.doorOpenFactor, 1f);
+
+        if(this.openDoor != null) {
+            this.portalLevel = LevelCache.LEVEL_CACHE.getLevel(this.openDoor.targetLevel);
+            this.portalDoor = portalLevel.doors.get(this.openDoor.targetDoor);
+            this.portalRotation = this.getPortalRotation();
+
+            this.teleport();
+            this.renderPortal();
+            this.previousCameraPosition.set(this.camera.position);
+        }
+
 
         this.renderCurrent();
+    }
+
+    @Override
+    public Terrain getTerrain() {
+        return this.currentLevel.terrain;
     }
 
 }
