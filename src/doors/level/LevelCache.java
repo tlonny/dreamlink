@@ -29,7 +29,6 @@ public class LevelCache {
     }
 
     public Level getLevel(String levelName) {
-
         Level level;
 
         if(!this.levelMap.containsKey(levelName)) {

@@ -1,22 +1,23 @@
 package doors.state;
 
-import doors.Doors;
-import doors.core.config.Config;
-import doors.core.io.Mouse;
-import doors.core.ui.UIDocument;
-import doors.core.utility.vector.Vector2in;
-import doors.core.utility.vector.Vector3fl;
-import doors.ui.UITextureAtlas;
-import doors.ui.MainMenuComponent;
+import doors.core.Config;
+import doors.core.GameState;
+import doors.graphics.mesh.SpriteBatch;
+import doors.graphics.texture.MenuTextureAtlas;
+import doors.io.Mouse;
+import doors.utility.vector.Vector2in;
+import doors.utility.vector.Vector3fl;
+import doors.menu.MainMenuComponent;
+import doors.menu.MenuContext;
 
 public class MainMenuGameState extends GameState {
 
     public static MainMenuGameState MAIN_MENU_GAME_STATE = new MainMenuGameState();
 
-    private UIDocument document;
+    private MenuContext context;
 
     public MainMenuGameState() {
-        this.document = new UIDocument(new MainMenuComponent());
+        this.context = new MenuContext(new MainMenuComponent());
     }
 
     @Override
@@ -28,14 +29,13 @@ public class MainMenuGameState extends GameState {
     @Override
     public void update() {
 
-        Doors.UI_QUAD_BATCH.writeQuad(
-            UITextureAtlas.BACKGROUND,
+        SpriteBatch.SPRITE_BATCH.writeSprite(
+            MenuTextureAtlas.MENU_TEXTURE_ATLAS.background,
             Vector2in.ZERO,
-            Config.CONFIG.getResolution(),
+            Config.RESOLUTION,
             Vector3fl.WHITE
         );
 
-        this.document.update(Doors.UI_QUAD_BATCH);
-
+        this.context.update();
     }
 }

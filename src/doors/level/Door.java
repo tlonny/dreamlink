@@ -1,7 +1,7 @@
 package doors.level;
 
-import doors.core.utility.CubeFace;
-import doors.core.utility.vector.Vector3fl;
+import doors.utility.CubeFace;
+import doors.utility.vector.Vector3fl;
 
 public class Door {
 

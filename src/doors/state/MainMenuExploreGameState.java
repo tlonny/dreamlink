@@ -1,23 +1,20 @@
 package doors.state;
 
-import doors.Doors;
-import doors.core.config.Config;
-import doors.core.io.Mouse;
-import doors.core.ui.UIDocument;
-import doors.core.utility.vector.Vector2in;
-import doors.core.utility.vector.Vector3fl;
-import doors.ui.UITextureAtlas;
-import doors.ui.MainMenuExploreComponent;
+import doors.core.GameState;
+import doors.core.Config;
+import doors.io.Mouse;
+import doors.menu.MenuContext;
+import doors.utility.vector.Vector2in;
+import doors.utility.vector.Vector3fl;
+import doors.graphics.mesh.SpriteBatch;
+import doors.graphics.texture.MenuTextureAtlas;
+import doors.menu.MainMenuExploreComponent;
 
 public class MainMenuExploreGameState extends GameState {
 
     public static MainMenuExploreGameState MAIN_MENU_EXPLORE_GAME_STATE = new MainMenuExploreGameState();
 
-    private UIDocument document;
-
-    public MainMenuExploreGameState() {
-        this.document = new UIDocument(new MainMenuExploreComponent());
-    }
+    private MenuContext context = new MenuContext(new MainMenuExploreComponent());
 
     @Override
     public void use() {
@@ -28,14 +25,14 @@ public class MainMenuExploreGameState extends GameState {
     @Override
     public void update() {
 
-        Doors.UI_QUAD_BATCH.writeQuad(
-            UITextureAtlas.BACKGROUND,
+        SpriteBatch.SPRITE_BATCH.writeSprite(
+            MenuTextureAtlas.MENU_TEXTURE_ATLAS.background,
             Vector2in.ZERO,
-            Config.CONFIG.getResolution(),
+            Config.RESOLUTION,
             Vector3fl.WHITE
         );
 
-        this.document.update(Doors.UI_QUAD_BATCH);
+        this.context.update();
 
     }
 }
