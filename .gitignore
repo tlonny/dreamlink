@@ -1,9 +1,9 @@
 .project
 .classpath
-
+target/
 .idea/
 .settings/
 .log
 
-target/
 scratch/
+.levels/

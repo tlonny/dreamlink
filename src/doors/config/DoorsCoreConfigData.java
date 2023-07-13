@@ -13,8 +13,6 @@ public class DoorsCoreConfigData implements IConfigData {
     public static Vector3fl HYPERLINK_HOVER_COLOR = Vector3fl.fromHex(0xFF00FF);
     public static Vector3fl HYPERLINK_PRESSED_COLOR = Vector3fl.fromHex(0xFF0000);
 
-    public static String EDITOR_LEVEL_DIRECTORY = "scratch/editor";
-
     @Override
     public Vector2in getResolution() {
         return RESOLUTION;

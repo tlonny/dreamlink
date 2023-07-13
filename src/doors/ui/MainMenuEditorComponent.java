@@ -2,7 +2,8 @@ package doors.ui;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import doors.core.config.Config;
 import doors.core.graphics.mesh.MeshBuffer;
@@ -10,34 +11,36 @@ import doors.core.graphics.sprite.FontDecoration;
 import doors.core.ui.BaseUIComponent;
 import doors.core.utility.vector.Vector2in;
 import doors.core.utility.vector.Vector3fl;
+import doors.level.LevelCache;
+import doors.state.EditorGameState;
 import doors.state.MainMenuGameState;
 
 public class MainMenuEditorComponent extends BaseUIComponent {
 
     private static Vector2in BUTTON_DIMENSIONS = new Vector2in(60, 24);
     private static Vector2in WINDOW_PADDING = new Vector2in(10, 10);
+    private static Vector2in SELECT_DIMENSIONS = new Vector2in(200, 400);
     private static int SPACING = 10;
-    private static int MAX_TEXT_LENGTH = 20;
 
     private ButtonComponent goButton;
     private ButtonComponent backButton;
     private TextLabelComponent textLabel;
-    private TextTableComponent table;
+    private TableComponent<TextLabelComponent> table;
 
-    private String selectedLevel;
+    private TextLabelComponent selectedLevel;
 
     public MainMenuEditorComponent() {
         super();
 
         this.textLabel = this.addChild(new TextLabelComponent("Level select:", FontDecoration.NORMAL, Vector3fl.BLACK));
 
-        var levels = Arrays.asList("fcuk", "you");
-        this.table = this.addChild(new TextTableComponent(levels, MAX_TEXT_LENGTH, 10, this::onSelect));
+        var levels = this.buildAvailableLevels();
+        this.table = this.addChild(new TableComponent<TextLabelComponent>(levels, SELECT_DIMENSIONS, this::onChange));
 
         this.goButton = this.addChild(new ButtonComponent(
             new TextLabelComponent("Go", FontDecoration.NORMAL, Vector3fl.BLACK),
             BUTTON_DIMENSIONS,
-            () -> {}
+            this::gotoExplore
         ));
 
         this.goButton.isDisabled = true;
@@ -50,12 +53,30 @@ public class MainMenuEditorComponent extends BaseUIComponent {
 
     }
 
+    private Collection<TextLabelComponent> buildAvailableLevels() {
+        var editorDirectory = Paths.get(LevelCache.LEVEL_DIRECTORY_ROOT, "editor").toString();
+        var levels = new ArrayList<TextLabelComponent>();
+        for(var file : new File(editorDirectory).listFiles()) {
+            if(file.isDirectory()) {
+                levels.add(new TextLabelComponent(file.getName(), FontDecoration.NORMAL, Vector3fl.BLACK));
+            }
+        }
+        return levels;
+    }
+
     private void gotoMainMenu() {
         MainMenuGameState.MAIN_MENU_GAME_STATE.use();
     }
 
-    private void onSelect(String selectedLevel) {
-        this.selectedLevel = selectedLevel;
+    private void gotoExplore() {
+        EditorGameState.EDITOR_GAME_STATE.use(this.selectedLevel.text);
+    }
+
+    private void onChange() {
+        for(var entry : this.table.entries) {
+            entry.color.set(this.table.selectedEntry == entry ? Vector3fl.WHITE : Vector3fl.BLACK);
+        }
+        this.selectedLevel = this.table.selectedEntry;
         this.goButton.isDisabled = this.selectedLevel == null;
     }
 

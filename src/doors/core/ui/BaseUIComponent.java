@@ -16,6 +16,7 @@ public class BaseUIComponent {
     private Collection<BaseUIComponent> children;
 
     protected boolean isFocused;
+    protected boolean isSelected;
     protected boolean isHovered;
 
     public BaseUIComponent() {

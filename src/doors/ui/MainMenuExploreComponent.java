@@ -1,8 +1,5 @@
 package doors.ui;
 
-import java.io.File;
-import java.nio.file.Paths;
-
 import doors.core.config.Config;
 import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.graphics.sprite.FontDecoration;
@@ -35,15 +32,13 @@ public class MainMenuExploreComponent extends BaseUIComponent {
             this::gotoExplore
         ));
 
-        this.goButton.isDisabled = true;
-
         this.backButton = this.addChild(new ButtonComponent(
             new TextLabelComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
             BUTTON_DIMENSIONS,
             this::gotoMainMenu
         ));
 
-        this.textInput = this.addChild(new TextInputComponent(MAX_TEXT_LENGTH, this::onChange));
+        this.textInput = this.addChild(new TextInputComponent(MAX_TEXT_LENGTH));
     }
 
     private void gotoMainMenu() {
@@ -52,12 +47,6 @@ public class MainMenuExploreComponent extends BaseUIComponent {
 
     private void gotoExplore() {
         ExploreGameState.EXPLORE_GAME_STATE.use(this.textInput.stringBuilder.toString());
-    }
-
-    private void onChange(String text) {
-        var path = Paths.get(text, "config.json").toString();
-        var file = new File(path);
-        this.goButton.isDisabled = !file.exists();
     }
 
     @Override

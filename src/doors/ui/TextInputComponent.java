@@ -6,7 +6,7 @@ import doors.core.graphics.mesh.MeshBuffer;
 import doors.core.graphics.sprite.FontDecoration;
 import doors.core.ui.BaseUIComponent;
 import doors.core.ui.UILayer;
-import doors.core.utility.Functional.IAction1;
+import doors.core.utility.Functional.IAction0;
 import doors.core.utility.vector.Vector2in;
 import doors.core.utility.vector.Vector3fl;
 
@@ -16,12 +16,12 @@ public class TextInputComponent extends BaseUIComponent {
 
     private int maxLength;
     private long blinkCursorOffset;
-    private IAction1<String> onChange;
+    private IAction0 onChange;
     public StringBuilder stringBuilder;
 
     public boolean isDisabled;
 
-    public TextInputComponent(int maxLength, IAction1<String> onChange) {
+    public TextInputComponent(int maxLength, IAction0 onChange) {
         super();
         this.stringBuilder = new StringBuilder();
         this.maxLength = maxLength;
@@ -39,7 +39,7 @@ public class TextInputComponent extends BaseUIComponent {
 
     private void onChange() {
         if(this.onChange != null) {
-            this.onChange.invoke(this.stringBuilder.toString());
+            this.onChange.invoke();
         }
     }
 
