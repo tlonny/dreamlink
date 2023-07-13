@@ -31,6 +31,11 @@ public class ButtonComponent extends BaseMenuComponent {
     }
 
     @Override
+    public Cursor getCursor() {
+        return this.isDisabled ? Cursor.CURSOR_FORBIDDEN : Cursor.CURSOR_POINTER;
+    }
+
+    @Override
     public void calculateLayout() {
         super.calculateLayout();
         this.child.centerH(this);

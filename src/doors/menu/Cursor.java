@@ -19,6 +19,11 @@ public class Cursor {
         new Vector2in(7, 0)
     );
 
+    public static Cursor CURSOR_FORBIDDEN = new Cursor(
+        MenuTextureAtlas.MENU_TEXTURE_ATLAS.cursorForbidden,
+        new Vector2in(8 , 8)
+    );
+
     public TextureSample textureSample;
     public Vector2in offset;
     private Vector2in adjustedPosition;

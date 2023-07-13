@@ -9,7 +9,7 @@ import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class TableComponent<T extends BaseMenuComponent> extends BaseMenuComponent {
+public class SelectableTableComponent<T extends BaseMenuComponent> extends BaseMenuComponent {
 
     private static Vector2in PADDING = new Vector2in(3, 3);
 
@@ -19,7 +19,7 @@ public class TableComponent<T extends BaseMenuComponent> extends BaseMenuCompone
 
     private Vector2in highlightDimensions;
 
-    public TableComponent(Collection<T> entries, Vector2in dimensions, IAction0 onChange) {
+    public SelectableTableComponent(Collection<T> entries, Vector2in dimensions, IAction0 onChange) {
         super();
         this.entries = entries;
         this.dimensions = new Vector2in(dimensions);
@@ -44,8 +44,14 @@ public class TableComponent<T extends BaseMenuComponent> extends BaseMenuCompone
         return null;
     }
 
+    @Override
+    public Cursor getCursor() {
+        return Cursor.CURSOR_POINTER;
+    }
+
     public void onPress() {
         var selectedEntry = this.getSelectedEntry();
+        selectedEntry = selectedEntry == this.selectedEntry ? null : selectedEntry;
 
         if(selectedEntry == this.selectedEntry) {
             return;
@@ -74,10 +80,7 @@ public class TableComponent<T extends BaseMenuComponent> extends BaseMenuCompone
     }
 
     private BoxSchema getBoxSchema() {
-        if(this.isFocused) {
-            return BoxSchema.DIALOG_FOCUS;
-        }
-        return BoxSchema.DIALOG_BLUR;
+        return BoxSchema.DIALOG_FOCUS;
     }
 
     @Override

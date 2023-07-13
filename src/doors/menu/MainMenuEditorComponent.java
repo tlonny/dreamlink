@@ -23,7 +23,7 @@ public class MainMenuEditorComponent extends BaseMenuComponent {
     private ButtonComponent goButton;
     private ButtonComponent backButton;
     private TextLabelComponent textLabel;
-    private TableComponent<TextLabelComponent> table;
+    private SelectableTableComponent<TextLabelComponent> table;
 
     private TextLabelComponent selectedLevel;
 
@@ -33,7 +33,7 @@ public class MainMenuEditorComponent extends BaseMenuComponent {
         this.textLabel = this.addChild(new TextLabelComponent("Level select:", FontDecoration.NORMAL, Vector3fl.BLACK));
 
         var levels = this.buildAvailableLevels();
-        this.table = this.addChild(new TableComponent<TextLabelComponent>(levels, SELECT_DIMENSIONS, this::onChange));
+        this.table = this.addChild(new SelectableTableComponent<TextLabelComponent>(levels, SELECT_DIMENSIONS, this::onChange));
 
         this.goButton = this.addChild(new ButtonComponent(
             new TextLabelComponent("Go", FontDecoration.NORMAL, Vector3fl.BLACK),

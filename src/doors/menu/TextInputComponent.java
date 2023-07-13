@@ -27,6 +27,11 @@ public class TextInputComponent extends BaseMenuComponent {
         this.layer = MenuLayer.INTERACTIVE;
     }
 
+    @Override
+    public Cursor getCursor() {
+        return Cursor.CURSOR_POINTER;
+    }
+
     public TextInputComponent(int maxLength) {
         this(maxLength, null);
     }
