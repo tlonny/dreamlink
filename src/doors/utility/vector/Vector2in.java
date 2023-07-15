@@ -6,6 +6,7 @@ public class Vector2in implements IVector2fl {
 
     public static Vector2in ZERO = new Vector2in(0);
     public static Vector2in ONE = new Vector2in(1);
+    public static Vector2in TWO = new Vector2in(2);
 
     public int x;
     public int y;

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import doors.core.WorkQueue;
-import doors.graphics.mesh.MeshBuffer;
-import doors.graphics.texture.ImageTexture;
-import doors.graphics.texture.TextureChannel;
+import doors.queue.WorkQueue;
+import doors.core.graphics.mesh.MeshBuffer;
+import doors.core.graphics.texture.ImageTexture;
+import doors.graphics.texture.channel.BlockTextureChannel;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
 import doors.utility.vector.Vector3fl;
@@ -44,7 +44,7 @@ public class Terrain {
         var texturePath = Paths.get(this.terrainDirectory, "atlas.png").toString();
         var textureDimensions = new Vector2in(rootConfig.getJSONArray("textureDimensions"));
 
-        this.texture = new ImageTexture(TextureChannel.TEXTURE_CHANNEL_BLOCK, textureDimensions, texturePath);
+        this.texture = new ImageTexture(BlockTextureChannel.BLOCK_TEXTURE_CHANNEL, textureDimensions, texturePath);
         WorkQueue.WORK_QUEUE.addWorkUnit(this.texture::setup);
 
         var blocks = rootConfig.getJSONArray("blocks");

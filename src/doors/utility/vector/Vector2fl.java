@@ -38,8 +38,8 @@ public class Vector2fl implements IVector2fl {
         return this;
     }
 
-    public Vector2fl add(Vector2fl toAdd) {
-        return this.add(toAdd.x, toAdd.y);
+    public Vector2fl add(IVector2fl toAdd) {
+        return this.add(toAdd.getFloatX(), toAdd.getFloatY());
     }
 
     public Vector2fl sub(float x, float y) {
@@ -53,7 +53,7 @@ public class Vector2fl implements IVector2fl {
     }
 
 
-    public Vector2fl sub(Vector2fl other) {
+    public Vector2fl sub(IVector2fl other) {
         return this.sub(other.getFloatX(), other.getFloatY());
     }
 

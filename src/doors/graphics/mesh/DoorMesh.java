@@ -1,7 +1,9 @@
 package doors.graphics.mesh;
 
-import doors.graphics.cube.CubeSchema;
-import doors.graphics.texture.EntityTextureAtlas;
+import doors.core.graphics.mesh.Mesh;
+import doors.core.graphics.mesh.MeshBuffer;
+import doors.core.graphics.model.cube.CubeSchema;
+import doors.graphics.texture.EntityTexture;
 import doors.utility.vector.Vector3fl;
 
 public class DoorMesh extends Mesh {
@@ -14,12 +16,12 @@ public class DoorMesh extends Mesh {
         new Vector3fl(0f, 0f, 0f),
         new Vector3fl(1f, 0f, 0f),
         DOOR_FACE_DIMENSIONS,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorRightFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorLeftFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorRightFace,
+        EntityTexture.ENTITY_TEXTURE.doorLeftFace,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
         1
     );
 
@@ -27,12 +29,12 @@ public class DoorMesh extends Mesh {
         new Vector3fl(-1f, 0f, 0f),
         new Vector3fl(-1f, 0f, 0f),
         DOOR_FACE_DIMENSIONS,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorLeftFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorRightFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorLeftFace,
+        EntityTexture.ENTITY_TEXTURE.doorRightFace,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
         2
     );
 
@@ -40,12 +42,12 @@ public class DoorMesh extends Mesh {
         new Vector3fl(-1f, 0f, 0f),
         new Vector3fl(0f, 0f, 0f),
         new Vector3fl(2f, 2f, 0.25f),
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorLockedDoubleFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorLockedDoubleFace,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorEnd,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
-        EntityTextureAtlas.ENTITY_TEXTURE_ATLAS.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorLockedDoubleFace,
+        EntityTexture.ENTITY_TEXTURE.doorLockedDoubleFace,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorEnd,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
+        EntityTexture.ENTITY_TEXTURE.doorSide,
         3
     );
 

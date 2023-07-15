@@ -2,7 +2,7 @@ package doors.level.camera;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.io.Keyboard;
+import doors.core.io.Keyboard;
 import doors.level.terrain.IHasTerrain;
 import doors.utility.CubeFace;
 import doors.utility.vector.Vector3fl;

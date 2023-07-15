@@ -1,9 +1,10 @@
 package doors.level;
 
-import doors.graphics.texture.FontDecoration;
-import doors.graphics.texture.FontTextureAtlas;
+import doors.core.graphics.font.FontDecoration;
+import doors.core.graphics.mesh.MeshBuffer;
+import doors.graphics.font.Font;
 import doors.level.camera.Camera;
-import doors.state.GameState;
+import doors.state.AbstractGameState;
 import doors.utility.vector.Vector3fl;
 import doors.utility.CubeFace;
 import doors.utility.vector.Vector2in;
@@ -18,17 +19,19 @@ public class DebugInformation {
     private long count;
     private float fps;
 
+    private MeshBuffer meshBuffer = new MeshBuffer(5_000);
     private Vector2in positionCursor = new Vector2in();
     private Vector3fl rotatedNormal = new Vector3fl();
 
     private void writeLine(String text) {
-        FontTextureAtlas.FONT_TEXTURE_ATLAS.writeText(
+        Font.FONT.writeText(
+            this.meshBuffer,
             text,
             this.positionCursor,
             FontDecoration.NORMAL,
             Vector3fl.WHITE
         );
-        this.positionCursor.y += FontTextureAtlas.CHARACTER_DIMENSIONS.y;
+        this.positionCursor.y += Font.CHARACTER_DIMENSIONS.y;
     }
 
     public void update(Camera camera) {
@@ -47,7 +50,7 @@ public class DebugInformation {
         this.writeLine(String.format("camera position: %s", camera.position));
         this.writeLine(String.format("camera velocity: %s", camera.velocity));
         this.writeLine(String.format("camera normal: %s", this.rotatedNormal));
-        this.writeLine(String.format("game state: %s", GameState.USED_GAME_STATE.getClass().getSimpleName()));
+        this.writeLine(String.format("game state: %s", AbstractGameState.USED_GAME_STATE.getClass().getSimpleName()));
 
         this.count += 1;
     }

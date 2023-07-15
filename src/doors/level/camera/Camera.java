@@ -1,7 +1,7 @@
 package doors.level.camera;
 
-import doors.core.Config;
-import doors.io.Mouse;
+import doors.Config;
+import doors.core.io.Mouse;
 import doors.utility.vector.Vector2fl;
 import doors.utility.vector.Vector3fl;
 

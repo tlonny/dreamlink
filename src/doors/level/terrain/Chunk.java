@@ -3,7 +3,7 @@ package doors.level.terrain;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import doors.graphics.mesh.Mesh;
+import doors.core.graphics.mesh.Mesh;
 import doors.utility.vector.Vector3in;
 
 public class Chunk {

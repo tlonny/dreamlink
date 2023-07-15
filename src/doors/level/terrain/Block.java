@@ -1,7 +1,7 @@
 package doors.level.terrain;
 
-import doors.graphics.mesh.MeshBuffer;
-import doors.graphics.texture.TextureSample;
+import doors.core.graphics.mesh.MeshBuffer;
+import doors.core.graphics.texture.TextureSample;
 import doors.utility.CubeFace;
 import doors.utility.vector.IVector3fl;
 import doors.utility.vector.Vector3fl;
