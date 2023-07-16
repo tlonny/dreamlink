@@ -17,7 +17,7 @@ public class LevelCache {
     private Map<String,Level> levelMap = new HashMap<>();
 
     private String getLevelDirectory(String level) {
-        var editorPath = Paths.get(LEVEL_DIRECTORY_ROOT, "editor", level).toString();
+        var editorPath = Paths.get(LEVEL_DIRECTORY_ROOT, "edit", level).toString();
         if(new File(editorPath).isDirectory()) {
             return editorPath;
         }

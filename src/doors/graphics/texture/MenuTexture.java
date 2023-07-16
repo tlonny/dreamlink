@@ -1,7 +1,5 @@
 package doors.graphics.texture;
 
-import doors.core.graphics.texture.ImageTexture;
-import doors.core.graphics.texture.TextureSample;
 import doors.graphics.texture.channel.MenuTextureChannel;
 import doors.utility.vector.Vector2in;
 
@@ -116,7 +114,10 @@ public class MenuTexture extends ImageTexture {
 
     public TextureSample cursorPointer = this.createTextureSample(new Vector2in(1, 1), Vector2in.TWO, TEXTURE_SCALE);
     public TextureSample cursorArrow = this.createTextureSample(new Vector2in(1, 3), Vector2in.TWO, TEXTURE_SCALE);
+    public TextureSample cursorGrab = this.createTextureSample(new Vector2in(3, 3), Vector2in.TWO, TEXTURE_SCALE);
     public TextureSample cursorForbidden = this.createTextureSample(new Vector2in(3, 1), Vector2in.TWO, TEXTURE_SCALE);
+
+    public TextureSample dither = this.createTextureSample(new Vector2in(2, 0), Vector2in.ONE, TEXTURE_SCALE);
 
     public MenuTexture() {
         super(

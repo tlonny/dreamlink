@@ -1,7 +1,5 @@
 package doors.graphics.texture;
 
-import doors.core.graphics.texture.ImageTexture;
-import doors.core.graphics.texture.TextureSample;
 import doors.graphics.texture.channel.EntityTextureChannel;
 import doors.utility.vector.Vector2in;
 

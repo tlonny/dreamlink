@@ -1,8 +1,6 @@
 package doors.graphics.mesh;
 
-import doors.core.graphics.mesh.Mesh;
-import doors.core.graphics.mesh.MeshBuffer;
-import doors.core.graphics.model.cube.CubeSchema;
+import doors.graphics.template.CubeTemplate;
 import doors.graphics.texture.EntityTexture;
 import doors.utility.vector.Vector3fl;
 
@@ -12,7 +10,7 @@ public class DoorMesh extends Mesh {
     private static Vector3fl DOOR_FACE_DIMENSIONS = new Vector3fl(1f, 2f, 0.25f);
     private static float DOOR_OPEN_ROTATION = (float)Math.PI * 0.6f;
 
-    private static CubeSchema RIGHT_DOOR_SCHEMA = new CubeSchema(
+    private static CubeTemplate RIGHT_DOOR_SCHEMA = new CubeTemplate(
         new Vector3fl(0f, 0f, 0f),
         new Vector3fl(1f, 0f, 0f),
         DOOR_FACE_DIMENSIONS,
@@ -25,7 +23,7 @@ public class DoorMesh extends Mesh {
         1
     );
 
-    private static CubeSchema LEFT_DOOR_SCHEMA = new CubeSchema(
+    private static CubeTemplate LEFT_DOOR_SCHEMA = new CubeTemplate(
         new Vector3fl(-1f, 0f, 0f),
         new Vector3fl(-1f, 0f, 0f),
         DOOR_FACE_DIMENSIONS,
@@ -38,7 +36,7 @@ public class DoorMesh extends Mesh {
         2
     );
 
-    private static CubeSchema LOCKED_SCHEMA = new CubeSchema(
+    private static CubeTemplate LOCKED_SCHEMA = new CubeTemplate(
         new Vector3fl(-1f, 0f, 0f),
         new Vector3fl(0f, 0f, 0f),
         new Vector3fl(2f, 2f, 0.25f),
@@ -51,7 +49,7 @@ public class DoorMesh extends Mesh {
         3
     );
 
-    private static CubeSchema[] CUBE_SCHEMAS = new CubeSchema[] {
+    private static CubeTemplate[] CUBE_SCHEMAS = new CubeTemplate[] {
         LEFT_DOOR_SCHEMA,
         RIGHT_DOOR_SCHEMA,
         LOCKED_SCHEMA
@@ -66,7 +64,7 @@ public class DoorMesh extends Mesh {
         super.setup();
         MeshBuffer.DEFAULT_MESH_BUFFER.clear();
         for(var cubeSchema : CUBE_SCHEMAS) {
-            cubeSchema.writeCubeSchema(MeshBuffer.DEFAULT_MESH_BUFFER);
+            cubeSchema.writeCube(MeshBuffer.DEFAULT_MESH_BUFFER);
         }
         this.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
     }

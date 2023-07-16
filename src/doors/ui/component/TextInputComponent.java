@@ -2,129 +2,115 @@ package doors.ui.component;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.core.graphics.font.FontDecoration;
-import doors.core.graphics.mesh.MeshBuffer;
-import doors.core.io.Keyboard;
-import doors.core.io.TypedCharacters;
-import doors.core.ui.AbstractUIComponent;
-import doors.core.ui.AbstractUIRoot;
-import doors.core.ui.Cursor;
-import doors.core.ui.UILayer;
 import doors.graphics.font.Font;
-import doors.graphics.sprite.box.DialogSprite;
-import doors.graphics.sprite.box.DialogState;
-import doors.ui.cursor.ForbiddenCursor;
+import doors.graphics.font.FontDecoration;
+import doors.graphics.spritebatch.SpriteBatch;
+import doors.graphics.spritebatch.SpriteBatchHeight;
+import doors.graphics.template.menu.BlurredDialogTemplate;
+import doors.graphics.template.menu.DisabledDialogTemplate;
+import doors.graphics.template.menu.FocusedDialogTemplate;
+import doors.io.Keyboard;
+import doors.io.TypedCharacters;
 import doors.ui.cursor.PointerCursor;
+import doors.ui.root.UIRoot;
 import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class TextInputComponent extends AbstractUIComponent {
+public class TextInputComponent implements IComponent {
 
     private static int PADDING = 3;
 
     public boolean isDisabled = false;
+    public StringBuilder stringBuilder = new StringBuilder();
+    public int maxLength;
+    public IAction0 onChange;
 
-    private DialogSprite dialogSprite; 
-    private int maxLength;
-    private IAction0 onChange;
-    private Vector2in dimensions;
+    private Vector2in originCursor = new Vector2in();
+    private Vector2in position = new Vector2in();
+    private Vector2in dimensions = new Vector2in();
+    private boolean isFocused;
+    private boolean isHovered;
+    private boolean isBlinkingCursor;
 
-    private StringBuilder stringBuilder = new StringBuilder();
-    private Vector2in positionCursor = new Vector2in();
-
-    public TextInputComponent(AbstractUIRoot root, int maxLength, IAction0 onChange) {
-        super(root);
+    public TextInputComponent(int maxLength, IAction0 onChange) {
         this.maxLength = maxLength;
         this.onChange = onChange;
+    }
 
-        this.dimensions = new Vector2in(Font.CHARACTER_DIMENSIONS)
-            .mul(maxLength + 1, 1)
+    public TextInputComponent(int maxLength) {
+        this(maxLength, null);
+    }
+
+    @Override
+    public Vector2in getDimensions() {
+        return this.dimensions;
+    }
+
+    @Override
+    public void calculateDimensions() {
+        this.dimensions
+            .set(Font.CHARACTER_DIMENSIONS)
+            .mul(this.maxLength + 1, 1)
             .add(PADDING * 2);
-
-        this.dialogSprite = new DialogSprite(this.dimensions);
     }
 
-    public TextInputComponent(AbstractUIRoot root, int maxLength) {
-        this(root, maxLength, null);
+    @Override
+    public void onMousePress(UIRoot root) {
+        root.focusedComponent = this;
     }
 
-    public void update() {
-        super.update();
+    @Override
+    public void update(Vector2in origin, UIRoot root) {
+        this.position.set(origin);
+        this.isFocused = root.focusedComponent == this;
+        this.isHovered = root.hoveredComponent == this;
+        this.isBlinkingCursor = this.isFocused && (System.currentTimeMillis() / 500) % 2 == 0;
 
         if(this.isHovered) {
-            this.getCursor().use();
+            root.selectedCursor = PointerCursor.POINTER_CURSOR;
         }
 
-        if (this.isDisabled || !this.isFocused) {
+        root.captureMouse(this, this.position, this.dimensions, 0);
+
+        if(!this.isFocused) {
             return;
         }
 
-        var triggerOnChange = false;
-
         for(var character : TypedCharacters.TYPED_CHARACTERS.characters) {
-            if(this.stringBuilder.length() < this.maxLength) {
-                this.stringBuilder.append(character);
-                triggerOnChange = true;
+            if(this.stringBuilder.length() >= this.maxLength) {
+                break;
+            }
+
+            this.stringBuilder.append(character);
+            if(this.onChange != null) {
+                this.onChange.invoke();
             }
         }
 
         if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_BACKSPACE)) {
             if(this.stringBuilder.length() > 0) {
                 this.stringBuilder.deleteCharAt(this.stringBuilder.length() - 1);
-                triggerOnChange = true;
+                if(this.onChange != null) {
+                    this.onChange.invoke();
+                }
             }
         }
 
-        if(triggerOnChange && this.onChange != null) {
-            this.onChange.invoke();
-        }
     }
 
-    private DialogState getDialogState() {
+    @Override
+    public void writeUIComponent(SpriteBatch spriteBatch) {
         if(this.isDisabled) {
-            return DialogState.DISABLED;
+            DisabledDialogTemplate.DISABLED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+        } else if(this.isFocused) {
+            FocusedDialogTemplate.FOCUSED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+        } else {
+            BlurredDialogTemplate.BLURRED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         }
 
-        if(this.isFocused) {
-            return DialogState.FOCUSED;
-        }
-
-        return DialogState.BLURRED;
-    }
-
-    @Override
-    public UILayer getLayer() {
-        return UILayer.NORMAL;
-    }
-
-    public Cursor getCursor() {
-        if(this.isDisabled) {
-            return ForbiddenCursor.FORBIDDEN_CURSOR;
-        }
-        return PointerCursor.POINTER_CURSOR;
-    }
-
-    @Override
-    public void writeUIComponent(MeshBuffer meshBuffer) {
-        this.dialogSprite.dialogState = this.getDialogState();
-        this.dialogSprite.writeSprite(meshBuffer, this.position);
-
-        this.positionCursor.set(this.position).add(PADDING);
-
-        var isBlinkingCursor = this.isFocused && (System.currentTimeMillis() / 500) % 2 == 0;
-        var text = this.stringBuilder.toString() + (isBlinkingCursor ? "_" : "");
-        Font.FONT.writeText(
-            meshBuffer, 
-            text, 
-            this.positionCursor,
-            FontDecoration.NORMAL,
-            Vector3fl.BLACK
-        );
-    }
-
-    @Override
-    public Vector2in getDimensions() {
-        return this.dimensions;
+        var toRender = this.stringBuilder.toString() + (isBlinkingCursor ? "_" : "");
+        this.originCursor.set(this.position).add(PADDING);
+        Font.FONT.writeText(spriteBatch, toRender, this.originCursor, SpriteBatchHeight.UI_NORMAL, FontDecoration.NORMAL, Vector3fl.BLACK);
     }
 }

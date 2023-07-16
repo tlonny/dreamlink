@@ -1,6 +1,6 @@
 package doors.graphics.texture.channel;
 
-import doors.core.graphics.texture.AbstractTextureChannel;
+import doors.graphics.texture.AbstractTextureChannel;
 
 public class BlockTextureChannel extends AbstractTextureChannel {
 

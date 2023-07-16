@@ -1,118 +1,162 @@
 package doors.graphics.font;
 
-import doors.core.graphics.font.AbstractFont;
-import doors.graphics.texture.FontTexture;
-import doors.utility.vector.Vector2in;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Font extends AbstractFont {
+import doors.graphics.spritebatch.SpriteBatchHeight;
+import doors.graphics.spritebatch.SpriteBatch;
+import doors.graphics.texture.FontTexture;
+import doors.graphics.texture.TextureSample;
+import doors.utility.vector.Vector2in;
+import doors.utility.vector.Vector3fl;
+
+public class Font {
 
     public static Vector2in CHARACTER_DIMENSIONS = new Vector2in(8, 16);
 
     public static Font FONT = new Font();
 
+    private Map<Character, FontCharacter> fontCharacterLookup = new HashMap<>();
+
     public Font() {
-        super(FontTexture.FONT_TEXTURE, CHARACTER_DIMENSIONS);
+        this.registerCharacter(' ', FontTexture.FONT_TEXTURE.symSpace, FontTexture.FONT_TEXTURE.symSpaceUnderline);
+        this.registerCharacter('!', FontTexture.FONT_TEXTURE.symBang, FontTexture.FONT_TEXTURE.symBangUnderline);
+        this.registerCharacter('"', FontTexture.FONT_TEXTURE.symDoubleQuotes, FontTexture.FONT_TEXTURE.symDoubleQuotesUnderline);
+        this.registerCharacter('#', FontTexture.FONT_TEXTURE.symHash, FontTexture.FONT_TEXTURE.symHashUnderline);
+        this.registerCharacter('$', FontTexture.FONT_TEXTURE.symDollar, FontTexture.FONT_TEXTURE.symDollarUnderline);
+        this.registerCharacter('%', FontTexture.FONT_TEXTURE.symPercent, FontTexture.FONT_TEXTURE.symPercentUnderline);
+        this.registerCharacter('&', FontTexture.FONT_TEXTURE.symAmpersand, FontTexture.FONT_TEXTURE.symAmpersandUnderline);
+        this.registerCharacter('\'', FontTexture.FONT_TEXTURE.symSingleQuote, FontTexture.FONT_TEXTURE.symSingleQuoteUnderline);
+        this.registerCharacter('(', FontTexture.FONT_TEXTURE.symOpenParen, FontTexture.FONT_TEXTURE.symOpenParenUnderline);
+        this.registerCharacter(')', FontTexture.FONT_TEXTURE.symCloseParen, FontTexture.FONT_TEXTURE.symCloseParenUnderline);
+        this.registerCharacter('*', FontTexture.FONT_TEXTURE.symStar, FontTexture.FONT_TEXTURE.symStarUnderline);
+        this.registerCharacter('+', FontTexture.FONT_TEXTURE.symPlus, FontTexture.FONT_TEXTURE.symPlusUnderline);
+        this.registerCharacter(',', FontTexture.FONT_TEXTURE.symComma, FontTexture.FONT_TEXTURE.symCommaUnderline);
+        this.registerCharacter('-', FontTexture.FONT_TEXTURE.symMinus, FontTexture.FONT_TEXTURE.symMinusUnderline);
+        this.registerCharacter('.', FontTexture.FONT_TEXTURE.symPeriod, FontTexture.FONT_TEXTURE.symPeriodUnderline);
+        this.registerCharacter('/', FontTexture.FONT_TEXTURE.symSlash, FontTexture.FONT_TEXTURE.symSlashUnderline);
 
-        this.registerCharacter(' ', new Vector2in(0, 0), new Vector2in(16, 0));
-        this.registerCharacter('!', new Vector2in(1, 0), new Vector2in(17, 0));
-        this.registerCharacter('"', new Vector2in(2, 0), new Vector2in(18, 0));
-        this.registerCharacter('#', new Vector2in(3, 0), new Vector2in(19, 0));
-        this.registerCharacter('$', new Vector2in(4, 0), new Vector2in(20, 0));
-        this.registerCharacter('%', new Vector2in(5, 0), new Vector2in(21, 0));
-        this.registerCharacter('&', new Vector2in(6, 0), new Vector2in(22, 0));
-        this.registerCharacter('\'', new Vector2in(7, 0), new Vector2in(23, 0));
-        this.registerCharacter('(', new Vector2in(8, 0), new Vector2in(24, 0));
-        this.registerCharacter(')', new Vector2in(9, 0), new Vector2in(25, 0));
-        this.registerCharacter('*', new Vector2in(10, 0), new Vector2in(26, 0));
-        this.registerCharacter('+', new Vector2in(11, 0), new Vector2in(27, 0));
-        this.registerCharacter(',', new Vector2in(12, 0), new Vector2in(28, 0));
-        this.registerCharacter('-', new Vector2in(13, 0), new Vector2in(29, 0));
-        this.registerCharacter('.', new Vector2in(14, 0), new Vector2in(30, 0));
-        this.registerCharacter('/', new Vector2in(15, 0), new Vector2in(31, 0));
+        this.registerCharacter('0', FontTexture.FONT_TEXTURE.digit0, FontTexture.FONT_TEXTURE.digit0Underline);
+        this.registerCharacter('1', FontTexture.FONT_TEXTURE.digit1, FontTexture.FONT_TEXTURE.digit1Underline);
+        this.registerCharacter('2', FontTexture.FONT_TEXTURE.digit2, FontTexture.FONT_TEXTURE.digit2Underline);
+        this.registerCharacter('3', FontTexture.FONT_TEXTURE.digit3, FontTexture.FONT_TEXTURE.digit3Underline);
+        this.registerCharacter('4', FontTexture.FONT_TEXTURE.digit4, FontTexture.FONT_TEXTURE.digit4Underline);
+        this.registerCharacter('5', FontTexture.FONT_TEXTURE.digit5, FontTexture.FONT_TEXTURE.digit5Underline);
+        this.registerCharacter('6', FontTexture.FONT_TEXTURE.digit6, FontTexture.FONT_TEXTURE.digit6Underline);
+        this.registerCharacter('7', FontTexture.FONT_TEXTURE.digit7, FontTexture.FONT_TEXTURE.digit7Underline);
+        this.registerCharacter('8', FontTexture.FONT_TEXTURE.digit8, FontTexture.FONT_TEXTURE.digit8Underline);
+        this.registerCharacter('9', FontTexture.FONT_TEXTURE.digit9, FontTexture.FONT_TEXTURE.digit9Underline);
+        this.registerCharacter(':', FontTexture.FONT_TEXTURE.symColon, FontTexture.FONT_TEXTURE.symColonUnderline);
+        this.registerCharacter(';', FontTexture.FONT_TEXTURE.symSemicolon, FontTexture.FONT_TEXTURE.symSemicolonUnderline);
+        this.registerCharacter('<', FontTexture.FONT_TEXTURE.symLessThan, FontTexture.FONT_TEXTURE.symLessThanUnderline);
+        this.registerCharacter('=', FontTexture.FONT_TEXTURE.symEquals, FontTexture.FONT_TEXTURE.symEqualsUnderline);
+        this.registerCharacter('>', FontTexture.FONT_TEXTURE.symGreaterThan, FontTexture.FONT_TEXTURE.symGreaterThanUnderline);
+        this.registerCharacter('?', FontTexture.FONT_TEXTURE.symQuestionMark, FontTexture.FONT_TEXTURE.symQuestionMarkUnderline);
 
-        this.registerCharacter('0', new Vector2in(0, 1), new Vector2in(16, 1));
-        this.registerCharacter('1', new Vector2in(1, 1), new Vector2in(17, 1));
-        this.registerCharacter('2', new Vector2in(2, 1), new Vector2in(18, 1));
-        this.registerCharacter('3', new Vector2in(3, 1), new Vector2in(19, 1));
-        this.registerCharacter('4', new Vector2in(4, 1), new Vector2in(20, 1));
-        this.registerCharacter('5', new Vector2in(5, 1), new Vector2in(21, 1));
-        this.registerCharacter('6', new Vector2in(6, 1), new Vector2in(22, 1));
-        this.registerCharacter('7', new Vector2in(7, 1), new Vector2in(23, 1));
-        this.registerCharacter('8', new Vector2in(8, 1), new Vector2in(24, 1));
-        this.registerCharacter('9', new Vector2in(9, 1), new Vector2in(25, 1));
-        this.registerCharacter(':', new Vector2in(10, 1), new Vector2in(26, 1));
-        this.registerCharacter(';', new Vector2in(11, 1), new Vector2in(27, 1));
-        this.registerCharacter('<', new Vector2in(12, 1), new Vector2in(28, 1));
-        this.registerCharacter('=', new Vector2in(13, 1), new Vector2in(29, 1));
-        this.registerCharacter('>', new Vector2in(14, 1), new Vector2in(30, 1));
-        this.registerCharacter('?', new Vector2in(15, 1), new Vector2in(31, 1));
+        this.registerCharacter('@', FontTexture.FONT_TEXTURE.symAt, FontTexture.FONT_TEXTURE.symAtUnderline);
+        this.registerCharacter('A', FontTexture.FONT_TEXTURE.letterUppercaseA, FontTexture.FONT_TEXTURE.letterUppercaseAUnderline);
+        this.registerCharacter('B', FontTexture.FONT_TEXTURE.letterUppercaseB, FontTexture.FONT_TEXTURE.letterUppercaseBUnderline);
+        this.registerCharacter('C', FontTexture.FONT_TEXTURE.letterUppercaseC, FontTexture.FONT_TEXTURE.letterUppercaseCUnderline);
+        this.registerCharacter('D', FontTexture.FONT_TEXTURE.letterUppercaseD, FontTexture.FONT_TEXTURE.letterUppercaseDUnderline);
+        this.registerCharacter('E', FontTexture.FONT_TEXTURE.letterUppercaseE, FontTexture.FONT_TEXTURE.letterUppercaseEUnderline);
+        this.registerCharacter('F', FontTexture.FONT_TEXTURE.letterUppercaseF, FontTexture.FONT_TEXTURE.letterUppercaseFUnderline);
+        this.registerCharacter('G', FontTexture.FONT_TEXTURE.letterUppercaseG, FontTexture.FONT_TEXTURE.letterUppercaseGUnderline);
+        this.registerCharacter('H', FontTexture.FONT_TEXTURE.letterUppercaseH, FontTexture.FONT_TEXTURE.letterUppercaseHUnderline);
+        this.registerCharacter('I', FontTexture.FONT_TEXTURE.letterUppercaseI, FontTexture.FONT_TEXTURE.letterUppercaseIUnderline);
+        this.registerCharacter('J', FontTexture.FONT_TEXTURE.letterUppercaseJ, FontTexture.FONT_TEXTURE.letterUppercaseJUnderline);
+        this.registerCharacter('K', FontTexture.FONT_TEXTURE.letterUppercaseK, FontTexture.FONT_TEXTURE.letterUppercaseKUnderline);
+        this.registerCharacter('L', FontTexture.FONT_TEXTURE.letterUppercaseL, FontTexture.FONT_TEXTURE.letterUppercaseLUnderline);
+        this.registerCharacter('M', FontTexture.FONT_TEXTURE.letterUppercaseM, FontTexture.FONT_TEXTURE.letterUppercaseMUnderline);
+        this.registerCharacter('N', FontTexture.FONT_TEXTURE.letterUppercaseN, FontTexture.FONT_TEXTURE.letterUppercaseNUnderline);
+        this.registerCharacter('O', FontTexture.FONT_TEXTURE.letterUppercaseO, FontTexture.FONT_TEXTURE.letterUppercaseOUnderline);
 
-        this.registerCharacter('@', new Vector2in(0, 2), new Vector2in(16, 2));
-        this.registerCharacter('A', new Vector2in(1, 2), new Vector2in(17, 2));
-        this.registerCharacter('B', new Vector2in(2, 2), new Vector2in(18, 2));
-        this.registerCharacter('C', new Vector2in(3, 2), new Vector2in(19, 2));
-        this.registerCharacter('D', new Vector2in(4, 2), new Vector2in(20, 2));
-        this.registerCharacter('E', new Vector2in(5, 2), new Vector2in(21, 2));
-        this.registerCharacter('F', new Vector2in(6, 2), new Vector2in(22, 2));
-        this.registerCharacter('G', new Vector2in(7, 2), new Vector2in(23, 2));
-        this.registerCharacter('H', new Vector2in(8, 2), new Vector2in(24, 2));
-        this.registerCharacter('I', new Vector2in(9, 2), new Vector2in(25, 2));
-        this.registerCharacter('J', new Vector2in(10, 2), new Vector2in(26, 2));
-        this.registerCharacter('K', new Vector2in(11, 2), new Vector2in(27, 2));
-        this.registerCharacter('L', new Vector2in(12, 2), new Vector2in(28, 2));
-        this.registerCharacter('M', new Vector2in(13, 2), new Vector2in(29, 2));
-        this.registerCharacter('N', new Vector2in(14, 2), new Vector2in(30, 2));
-        this.registerCharacter('O', new Vector2in(15, 2), new Vector2in(31, 2));
+        this.registerCharacter('P', FontTexture.FONT_TEXTURE.letterUppercaseP, FontTexture.FONT_TEXTURE.letterUppercasePUnderline);
+        this.registerCharacter('Q', FontTexture.FONT_TEXTURE.letterUppercaseQ, FontTexture.FONT_TEXTURE.letterUppercaseQUnderline);
+        this.registerCharacter('R', FontTexture.FONT_TEXTURE.letterUppercaseR, FontTexture.FONT_TEXTURE.letterUppercaseRUnderline);
+        this.registerCharacter('S', FontTexture.FONT_TEXTURE.letterUppercaseS, FontTexture.FONT_TEXTURE.letterUppercaseSUnderline);
+        this.registerCharacter('T', FontTexture.FONT_TEXTURE.letterUppercaseT, FontTexture.FONT_TEXTURE.letterUppercaseTUnderline);
+        this.registerCharacter('U', FontTexture.FONT_TEXTURE.letterUppercaseU, FontTexture.FONT_TEXTURE.letterUppercaseUUnderline);
+        this.registerCharacter('V', FontTexture.FONT_TEXTURE.letterUppercaseV, FontTexture.FONT_TEXTURE.letterUppercaseVUnderline);
+        this.registerCharacter('W', FontTexture.FONT_TEXTURE.letterUppercaseW, FontTexture.FONT_TEXTURE.letterUppercaseWUnderline);
+        this.registerCharacter('X', FontTexture.FONT_TEXTURE.letterUppercaseX, FontTexture.FONT_TEXTURE.letterUppercaseXUnderline);
+        this.registerCharacter('Y', FontTexture.FONT_TEXTURE.letterUppercaseY, FontTexture.FONT_TEXTURE.letterUppercaseYUnderline);
+        this.registerCharacter('Z', FontTexture.FONT_TEXTURE.letterUppercaseZ, FontTexture.FONT_TEXTURE.letterUppercaseZUnderline); 
+        this.registerCharacter('[', FontTexture.FONT_TEXTURE.symOpenBracket, FontTexture.FONT_TEXTURE.symOpenBracketUnderline);
+        this.registerCharacter('\\', FontTexture.FONT_TEXTURE.symBackslash, FontTexture.FONT_TEXTURE.symBackslashUnderline);
+        this.registerCharacter(']', FontTexture.FONT_TEXTURE.symCloseBracket, FontTexture.FONT_TEXTURE.symCloseBracketUnderline);
+        this.registerCharacter('^', FontTexture.FONT_TEXTURE.symCaret, FontTexture.FONT_TEXTURE.symCaretUnderline);
+        this.registerCharacter('_', FontTexture.FONT_TEXTURE.symUnderscore, FontTexture.FONT_TEXTURE.symUnderscoreUnderline);
 
-        this.registerCharacter('P', new Vector2in(0, 3), new Vector2in(16, 3));
-        this.registerCharacter('Q', new Vector2in(1, 3), new Vector2in(17, 3));
-        this.registerCharacter('R', new Vector2in(2, 3), new Vector2in(18, 3));
-        this.registerCharacter('S', new Vector2in(3, 3), new Vector2in(19, 3));
-        this.registerCharacter('T', new Vector2in(4, 3), new Vector2in(20, 3));
-        this.registerCharacter('U', new Vector2in(5, 3), new Vector2in(21, 3));
-        this.registerCharacter('V', new Vector2in(6, 3), new Vector2in(22, 3));
-        this.registerCharacter('W', new Vector2in(7, 3), new Vector2in(23, 3));
-        this.registerCharacter('X', new Vector2in(8, 3), new Vector2in(24, 3));
-        this.registerCharacter('Y', new Vector2in(9, 3), new Vector2in(25, 3));
-        this.registerCharacter('Z', new Vector2in(10, 3), new Vector2in(26, 3));
-        this.registerCharacter('[', new Vector2in(11, 3), new Vector2in(27, 3));
-        this.registerCharacter('\\', new Vector2in(12, 3), new Vector2in(28, 3));
-        this.registerCharacter(']', new Vector2in(13, 3), new Vector2in(29, 3));
-        this.registerCharacter('^', new Vector2in(14, 3), new Vector2in(30, 3));
-        this.registerCharacter('_', new Vector2in(15, 3), new Vector2in(31, 3));
+        this.registerCharacter('`', FontTexture.FONT_TEXTURE.symGrave, FontTexture.FONT_TEXTURE.symGraveUnderline);
+        this.registerCharacter('a', FontTexture.FONT_TEXTURE.letterLowercaseA, FontTexture.FONT_TEXTURE.letterLowercaseAUnderline);
+        this.registerCharacter('b', FontTexture.FONT_TEXTURE.letterLowercaseB, FontTexture.FONT_TEXTURE.letterLowercaseBUnderline);
+        this.registerCharacter('c', FontTexture.FONT_TEXTURE.letterLowercaseC, FontTexture.FONT_TEXTURE.letterLowercaseCUnderline);
+        this.registerCharacter('d', FontTexture.FONT_TEXTURE.letterLowercaseD, FontTexture.FONT_TEXTURE.letterLowercaseDUnderline);
+        this.registerCharacter('e', FontTexture.FONT_TEXTURE.letterLowercaseE, FontTexture.FONT_TEXTURE.letterLowercaseEUnderline);
+        this.registerCharacter('f', FontTexture.FONT_TEXTURE.letterLowercaseF, FontTexture.FONT_TEXTURE.letterLowercaseFUnderline);
+        this.registerCharacter('g', FontTexture.FONT_TEXTURE.letterLowercaseG, FontTexture.FONT_TEXTURE.letterLowercaseGUnderline);
+        this.registerCharacter('h', FontTexture.FONT_TEXTURE.letterLowercaseH, FontTexture.FONT_TEXTURE.letterLowercaseHUnderline);
+        this.registerCharacter('i', FontTexture.FONT_TEXTURE.letterLowercaseI, FontTexture.FONT_TEXTURE.letterLowercaseIUnderline);
+        this.registerCharacter('j', FontTexture.FONT_TEXTURE.letterLowercaseJ, FontTexture.FONT_TEXTURE.letterLowercaseJUnderline);
+        this.registerCharacter('k', FontTexture.FONT_TEXTURE.letterLowercaseK, FontTexture.FONT_TEXTURE.letterLowercaseKUnderline);
+        this.registerCharacter('l', FontTexture.FONT_TEXTURE.letterLowercaseL, FontTexture.FONT_TEXTURE.letterLowercaseLUnderline);
+        this.registerCharacter('m', FontTexture.FONT_TEXTURE.letterLowercaseM, FontTexture.FONT_TEXTURE.letterLowercaseMUnderline);
+        this.registerCharacter('n', FontTexture.FONT_TEXTURE.letterLowercaseN, FontTexture.FONT_TEXTURE.letterLowercaseNUnderline);
+        this.registerCharacter('o', FontTexture.FONT_TEXTURE.letterLowercaseO, FontTexture.FONT_TEXTURE.letterLowercaseOUnderline);
 
-        this.registerCharacter('`', new Vector2in(0, 4), new Vector2in(16, 4));
-        this.registerCharacter('a', new Vector2in(1, 4), new Vector2in(17, 4));
-        this.registerCharacter('b', new Vector2in(2, 4), new Vector2in(18, 4));
-        this.registerCharacter('c', new Vector2in(3, 4), new Vector2in(19, 4));
-        this.registerCharacter('d', new Vector2in(4, 4), new Vector2in(20, 4));
-        this.registerCharacter('e', new Vector2in(5, 4), new Vector2in(21, 4));
-        this.registerCharacter('f', new Vector2in(6, 4), new Vector2in(22, 4));
-        this.registerCharacter('g', new Vector2in(7, 4), new Vector2in(23, 4));
-        this.registerCharacter('h', new Vector2in(8, 4), new Vector2in(24, 4));
-        this.registerCharacter('i', new Vector2in(9, 4), new Vector2in(25, 4));
-        this.registerCharacter('j', new Vector2in(10, 4), new Vector2in(26, 4));
-        this.registerCharacter('k', new Vector2in(11, 4), new Vector2in(27, 4));
-        this.registerCharacter('l', new Vector2in(12, 4), new Vector2in(28, 4));
-        this.registerCharacter('m', new Vector2in(13, 4), new Vector2in(29, 4));
-        this.registerCharacter('n', new Vector2in(14, 4), new Vector2in(30, 4));
-        this.registerCharacter('o', new Vector2in(15, 4), new Vector2in(31, 4));
+        this.registerCharacter('p', FontTexture.FONT_TEXTURE.letterLowercaseP, FontTexture.FONT_TEXTURE.letterLowercasePUnderline);
+        this.registerCharacter('q', FontTexture.FONT_TEXTURE.letterLowercaseQ, FontTexture.FONT_TEXTURE.letterLowercaseQUnderline);
+        this.registerCharacter('r', FontTexture.FONT_TEXTURE.letterLowercaseR, FontTexture.FONT_TEXTURE.letterLowercaseRUnderline);
+        this.registerCharacter('s', FontTexture.FONT_TEXTURE.letterLowercaseS, FontTexture.FONT_TEXTURE.letterLowercaseSUnderline);
+        this.registerCharacter('t', FontTexture.FONT_TEXTURE.letterLowercaseT, FontTexture.FONT_TEXTURE.letterLowercaseTUnderline);
+        this.registerCharacter('u', FontTexture.FONT_TEXTURE.letterLowercaseU, FontTexture.FONT_TEXTURE.letterLowercaseUUnderline);
+        this.registerCharacter('v', FontTexture.FONT_TEXTURE.letterLowercaseV, FontTexture.FONT_TEXTURE.letterLowercaseVUnderline);
+        this.registerCharacter('w', FontTexture.FONT_TEXTURE.letterLowercaseW, FontTexture.FONT_TEXTURE.letterLowercaseWUnderline);
+        this.registerCharacter('x', FontTexture.FONT_TEXTURE.letterLowercaseX, FontTexture.FONT_TEXTURE.letterLowercaseXUnderline);
+        this.registerCharacter('y', FontTexture.FONT_TEXTURE.letterLowercaseY, FontTexture.FONT_TEXTURE.letterLowercaseYUnderline);
+        this.registerCharacter('z', FontTexture.FONT_TEXTURE.letterLowercaseZ, FontTexture.FONT_TEXTURE.letterLowercaseZUnderline);
+        this.registerCharacter('{', FontTexture.FONT_TEXTURE.symOpenBrace, FontTexture.FONT_TEXTURE.symCloseBrace);
+        this.registerCharacter('|', FontTexture.FONT_TEXTURE.symPipe, FontTexture.FONT_TEXTURE.symPipeUnderline);
+        this.registerCharacter('}', FontTexture.FONT_TEXTURE.symCloseBrace, FontTexture.FONT_TEXTURE.symCloseBraceUnderline);
+        this.registerCharacter('~', FontTexture.FONT_TEXTURE.symTilde, FontTexture.FONT_TEXTURE.symTildeUnderline);
+    }
 
-        this.registerCharacter('p', new Vector2in(0, 5), new Vector2in(16, 5));
-        this.registerCharacter('q', new Vector2in(1, 5), new Vector2in(17, 5));
-        this.registerCharacter('r', new Vector2in(2, 5), new Vector2in(18, 5));
-        this.registerCharacter('s', new Vector2in(3, 5), new Vector2in(19, 5));
-        this.registerCharacter('t', new Vector2in(4, 5), new Vector2in(20, 5));
-        this.registerCharacter('u', new Vector2in(5, 5), new Vector2in(21, 5));
-        this.registerCharacter('v', new Vector2in(6, 5), new Vector2in(22, 5));
-        this.registerCharacter('w', new Vector2in(7, 5), new Vector2in(23, 5));
-        this.registerCharacter('x', new Vector2in(8, 5), new Vector2in(24, 5));
-        this.registerCharacter('y', new Vector2in(9, 5), new Vector2in(25, 5));
-        this.registerCharacter('z', new Vector2in(10, 5), new Vector2in(26, 5));
-        this.registerCharacter('{', new Vector2in(11, 5), new Vector2in(27, 5));
-        this.registerCharacter('|', new Vector2in(12, 5), new Vector2in(28, 5));
-        this.registerCharacter('}', new Vector2in(13, 5), new Vector2in(29, 5));
-        this.registerCharacter('~', new Vector2in(14, 5), new Vector2in(30, 5));
+    private void registerCharacter(
+        char character, 
+        TextureSample normalTextureSample,
+        TextureSample underlineTextureSample
+    ) {
+        var fontcharacter = new FontCharacter(
+            normalTextureSample,
+            normalTextureSample,
+            normalTextureSample,
+            underlineTextureSample
+        );
+
+        this.fontCharacterLookup.put(character, fontcharacter);
+    }
+
+    public FontCharacter getFontCharacter(char character) {
+        return this.fontCharacterLookup.getOrDefault(character, null);
+    }
+
+    public void writeText(SpriteBatch spriteBatch, String text, Vector2in position, SpriteBatchHeight height, FontDecoration fontDecoration, Vector3fl color) {
+        var cursor = new Vector2in(position);
+        for(var ix = 0; ix < text.length(); ix += 1) {
+            var character = text.charAt(ix);
+            var fontCharacter = this.getFontCharacter(character);
+            if (fontCharacter != null) {
+                var textureSample = fontCharacter.getTextureSample(fontDecoration);
+                spriteBatch.writeSprite(
+                    textureSample,
+                    cursor,
+                    Font.CHARACTER_DIMENSIONS,
+                    height,
+                    color
+                );
+            }
+            cursor.x += CHARACTER_DIMENSIONS.x;
+        }
     }
     
 }

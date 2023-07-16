@@ -1,7 +1,6 @@
 package doors.graphics.rendertarget;
 
-import doors.core.graphics.rendertarget.AbstractVirtualRenderTarget;
-import doors.core.graphics.texture.AbstractTextureChannel;
+import doors.graphics.texture.AbstractTextureChannel;
 import doors.graphics.texture.channel.PortalRenderTextureChannel;
 
 public class PortalVirtualRenderTarget extends AbstractVirtualRenderTarget {

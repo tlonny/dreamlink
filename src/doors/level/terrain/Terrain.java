@@ -7,8 +7,8 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import doors.queue.WorkQueue;
-import doors.core.graphics.mesh.MeshBuffer;
-import doors.core.graphics.texture.ImageTexture;
+import doors.graphics.mesh.MeshBuffer;
+import doors.graphics.texture.ImageTexture;
 import doors.graphics.texture.channel.BlockTextureChannel;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
@@ -50,7 +50,7 @@ public class Terrain {
         var blocks = rootConfig.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
             var block = blocks.getJSONObject(ix);
-            var textureSample = block.getJSONArray("texture_sample");
+            var textureSample = block.getJSONArray("textureSample");
             this.blockMap.put(ix + 1, new Block(
                 ix + 1,
                 block.getString("name"),

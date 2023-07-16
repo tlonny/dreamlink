@@ -30,6 +30,10 @@ public interface IVector3fl {
     public default float getFloatVolume() {
         return this.getFloatX() * this.getFloatY() * this.getFloatZ();
     }
+
+    public default float getFloatSum() {
+        return this.getFloatX() + this.getFloatY() + this.getFloatZ();
+    }
     
     public default boolean isWithinBounds(IVector3fl position, IVector3fl dimensions) {
         if(this.getFloatX() < position.getFloatX()) {

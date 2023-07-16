@@ -1,7 +1,8 @@
 package doors.level.camera;
 
 import doors.Config;
-import doors.core.io.Mouse;
+import doors.io.Mouse;
+import doors.utility.CubeFace;
 import doors.utility.vector.Vector2fl;
 import doors.utility.vector.Vector3fl;
 
@@ -13,6 +14,7 @@ public class Camera {
     public Vector3fl position = new Vector3fl();
     public Vector3fl rotation = new Vector3fl();
     public Vector3fl velocity = new Vector3fl();
+    public Vector3fl direction = new Vector3fl();
     public Vector2fl mouseDelta = new Vector2fl();
 
     public ICameraMovementSystem movementSystem;
@@ -48,6 +50,10 @@ public class Camera {
         if(this.rotation.y < 0) {
             this.rotation.y += 2 * Math.PI;
         }
+
+        this.direction.set(CubeFace.FRONT.normal);
+        this.direction.rotateX(this.rotation.x);
+        this.direction.rotateY(this.rotation.y);
     }
 
 

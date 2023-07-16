@@ -10,4 +10,8 @@ public class Functional {
         public void invoke(T arg);
     }
 
+    public interface IFunc0<T> {
+        public T invoke();
+    }
+
 }

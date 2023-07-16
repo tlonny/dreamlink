@@ -4,6 +4,7 @@ import org.json.JSONArray;
 
 public class Vector2in implements IVector2fl {
 
+    public static final Vector2in WHITE = null;
     public static Vector2in ZERO = new Vector2in(0);
     public static Vector2in ONE = new Vector2in(1);
     public static Vector2in TWO = new Vector2in(2);
@@ -110,6 +111,10 @@ public class Vector2in implements IVector2fl {
 
     public Vector2in set(Vector2in other) {
         return this.set(other.x, other.y);
+    }
+
+    public Vector2in set(Vector2fl other) {
+        return this.set((int)other.x, (int)other.y);
     }
 
     public String toString() {
