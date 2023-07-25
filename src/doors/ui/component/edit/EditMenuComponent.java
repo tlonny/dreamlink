@@ -5,10 +5,13 @@ import doors.graphics.font.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.level.Level;
+import doors.state.MainMenuGameState;
+import doors.ui.component.ButtonComponent;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.WindowComponent;
 import doors.ui.component.layout.HorizontalAlignment;
+import doors.ui.component.layout.HorizontalSpanComponent;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.component.layout.VerticalSpanComponent;
 import doors.ui.component.table.TableComponent;
@@ -21,6 +24,7 @@ public class EditMenuComponent implements IComponent {
     private static int NUM_ROWS = 10;
     private static int SPACING = 10;
     private static int WINDOW_PADDING = 10;
+    private static Vector2in BUTTON_DIMENSIONS = new Vector2in(60, 24);
     private static Vector2in ROW_DIMENSIONS = new Vector2in(160, 18);
 
     private Vector2in position = new Vector2in();
@@ -34,7 +38,22 @@ public class EditMenuComponent implements IComponent {
     );
 
     private VerticalSpanComponent layoutComponent = new VerticalSpanComponent(
-        HorizontalAlignment.LEFT, SPACING
+        HorizontalAlignment.LEFT, 
+        SPACING
+    );
+
+    private HorizontalSpanComponent buttonSpanComponent = new HorizontalSpanComponent(SPACING);
+
+    private ButtonComponent saveButtonComponent = new ButtonComponent(
+        BUTTON_DIMENSIONS,
+        new TextComponent("Save", FontDecoration.NORMAL, Vector3fl.BLACK),
+        null
+    );
+
+    private ButtonComponent quitButtonComponent = new ButtonComponent(
+        BUTTON_DIMENSIONS,
+        new TextComponent("Quit", FontDecoration.NORMAL, Vector3fl.BLACK),
+        this::gotoMainMenu
     );
 
     private WindowComponent windowComponent;
@@ -42,6 +61,11 @@ public class EditMenuComponent implements IComponent {
     public EditMenuComponent() {
         this.layoutComponent.components.add(this.labelComponent);
         this.layoutComponent.components.add(this.tableComponent);
+        this.layoutComponent.components.add(this.buttonSpanComponent);
+
+        this.buttonSpanComponent.components.add(this.saveButtonComponent);
+        this.buttonSpanComponent.components.add(this.quitButtonComponent);
+
         this.windowComponent = new WindowComponent(
             MenuTexture.MENU_TEXTURE.iconFolder, 
             "Choose blocks:",
@@ -75,6 +99,11 @@ public class EditMenuComponent implements IComponent {
     @Override
     public void writeUIComponent(SpriteBatch spriteBatch) {
         this.windowComponent.writeUIComponent(spriteBatch);
+    }
+
+    private void gotoMainMenu() {
+        MainMenuGameState.MAIN_MENU_GAME_STATE.gotoRootMenu();
+        MainMenuGameState.MAIN_MENU_GAME_STATE.use();
     }
     
 }

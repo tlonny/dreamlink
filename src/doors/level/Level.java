@@ -14,12 +14,14 @@ import doors.utility.vector.Vector3fl;
 public class Level {
 
     public String levelDirectory;
+    public String name;
     public Terrain terrain;
     public Map<String, Door> doors = new HashMap<>();
 
-    public Level(String levelDirectory) {
+    public Level(String levelName, String levelDirectory) {
         var terrainPath = Paths.get(levelDirectory, "terrain").toString();
         this.terrain = new Terrain(terrainPath);
+        this.name = levelName;
         this.levelDirectory = levelDirectory;
     }
 
@@ -32,6 +34,7 @@ public class Level {
             var position = doorConfig.getJSONArray("position");
             var target = doorConfig.getJSONObject("target");
             var door = new Door(
+                doorName,
                 target.getString("level"),
                 target.getString("door"),
                 new Vector3fl(

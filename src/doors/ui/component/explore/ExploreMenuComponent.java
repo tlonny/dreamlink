@@ -1,4 +1,4 @@
-package doors.ui.component.mainmenu;
+package doors.ui.component.explore;
 
 import doors.Config;
 import doors.graphics.font.FontDecoration;
@@ -7,7 +7,6 @@ import doors.graphics.texture.MenuTexture;
 import doors.state.ExploreGameState;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.TextInputComponent;
@@ -20,7 +19,7 @@ import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class MainMenuExploreComponent implements IComponent {
+public class ExploreMenuComponent implements IComponent {
 
     private static int INPUT_MAX_LENGTH = 24;
     private static int SPACING = 10;
@@ -42,15 +41,13 @@ public class MainMenuExploreComponent implements IComponent {
 
     private ButtonComponent backButtonComponent = new ButtonComponent(
         BUTTON_DIMENSIONS,
-        new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
+        new TextComponent("Quit", FontDecoration.NORMAL, Vector3fl.BLACK),
         this::gotoRootMenu
     );
 
     private TextInputComponent textInputComponent = new TextInputComponent(INPUT_MAX_LENGTH);
 
-    private IconComponent backgroundComponent = new IconComponent(MenuTexture.MENU_TEXTURE.background);
-
-    public MainMenuExploreComponent() {
+    public ExploreMenuComponent() {
         var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
 
         span.components.add(labelComponent);
@@ -77,7 +74,6 @@ public class MainMenuExploreComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.windowComponent.calculateDimensions();
-        this.backgroundComponent.dimensions.set(Config.RESOLUTION);
     }
 
     @Override
@@ -87,6 +83,7 @@ public class MainMenuExploreComponent implements IComponent {
     }
 
     private void gotoRootMenu() {
+        MainMenuGameState.MAIN_MENU_GAME_STATE.use();
         MainMenuGameState.MAIN_MENU_GAME_STATE.gotoRootMenu();
     }
 
@@ -96,7 +93,6 @@ public class MainMenuExploreComponent implements IComponent {
 
     @Override
     public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeUIComponent(spriteBatch);
         this.windowComponent.writeUIComponent(spriteBatch);
     }
     

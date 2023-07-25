@@ -25,6 +25,8 @@ import doors.level.camera.Camera;
 import doors.level.camera.PlayerMovementSystem;
 import doors.level.terrain.IHasTerrain;
 import doors.level.terrain.Terrain;
+import doors.ui.component.explore.ExploreMenuComponent;
+import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -32,6 +34,7 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     private static int SPRITE_BATCH_QUADS = 1_000;
     private static Vector3fl COLLIDER_DIMENSIONS = new Vector3fl(2f,2f,2f);
+    private static float MAX_OPEN_DISTANCE = 20;
 
     private static Vector2in RETICULE_POSITION = new Vector2in()
         .set(Config.RESOLUTION)
@@ -53,12 +56,16 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     private MeshBuffer meshBuffer = new MeshBuffer(SPRITE_BATCH_QUADS);
     private SpriteBatch spriteBatch = new SpriteBatch();
+    private ExploreMenuComponent exploreMenuComponent = new ExploreMenuComponent();
+    private UIRoot exploreMenu = new UIRoot();
     private Mesh mesh = new Mesh();
+    private boolean showMenu;
 
     private Vector3fl previousCameraPosition = new Vector3fl();
 
     public ExploreGameState() {
         this.camera = new Camera(new PlayerMovementSystem(this));
+        this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 
     public void setup() {
@@ -73,11 +80,12 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         var mainDoor = this.currentLevel.doors.get("main");
         this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 2f, 0f);
         this.camera.rotation.set(mainDoor.orientation.rotation);
+        this.showMenu = false;
     }
 
     private void tryOpenDoor() {
         Door target = null;
-        float distanceToTarget = Float.MAX_VALUE;
+        float distanceToTarget = MAX_OPEN_DISTANCE;
 
         for(var door : this.currentLevel.doors.values()) {
             var distance = door.position.getDistance(this.camera.position);
@@ -127,6 +135,9 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         this.camera.position.add(this.portalDoor.position);
         this.camera.rotation.y += this.portalRotation;
         this.camera.velocity.rotateY(this.portalRotation);
+
+        this.portalDoor.targetLevel = this.currentLevel.name;
+        this.portalDoor.targetDoor = this.openDoor.name;
 
         var currentLevel = this.currentLevel;
         this.currentLevel = this.portalLevel;
@@ -231,14 +242,26 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     @Override
     public void update() {
-        this.meshBuffer.clear();
-        this.spriteBatch.clear();
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            this.showMenu = !this.showMenu;
+            Mouse.MOUSE.setLocked(!this.showMenu);
+        }
 
         if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
             this.tryOpenDoor();
         }
 
-        this.camera.update();
+        this.meshBuffer.clear();
+        this.spriteBatch.clear();
+
+        if(this.showMenu) {
+            this.exploreMenu.update();
+            this.exploreMenu.writeUIRoot(this.spriteBatch);
+            this.exploreMenu.selectedCursor.writeCursor(this.spriteBatch);
+        } else {
+            this.camera.update();
+        }
+
         DebugInformation.DEBUG_INFORMATION.update(this.camera);
 
         this.doorOpenFactor += 0.05f;
@@ -252,6 +275,14 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
             this.teleport();
             this.renderPortal();
             this.previousCameraPosition.set(this.camera.position);
+
+            var distance = this.openDoor.position.getDistance(this.camera.position);
+            if(distance > MAX_OPEN_DISTANCE) {
+                this.doorOpenFactor = 0f;
+                this.shutDoor = this.openDoor;
+                this.openDoor = null;
+            }
+
         }
 
         this.renderCurrent();

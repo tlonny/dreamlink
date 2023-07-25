@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import doors.Config;
+
 public class LevelCache {
 
-    public static String LEVEL_DIRECTORY_ROOT = ".levels";
+    public static String LEVEL_DIRECTORY_ROOT = "level-cache";
     private static int LRU_CACHE_SIZE = 20;
     public static LevelCache LEVEL_CACHE = new LevelCache();
 
@@ -17,11 +19,11 @@ public class LevelCache {
     private Map<String,Level> levelMap = new HashMap<>();
 
     private String getLevelDirectory(String level) {
-        var editorPath = Paths.get(LEVEL_DIRECTORY_ROOT, "edit", level).toString();
+        var editorPath = Paths.get(Config.EDIT_LEVEL_PATH, level).toString();
         if(new File(editorPath).isDirectory()) {
             return editorPath;
         }
-        var explorePath = Paths.get(LEVEL_DIRECTORY_ROOT, "explore", level).toString();
+        var explorePath = Paths.get(Config.EXPLORE_LEVEL_PATH, level).toString();
         if(new File(explorePath).isDirectory()) {
             return explorePath;
         }
@@ -36,7 +38,7 @@ public class LevelCache {
             if(levelDirectory == null) {
                 throw new RuntimeException("Level not found: " + levelName);
             }
-            level = new Level(levelDirectory);
+            level = new Level(levelName, levelDirectory);
             this.levelMap.put(levelName, level);
             level.setup();
         } else {

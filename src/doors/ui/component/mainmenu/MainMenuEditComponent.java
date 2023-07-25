@@ -36,43 +36,43 @@ public class MainMenuEditComponent implements IComponent {
     private Vector2in originCursor = new Vector2in();
     private WindowComponent windowComponent;
 
-    private ButtonComponent editButtonComponent;
     private IconComponent backgroundComponent = new IconComponent(MenuTexture.MENU_TEXTURE.background);
     private TableComponent<MainMenuEditLevelTableRow> tableComponent = new TableComponent<>(NUM_ROWS, ROW_DIMENSIONS);
+    private ButtonComponent editButtonComponent = new ButtonComponent(
+        BUTTON_DIMENSIONS,
+        new TextComponent("Edit", FontDecoration.NORMAL, Vector3fl.BLACK),
+        this::gotoEdit
+    );
+
+    private ButtonComponent quitButtonComponent = new ButtonComponent(
+        BUTTON_DIMENSIONS,
+        new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
+        this::gotoRootMenu
+    );
+
+    private VerticalSpanComponent layoutSpanComponent = new VerticalSpanComponent(
+        HorizontalAlignment.LEFT, 
+        SPACING
+    );
+
+    private HorizontalSpanComponent buttonSpanComponent = new HorizontalSpanComponent(SPACING);
 
     public MainMenuEditComponent() {
-        var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
 
-        span.components.add(
+        this.layoutSpanComponent.components.add(
             new TextComponent("Select level to edit:", FontDecoration.NORMAL, Vector3fl.BLACK)
         );
 
-        span.components.add(this.tableComponent);
+        this.layoutSpanComponent.components.add(this.tableComponent);
+        this.layoutSpanComponent.components.add(this.buttonSpanComponent);
 
-        var buttonSpan = new HorizontalSpanComponent(SPACING);
-
-        this.editButtonComponent = new ButtonComponent(
-            BUTTON_DIMENSIONS,
-            new TextComponent("Edit", FontDecoration.NORMAL, Vector3fl.BLACK),
-            this::gotoEdit
-        );
-
-        buttonSpan.components.add(this.editButtonComponent);
-
-        buttonSpan.components.add(
-            new ButtonComponent(
-                BUTTON_DIMENSIONS,
-                new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
-                this::gotoRootMenu
-            )
-        );
-
-        span.components.add(buttonSpan);
+        this.buttonSpanComponent.components.add(this.editButtonComponent);
+        this.buttonSpanComponent.components.add(this.quitButtonComponent);
 
         this.windowComponent = new WindowComponent(
             MenuTexture.MENU_TEXTURE.iconFolder,
             "Edit Menu",
-            new PaddingComponent(span, WINDOW_PADDING)
+            new PaddingComponent(this.layoutSpanComponent, WINDOW_PADDING)
         );
     }
 

@@ -13,7 +13,7 @@ public class Config {
     public static Vector3fl HYPERLINK_HOVER_COLOR = Vector3fl.fromHex(0xFF00FF);
     public static Vector3fl HYPERLINK_PRESSED_COLOR = Vector3fl.fromHex(0xFF0000);
 
-    public static String EDIT_LEVEL_PATH = Paths.get(".levels/edit").toString();
-    public static String CACHE_LEVEL_PATH = Paths.get(".levels/cache").toString();
+    public static String EDIT_LEVEL_PATH = Paths.get("level-cache/edit").toString();
+    public static String EXPLORE_LEVEL_PATH = Paths.get("level-cache/explore").toString();
 
 }

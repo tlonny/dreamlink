@@ -16,12 +16,15 @@ import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.EntityTexture;
 import doors.io.Keyboard;
 import doors.io.Mouse;
+import doors.level.Door;
 import doors.level.Level;
 import doors.level.LevelCache;
 import doors.level.camera.Camera;
 import doors.level.camera.NoClipMovementSystem;
 import doors.ui.component.HiddenComponent;
+import doors.ui.component.edit.EditDoorMenuComponent;
 import doors.ui.component.edit.EditMenuComponent;
+import doors.ui.component.edit.EditMenuState;
 import doors.ui.component.edit.EditQuickBarComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.VoxelRayCaster;
@@ -32,6 +35,7 @@ public class EditGameState extends AbstractGameState {
 
     private static int MAX_QUADS = 1000;
     private static int MAX_RAY_ITERATIONS = 50;
+    private static float MAX_DOOR_DISTANCE = 10f;
 
     public static EditGameState EDIT_GAME_STATE = new EditGameState();
 
@@ -43,14 +47,18 @@ public class EditGameState extends AbstractGameState {
     private Level currentLevel;
 
     private VoxelRayCaster voxelRayCaster = new VoxelRayCaster();
-    private boolean showMenu = false;
+    public EditMenuState menuState = EditMenuState.HIDDEN;
     private MeshBuffer meshBuffer = new MeshBuffer(MAX_QUADS);
     private SpriteBatch spriteBatch = new SpriteBatch();
     private Mesh mesh = new Mesh();
+    private Door targetDoor;
 
     private EditMenuComponent editMenuComponent = new EditMenuComponent();
+    private EditDoorMenuComponent editDoorMenuComponent = new EditDoorMenuComponent();
     private EditQuickBarComponent editQuickBarComponent = new EditQuickBarComponent();
+
     private HiddenComponent hiddenEditMenuComponent = new HiddenComponent(this.editMenuComponent, true);
+    private HiddenComponent hiddenDoorMenuComponent = new HiddenComponent(this.editDoorMenuComponent, true);
     private UIRoot editMenu = new UIRoot();
 
     private Camera camera = new Camera(new NoClipMovementSystem());
@@ -58,6 +66,27 @@ public class EditGameState extends AbstractGameState {
     public EditGameState() {
         this.editMenu.rootComponents.add(this.hiddenEditMenuComponent);
         this.editMenu.rootComponents.add(this.editQuickBarComponent);
+        this.editMenu.rootComponents.add(this.hiddenDoorMenuComponent);
+    }
+
+    private void tryEditDoor() {
+        this.targetDoor = null;
+        float distanceToTarget = MAX_DOOR_DISTANCE;
+
+        for(var door : this.currentLevel.doors.values()) {
+            var distance = door.position.getDistance(this.camera.position);
+            if(distance < distanceToTarget) {
+                this.targetDoor = door;
+                distanceToTarget = distance;
+            }
+        }
+
+        if(this.targetDoor == null) {
+            return;
+        }
+
+       this.editDoorMenuComponent.onSubmit = this.targetDoor::setTarget;
+       this.menuState = EditMenuState.DOOR_CONFIG;
     }
 
     private void tryAddBlock() {
@@ -123,8 +152,8 @@ public class EditGameState extends AbstractGameState {
         this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
         this.camera.rotation.set(mainDoor.orientation.rotation);
         this.camera.position.y = 6;
+        this.menuState = EditMenuState.HIDDEN;
 
-        //this.camera.position.add(0.3f);
     }
 
     private void renderCurrent() {
@@ -151,9 +180,15 @@ public class EditGameState extends AbstractGameState {
     @Override
     public void update() {
         if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            this.showMenu = !this.showMenu;
-            Mouse.MOUSE.setLocked(!this.showMenu);
+            this.menuState = this.menuState == EditMenuState.HIDDEN ? EditMenuState.MENU : EditMenuState.HIDDEN;
         }
+
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
+            this.tryEditDoor();
+        }
+
+        var menuState = this.menuState;
+        Mouse.MOUSE.setLocked(menuState == EditMenuState.HIDDEN);
 
         this.spriteBatch.clear();
         this.meshBuffer.clear();
@@ -178,17 +213,18 @@ public class EditGameState extends AbstractGameState {
 
         DebugInformation.DEBUG_INFORMATION.writeDebugInformation(this.spriteBatch);
 
+        this.hiddenEditMenuComponent.isHidden = menuState != EditMenuState.MENU;
+        this.hiddenDoorMenuComponent.isHidden = menuState != EditMenuState.DOOR_CONFIG;
+
         this.editMenu.update();
         this.editMenu.writeUIRoot(this.spriteBatch);
 
-        if(this.showMenu) {
-            this.hiddenEditMenuComponent.isHidden = false;
-            this.editMenu.selectedCursor.writeCursor(this.spriteBatch);
-        } else {
-            this.hiddenEditMenuComponent.isHidden = true;
+        if(menuState == EditMenuState.HIDDEN) {
             this.camera.update();
             this.tryAddBlock();
             this.tryRemoveBlock();
+        } else {
+            this.editMenu.selectedCursor.writeCursor(this.spriteBatch);
         }
 
         this.spriteBatch.writeToMeshBuffer(this.meshBuffer);

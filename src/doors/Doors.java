@@ -47,7 +47,6 @@ public class Doors {
         ExploreGameState.EXPLORE_GAME_STATE.setup();
         EditGameState.EDIT_GAME_STATE.setup();
         MainMenuGameState.MAIN_MENU_GAME_STATE.use();
-        //EditGameState.EDIT_GAME_STATE.use("ncage_cube");
     }
 
     private void update() {

@@ -18,6 +18,8 @@ import doors.utility.vector.Vector3in;
 
 public class Terrain {
 
+    private static int RESERVED_BLOCK_RANGE = 0x1000;
+
     private ImageTexture texture;
     private Vector3in chunkDimensions;
     private Vector3in blockDimensions;
@@ -50,9 +52,10 @@ public class Terrain {
         var blocks = rootConfig.getJSONArray("blocks");
         for(var ix = 0; ix < blocks.length(); ix += 1) {
             var block = blocks.getJSONObject(ix);
+            var blockID = block.getInt("id") + RESERVED_BLOCK_RANGE;
             var textureSample = block.getJSONArray("textureSample");
-            this.blockMap.put(ix + 1, new Block(
-                ix + 1,
+            this.blockMap.put(blockID, new Block(
+                blockID,
                 block.getString("name"),
                 this.texture.createTextureSample(
                     new Vector2in(

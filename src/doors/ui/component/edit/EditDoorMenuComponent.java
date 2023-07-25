@@ -1,11 +1,10 @@
-package doors.ui.component.mainmenu;
+package doors.ui.component.edit;
 
 import doors.Config;
 import doors.graphics.font.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
-import doors.state.ExploreGameState;
-import doors.state.MainMenuGameState;
+import doors.state.EditGameState;
 import doors.ui.component.IComponent;
 import doors.ui.component.IconComponent;
 import doors.ui.component.ButtonComponent;
@@ -17,10 +16,11 @@ import doors.ui.component.layout.HorizontalSpanComponent;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.component.layout.VerticalSpanComponent;
 import doors.ui.root.UIRoot;
+import doors.utility.Functional.IAction1;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class MainMenuExploreComponent implements IComponent {
+public class EditDoorMenuComponent implements IComponent {
 
     private static int INPUT_MAX_LENGTH = 24;
     private static int SPACING = 10;
@@ -31,26 +31,26 @@ public class MainMenuExploreComponent implements IComponent {
     private WindowComponent windowComponent;
 
     private TextComponent labelComponent = new TextComponent(
-        "Input level to explore:", FontDecoration.NORMAL, Vector3fl.BLACK
+        "Door target:", FontDecoration.NORMAL, Vector3fl.BLACK
     );
 
     private ButtonComponent exploreButtonComponent = new ButtonComponent(
         BUTTON_DIMENSIONS,
-        new TextComponent("Explore", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoExplore
+        new TextComponent("Ok", FontDecoration.NORMAL, Vector3fl.BLACK),
+        this::setDoor
     );
 
     private ButtonComponent backButtonComponent = new ButtonComponent(
         BUTTON_DIMENSIONS,
         new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoRootMenu
+        this::close
     );
 
     private TextInputComponent textInputComponent = new TextInputComponent(INPUT_MAX_LENGTH);
 
-    private IconComponent backgroundComponent = new IconComponent(MenuTexture.MENU_TEXTURE.background);
+    public IAction1<String> onSubmit = null;
 
-    public MainMenuExploreComponent() {
+    public EditDoorMenuComponent() {
         var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
 
         span.components.add(labelComponent);
@@ -77,7 +77,6 @@ public class MainMenuExploreComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.windowComponent.calculateDimensions();
-        this.backgroundComponent.dimensions.set(Config.RESOLUTION);
     }
 
     @Override
@@ -86,17 +85,19 @@ public class MainMenuExploreComponent implements IComponent {
         this.windowComponent.update(this.originCursor, root);
     }
 
-    private void gotoRootMenu() {
-        MainMenuGameState.MAIN_MENU_GAME_STATE.gotoRootMenu();
+    private void close() {
+        EditGameState.EDIT_GAME_STATE.menuState = EditMenuState.HIDDEN;
     }
 
-    private void gotoExplore() {
-        ExploreGameState.EXPLORE_GAME_STATE.use(this.textInputComponent.stringBuilder.toString());
+    private void setDoor() {
+        if(this.onSubmit != null) {
+            this.onSubmit.invoke(this.textInputComponent.stringBuilder.toString());
+        }
+        EditGameState.EDIT_GAME_STATE.menuState = EditMenuState.HIDDEN;
     }
 
     @Override
     public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeUIComponent(spriteBatch);
         this.windowComponent.writeUIComponent(spriteBatch);
     }
     
