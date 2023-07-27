@@ -7,22 +7,23 @@ import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class IconComponent implements IComponent {
+public class TextureComponent implements IExplicitDimensions {
 
     public TextureSample textureSample;
-    public Vector2in dimensions = new Vector2in();
     public Vector2in position = new Vector2in();
 
-    public IconComponent(TextureSample textureSample, Vector2in dimensions) {
+    private Vector2in dimensions = new Vector2in();
+
+    public TextureComponent(TextureSample textureSample, Vector2in dimensions) {
         this.textureSample = textureSample;
         this.dimensions.set(dimensions);
     }
 
-    public IconComponent(TextureSample textureSample) {
+    public TextureComponent(TextureSample textureSample) {
         this(textureSample, textureSample.dimensions);
     }
 
-    public IconComponent(Vector2in dimensions) {
+    public TextureComponent(Vector2in dimensions) {
         this.dimensions.set(dimensions);
     }
 
@@ -37,16 +38,21 @@ public class IconComponent implements IComponent {
     }
 
     @Override
+    public void setDimensions(int x, int y) {
+        this.dimensions.set(x, y);
+    }
+
+    @Override
     public void update(Vector2in origin, UIRoot root) {
         this.position.set(origin);
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.textureSample == null) {
             return;
         }
-        spriteBatch.writeSprite(
+        spriteBatch.pushSprite(
             this.textureSample,
             this.position,
             this.dimensions,

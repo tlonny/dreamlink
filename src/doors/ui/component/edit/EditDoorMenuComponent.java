@@ -1,12 +1,11 @@
 package doors.ui.component.edit;
 
 import doors.Config;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.state.EditGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.TextInputComponent;
@@ -91,14 +90,14 @@ public class EditDoorMenuComponent implements IComponent {
 
     private void setDoor() {
         if(this.onSubmit != null) {
-            this.onSubmit.invoke(this.textInputComponent.stringBuilder.toString());
+            this.onSubmit.invoke(this.textInputComponent.getText());
         }
         EditGameState.EDIT_GAME_STATE.menuState = EditMenuState.HIDDEN;
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.windowComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

@@ -10,28 +10,18 @@ public interface IComponent {
 
     public void calculateDimensions();
 
+    public default void onMousePress(UIRoot root) { }
+ 
+    public default void onMouseRelease(UIRoot root) { }
+
+    public default void onMouseClick(UIRoot root) { }
+
+    public default void onDragStart(UIRoot root) { }
+
+    public default void onDragDrop(UIRoot root, IComponent droppedComponent) { }
+
     public void update(Vector2in origin, UIRoot root);
 
-    public void writeUIComponent(SpriteBatch spriteBatch);
-
-    public default void onMousePress(UIRoot root) {
-
-    }
-
-    public default void onMouseRelease(UIRoot root) {
-
-    }
-
-    public default void onMouseClick(UIRoot root) {
-
-    }
-
-    public default void onDragStart(UIRoot root) {
-
-    }
-
-    public default void onDragDrop(UIRoot root, IComponent droppedComponent) {
-
-    }
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch);
 
 }

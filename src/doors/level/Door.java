@@ -19,9 +19,11 @@ public class Door {
         this.orientation = orientation;
     }
 
-    public void setTarget(String target) {
-        var split = target.split(":");
-        this.targetLevel = split[0];
-        this.targetDoor = split[1];
+    public Door(String name, Vector3fl position, CubeFace orientation) {
+        this(name, null, null, position, orientation);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

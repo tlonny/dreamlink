@@ -27,17 +27,11 @@ public class Vector3in implements IVector3fl {
     }
 
     public Vector3in(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.set(x, y, z);
     }
 
     public Vector3in(int index, Vector3in dimensions) {
-        this.x = index % dimensions.x;
-        index /= dimensions.x;
-        this.y = index % dimensions.y;
-        index /= dimensions.y;
-        this.z = index;
+        this.set(index, dimensions);
     }
 
     public Vector3in(Vector3in other) {
@@ -84,6 +78,15 @@ public class Vector3in implements IVector3fl {
 
     public Vector3in sub(Vector3in other) {
         return this.sub(other.x, other.y, other.z);
+    }
+
+    public Vector3in set(int index, Vector3in dimensions) {
+        this.x = index % dimensions.x;
+        index /= dimensions.x;
+        this.y = index % dimensions.y;
+        index /= dimensions.y;
+        this.z = index;
+        return this;
     }
 
     public Vector3in set(int x, int y, int z) {

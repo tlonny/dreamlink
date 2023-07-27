@@ -125,7 +125,7 @@ public class UIRoot {
 
     public void writeUIRoot(SpriteBatch spriteBatch) {
         for(var rootComponent : this.rootComponents) {
-            rootComponent.writeUIComponent(spriteBatch);
+            rootComponent.writeComponentToSpriteBatch(spriteBatch);
         }
     }
 }

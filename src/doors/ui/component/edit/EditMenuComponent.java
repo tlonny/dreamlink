@@ -1,7 +1,7 @@
 package doors.ui.component.edit;
 
 import doors.Config;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.level.Level;
@@ -75,7 +75,7 @@ public class EditMenuComponent implements IComponent {
 
     public void setLevel(Level level) {
         this.tableComponent.rows.clear();
-        for(var block : level.terrain.blockMap.values()) {
+        for(var block : level.blockMap.getBlocks()) {
             this.tableComponent.rows.add(new EditBlockTableRowComponent(block));
         }
     }
@@ -97,8 +97,8 @@ public class EditMenuComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.windowComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
     private void gotoMainMenu() {

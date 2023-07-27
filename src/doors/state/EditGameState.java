@@ -1,5 +1,7 @@
 package doors.state;
 
+import java.nio.file.Paths;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL42;
 
@@ -18,7 +20,6 @@ import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.level.Door;
 import doors.level.Level;
-import doors.level.LevelCache;
 import doors.level.camera.Camera;
 import doors.level.camera.NoClipMovementSystem;
 import doors.ui.component.HiddenComponent;
@@ -85,7 +86,7 @@ public class EditGameState extends AbstractGameState {
             return;
         }
 
-       this.editDoorMenuComponent.onSubmit = this.targetDoor::setTarget;
+       this.editDoorMenuComponent.onSubmit = this.targetDoor::setName;
        this.menuState = EditMenuState.DOOR_CONFIG;
     }
 
@@ -94,12 +95,8 @@ public class EditGameState extends AbstractGameState {
             return;
         }
 
-        if(this.editQuickBarComponent.selectedSlot == null) {
-            return;
-        }
-
-
-        if(this.editQuickBarComponent.selectedSlot.value == null) {
+        var selectedBlock = this.editQuickBarComponent.getSelectedBlock();
+        if(selectedBlock == null) {
             return;
         }
 
@@ -116,7 +113,7 @@ public class EditGameState extends AbstractGameState {
 
         this.currentLevel.terrain.setBlock(
             this.voxelRayCaster.previousRayCursor,
-            this.editQuickBarComponent.selectedSlot.value.block
+            selectedBlock
         );
     }
 
@@ -137,15 +134,14 @@ public class EditGameState extends AbstractGameState {
         this.currentLevel.terrain.setBlock(this.voxelRayCaster.rayCursor, null);
     }
 
-    public void setup() {
-        this.mesh.setup();
-    }
-
-    public void use(String level) {
+    public void use(String levelName) {
         super.use();
 
+        // TODO: Dispose of old level
+        var levelDirectory = Paths.get(Config.WORKSPACE_PATH, levelName).toString();
+        this.currentLevel = new Level(levelDirectory);
+
         Mouse.MOUSE.setLocked(true);
-        this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
         this.editMenuComponent.setLevel(this.currentLevel);
         var mainDoor = this.currentLevel.doors.get("main");
 
@@ -156,7 +152,7 @@ public class EditGameState extends AbstractGameState {
 
     }
 
-    private void renderCurrent() {
+    private void renderLevel() {
         ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.useRenderTarget();
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
@@ -195,7 +191,7 @@ public class EditGameState extends AbstractGameState {
         
         DebugInformation.DEBUG_INFORMATION.update(this.camera);
 
-        this.spriteBatch.writeSprite(
+        this.spriteBatch.pushSprite(
             ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.texture.createTextureSample(),
             Vector2in.ZERO,
             Config.RESOLUTION,
@@ -203,7 +199,7 @@ public class EditGameState extends AbstractGameState {
             Vector3fl.WHITE
         );
 
-        this.spriteBatch.writeSprite(
+        this.spriteBatch.pushSprite(
             EntityTexture.ENTITY_TEXTURE.reticule,
             RETICULE_POSITION,
             EntityTexture.ENTITY_TEXTURE.reticule.dimensions,
@@ -211,7 +207,7 @@ public class EditGameState extends AbstractGameState {
             Vector3fl.WHITE
         );
 
-        DebugInformation.DEBUG_INFORMATION.writeDebugInformation(this.spriteBatch);
+        DebugInformation.DEBUG_INFORMATION.writeDebugInformationToSpriteBatch(this.spriteBatch);
 
         this.hiddenEditMenuComponent.isHidden = menuState != EditMenuState.MENU;
         this.hiddenDoorMenuComponent.isHidden = menuState != EditMenuState.DOOR_CONFIG;
@@ -227,10 +223,10 @@ public class EditGameState extends AbstractGameState {
             this.editMenu.selectedCursor.writeCursor(this.spriteBatch);
         }
 
-        this.spriteBatch.writeToMeshBuffer(this.meshBuffer);
-        this.mesh.loadDataFromMeshBuffer(this.meshBuffer);
+        this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
+        this.meshBuffer.writeMeshTo(this.mesh);
 
-        this.renderCurrent();
+        this.renderLevel();
 
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
         GL42.glDisable(GL42.GL_DEPTH_TEST);

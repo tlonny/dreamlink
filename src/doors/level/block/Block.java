@@ -1,4 +1,4 @@
-package doors.level.terrain;
+package doors.level.block;
 
 import doors.graphics.mesh.MeshBuffer;
 import doors.graphics.texture.TextureSample;
@@ -10,9 +10,9 @@ import doors.utility.vector.Vector3in;
 public class Block {
     private static IVector3fl DIMENSIONS = new Vector3in(1, 1, 1);
 
-    public final int blockID;
-    public final TextureSample textureSample;
-    public final String name;
+    public int blockID;
+    public TextureSample textureSample;
+    public String name;
 
     public Block(int blockID, String name, TextureSample textureSample) {
         this.blockID = blockID;
@@ -20,8 +20,8 @@ public class Block {
         this.textureSample = textureSample;
     }
 
-    public void writeBlockFace(MeshBuffer meshBuffer, IVector3fl position, CubeFace cubeFace) {
-        meshBuffer.writeQuad(
+    public void writeBlockFaceToMeshBuffer(MeshBuffer meshBuffer, IVector3fl position, CubeFace cubeFace) {
+        meshBuffer.pushQuad(
             this.textureSample, 
             0,
             position,

@@ -10,7 +10,7 @@ public abstract class AbstractTexture {
     public static int NUM_TEXTURE_UNITS = 10;
     public static AbstractTexture[] USED_TEXTURES = new AbstractTexture[NUM_TEXTURE_UNITS];
 
-    private Vector2in dimensions;
+    protected Vector2in dimensions;
     private AbstractTextureChannel textureChannel;
     public int textureID;
 
@@ -31,6 +31,13 @@ public abstract class AbstractTexture {
     }
 
     public void useTexture() {
+        // Careful here - if we bind the texture to the texture channel before running setup
+        // we will effectively bind texture ID 0 to the channel. The "caching" logic prevents
+        // this from being corrected later - so we need to catch it earlier...
+        if(this.textureID == 0) {
+            return;
+        }
+
         if(this.textureChannel.registeredTexture != this) {
             this.textureChannel.registeredTexture = this;
             GL42.glActiveTexture(GL42.GL_TEXTURE0 + this.textureChannel.getTextureUnitID());

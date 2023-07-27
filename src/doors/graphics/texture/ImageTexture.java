@@ -22,14 +22,14 @@ public class ImageTexture extends AbstractTexture {
 
     protected void loadTextureData() {
         BYTE_BUFFER.clear();
-        var dimensions = FileIO.writeImageToBuffer(path, BYTE_BUFFER, true);
+        FileIO.writeImageToBuffer(path, BYTE_BUFFER, true);
         BYTE_BUFFER.flip();
         GL42.glTexImage2D(
             GL42.GL_TEXTURE_2D, 
             0, 
             GL42.GL_RGBA, 
-            dimensions.x, 
-            dimensions.y, 
+            this.dimensions.x, 
+            this.dimensions.y, 
             0, 
             GL42.GL_RGBA, 
             GL42.GL_UNSIGNED_BYTE, 

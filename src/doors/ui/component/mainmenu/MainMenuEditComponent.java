@@ -3,13 +3,13 @@ package doors.ui.component.mainmenu;
 import java.io.File;
 
 import doors.Config;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.state.EditGameState;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
+import doors.ui.component.TextureComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.WindowComponent;
@@ -36,7 +36,7 @@ public class MainMenuEditComponent implements IComponent {
     private Vector2in originCursor = new Vector2in();
     private WindowComponent windowComponent;
 
-    private IconComponent backgroundComponent = new IconComponent(MenuTexture.MENU_TEXTURE.background);
+    private TextureComponent backgroundComponent = new TextureComponent(MenuTexture.MENU_TEXTURE.background);
     private TableComponent<MainMenuEditLevelTableRow> tableComponent = new TableComponent<>(NUM_ROWS, ROW_DIMENSIONS);
     private ButtonComponent editButtonComponent = new ButtonComponent(
         BUTTON_DIMENSIONS,
@@ -76,8 +76,9 @@ public class MainMenuEditComponent implements IComponent {
         );
     }
 
-    public void setup() {
-        var directory = new File(Config.EDIT_LEVEL_PATH);
+    public void readLevels() {
+        this.tableComponent.rows.clear();
+        var directory = new File(Config.WORKSPACE_PATH);
         for(var file : directory.listFiles(File::isDirectory)) {
             var row = new MainMenuEditLevelTableRow(this.selectedLevel, file.getName());
             this.tableComponent.rows.add(row);
@@ -92,7 +93,7 @@ public class MainMenuEditComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.windowComponent.calculateDimensions();
-        this.backgroundComponent.dimensions.set(Config.RESOLUTION);
+        this.backgroundComponent.setDimensions(Config.RESOLUTION);
     }
 
     @Override
@@ -107,14 +108,14 @@ public class MainMenuEditComponent implements IComponent {
     }
 
     private void gotoEdit() {
-        var level = this.selectedLevel.value.content.text;
-        EditGameState.EDIT_GAME_STATE.use(level);
+        var levelName = this.selectedLevel.value.getLevelName();
+        EditGameState.EDIT_GAME_STATE.use(levelName);
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeUIComponent(spriteBatch);
-        this.windowComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.backgroundComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

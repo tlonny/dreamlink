@@ -63,7 +63,7 @@ public class Shader {
         GL42.glAttachShader(this.programID, shaderID);
     }
 
-    public void setup() {
+    public Shader() {
         this.programID = GL42.glCreateProgram();
         var vertexID = GL42.glCreateShader(GL42.GL_VERTEX_SHADER);
         var vertexShaderPath = Paths.get(SHADER_DIRECTORY, "vertex.glsl").toString();

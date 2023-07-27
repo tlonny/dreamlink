@@ -21,6 +21,10 @@ public class Mouse {
 
     private boolean isLocked = false;
 
+    public Mouse() {
+        Window.WINDOW.setMouseButtonCallback(this::onMouseButtonEvent);
+    }
+
     public void setLocked(boolean isLocked) {
         if(isLocked == this.isLocked) {
             return;
@@ -100,9 +104,5 @@ public class Mouse {
                 Window.WINDOW.dimensions.y / 2
             );
         }
-    }
-
-    public void setup() {
-        Window.WINDOW.setMouseButtonCallback(this::onMouseButtonEvent);
     }
 }

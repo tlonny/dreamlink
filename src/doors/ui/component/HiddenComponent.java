@@ -42,11 +42,11 @@ public class HiddenComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.isHidden) {
             return;
         }
-        this.content.writeUIComponent(spriteBatch);
+        this.content.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

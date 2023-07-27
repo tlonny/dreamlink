@@ -54,9 +54,9 @@ public class VerticalSpanComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         for(var component : this.components) {
-            component.writeUIComponent(spriteBatch);
+            component.writeComponentToSpriteBatch(spriteBatch);
         }
     }
 

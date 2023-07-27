@@ -59,14 +59,13 @@ public class DoorMesh extends Mesh {
 
     private Vector3fl rotationBuffer = new Vector3fl();
 
-    @Override
-    public void setup() {
-        super.setup();
+    public DoorMesh() {
+        super();
         MeshBuffer.DEFAULT_MESH_BUFFER.clear();
         for(var cubeSchema : CUBE_SCHEMAS) {
-            cubeSchema.writeCube(MeshBuffer.DEFAULT_MESH_BUFFER);
+            cubeSchema.writeCubeToMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
         }
-        this.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
+        MeshBuffer.DEFAULT_MESH_BUFFER.writeMeshTo(this);
     }
 
     public void renderLocked(Vector3fl position, Vector3fl rotation) {

@@ -1,10 +1,10 @@
 package doors.ui.component.mainmenu;
 
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
-import doors.ui.component.IComponent;
+import doors.ui.component.IExplicitDimensions;
 import doors.ui.component.TextComponent;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
@@ -12,11 +12,11 @@ import doors.utility.BoxedValue;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class MainMenuEditLevelTableRow implements IComponent {
+public class MainMenuEditLevelTableRow implements IExplicitDimensions {
 
     private BoxedValue<MainMenuEditLevelTableRow> boxedSelection;
 
-    public TextComponent content;
+    private TextComponent content;
     private Vector2in dimensions = new Vector2in();
     private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
@@ -24,6 +24,19 @@ public class MainMenuEditLevelTableRow implements IComponent {
     public MainMenuEditLevelTableRow(BoxedValue<MainMenuEditLevelTableRow> boxedSelection, String levelName) {
         this.boxedSelection = boxedSelection;
         this.content = new TextComponent(levelName, FontDecoration.NORMAL, Vector3fl.BLACK);
+    }
+
+    public String getLevelName() {
+        return this.content.text;
+    }
+
+    public void setLevelName(String levelName) {
+        this.content.text = levelName;
+    }
+
+    @Override
+    public void setDimensions(int width, int height) {
+        this.dimensions.set(width, height);
     }
 
     @Override
@@ -64,9 +77,9 @@ public class MainMenuEditLevelTableRow implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.boxedSelection.value == this) {
-            spriteBatch.writeSprite(
+            spriteBatch.pushSprite(
                 MenuTexture.MENU_TEXTURE.highlight,
                 this.position,
                 this.dimensions,
@@ -75,7 +88,7 @@ public class MainMenuEditLevelTableRow implements IComponent {
             );
         }
 
-        this.content.writeUIComponent(spriteBatch);
+        this.content.writeComponentToSpriteBatch(spriteBatch);
     }
 
 

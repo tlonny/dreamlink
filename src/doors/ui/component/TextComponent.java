@@ -1,7 +1,8 @@
 package doors.ui.component;
 
-import doors.graphics.font.Font;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
+import doors.graphics.text.Glyph;
+import doors.graphics.text.GlyphLookup;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.ui.root.UIRoot;
@@ -10,17 +11,17 @@ import doors.utility.vector.Vector3fl;
 
 public class TextComponent implements IComponent {
 
-    public String text;
     public FontDecoration fontDecoration;
-    public Vector3fl color;
+    public Vector3fl color = new Vector3fl();
     
     private Vector2in dimensions = new Vector2in();
     private Vector2in position = new Vector2in();
+    public String text;
 
     public TextComponent(String text, FontDecoration fontDecoration, Vector3fl color) {
         this.text = text;
         this.fontDecoration = fontDecoration;
-        this.color = new Vector3fl(color);
+        this.color.set(color);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class TextComponent implements IComponent {
 
     @Override
     public void calculateDimensions() {
-        this.dimensions.set(Font.CHARACTER_DIMENSIONS).mul(this.text.length(), 1);
+        this.dimensions.set(Glyph.GLYPH_DIMENSIONS).mul(this.text.length(), 1);
     }
 
     @Override
@@ -39,13 +40,13 @@ public class TextComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        Font.FONT.writeText(
-            spriteBatch, 
-            this.text, 
-            this.position, 
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        GlyphLookup.GLYPH_LOOKUP.writeTextToSpriteBatch(
+            spriteBatch,
+            this.text,
+            this.position,
             SpriteBatchHeight.UI_NORMAL,
-            this.fontDecoration, 
+            this.fontDecoration,
             this.color
         );
     }

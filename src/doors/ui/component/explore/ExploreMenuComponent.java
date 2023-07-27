@@ -1,7 +1,7 @@
 package doors.ui.component.explore;
 
 import doors.Config;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.state.ExploreGameState;
@@ -15,6 +15,7 @@ import doors.ui.component.layout.HorizontalAlignment;
 import doors.ui.component.layout.HorizontalSpanComponent;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.component.layout.VerticalSpanComponent;
+import doors.ui.component.style.DialogStyleComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
@@ -47,6 +48,8 @@ public class ExploreMenuComponent implements IComponent {
 
     private TextInputComponent textInputComponent = new TextInputComponent(INPUT_MAX_LENGTH);
 
+    private TextComponent statusComponent = new TextComponent("ddd", FontDecoration.NORMAL, Vector3fl.BLACK);
+
     public ExploreMenuComponent() {
         var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
 
@@ -58,6 +61,10 @@ public class ExploreMenuComponent implements IComponent {
 
         buttonSpan.components.add(this.exploreButtonComponent);
         buttonSpan.components.add(this.backButtonComponent);
+
+        span.components.add(new DialogStyleComponent(
+            new PaddingComponent(this.statusComponent, WINDOW_PADDING)
+        ));
 
         this.windowComponent = new WindowComponent(
             MenuTexture.MENU_TEXTURE.iconFolder,
@@ -88,12 +95,12 @@ public class ExploreMenuComponent implements IComponent {
     }
 
     private void gotoExplore() {
-        ExploreGameState.EXPLORE_GAME_STATE.use(this.textInputComponent.stringBuilder.toString());
+        ExploreGameState.EXPLORE_GAME_STATE.use(this.textInputComponent.getText());
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.windowComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

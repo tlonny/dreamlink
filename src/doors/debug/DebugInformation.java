@@ -1,7 +1,8 @@
 package doors.debug;
 
-import doors.graphics.font.Font;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.Glyph;
+import doors.graphics.text.GlyphLookup;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.io.Mouse;
@@ -26,7 +27,7 @@ public class DebugInformation {
     private Vector3fl cameraNormal = new Vector3fl();
 
     private void writeLine(SpriteBatch spriteBatch, String text) {
-        Font.FONT.writeText(
+        GlyphLookup.GLYPH_LOOKUP.writeTextToSpriteBatch(
             spriteBatch,
             text,
             this.positionCursor,
@@ -34,7 +35,7 @@ public class DebugInformation {
             FontDecoration.NORMAL,
             Vector3fl.WHITE
         );
-        this.positionCursor.y += Font.CHARACTER_DIMENSIONS.y;
+        this.positionCursor.y += Glyph.GLYPH_DIMENSIONS.y;
     }
 
     public void update(Camera camera) {
@@ -52,7 +53,7 @@ public class DebugInformation {
         this.positionCursor.set(10, 10);
     }
 
-    public void writeDebugInformation(SpriteBatch spriteBatch) {
+    public void writeDebugInformationToSpriteBatch(SpriteBatch spriteBatch) {
         this.writeLine(spriteBatch, String.format("frames per second: %.2f", this.fps));
         this.writeLine(spriteBatch, String.format("camera position: %s", this.cameraPosition));
         this.writeLine(spriteBatch, String.format("camera normal: %s", this.cameraNormal));

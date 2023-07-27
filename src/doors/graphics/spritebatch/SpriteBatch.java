@@ -14,20 +14,22 @@ import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
 public class SpriteBatch {
+
+    private static Queue<Sprite> UNUSED_SPRITES = new ArrayDeque<>();
+
     private Vector3fl worldPosition = new Vector3fl();
     private Vector3fl worldDimensions = new Vector3fl();
 
     public List<Sprite> batchedSprites = new ArrayList<>();
-    private Queue<Sprite> unusedSprites = new ArrayDeque<>();
 
     private Sprite getNewSprite() {
-        if(unusedSprites.isEmpty()) {
+        if(UNUSED_SPRITES.isEmpty()) {
             return new Sprite();
         } 
-        return unusedSprites.remove();
+        return UNUSED_SPRITES.remove();
     }
 
-    public void writeSprite(TextureSample textureSample, Vector2in position, Vector2in dimensions, SpriteBatchHeight height, Vector3fl color) {
+    public void pushSprite(TextureSample textureSample, Vector2in position, Vector2in dimensions, SpriteBatchHeight height, Vector3fl color) {
         var sprite = this.getNewSprite();
         sprite.textureSample = textureSample;
         sprite.position.set(position);
@@ -43,12 +45,12 @@ public class SpriteBatch {
 
     public void clear() {
         for(var sprite : this.batchedSprites) {
-            this.unusedSprites.add(sprite);
+            UNUSED_SPRITES.add(sprite);
         }
         this.batchedSprites.clear();
     }
 
-    public void writeToMeshBuffer(MeshBuffer meshBuffer) {
+    public void writeSpriteBatchToMeshBuffer(MeshBuffer meshBuffer) {
         this.batchedSprites.sort(Comparator.comparing(this::getSpriteHeight));
 
         for(var sprite : this.batchedSprites) {
@@ -64,7 +66,7 @@ public class SpriteBatch {
                 0f
             );
 
-            meshBuffer.writeQuad(
+            meshBuffer.pushQuad(
                 sprite.textureSample, 
                 0,
                 worldPosition,

@@ -75,7 +75,7 @@ public class MeshBuffer {
         return packed;
     }
 
-    public void writeQuad(TextureSample textureSample, int transformerID, IVector3fl position, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
+    public void pushQuad(TextureSample textureSample, int transformerID, IVector3fl position, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
         var packedColor = this.packColor(color);
         var packedLookupIDs = this.packLookupIDs(textureSample.textureChannel.getTextureUnitID(), transformerID);
         var vertexPosition = new Vector3fl();
@@ -137,6 +137,15 @@ public class MeshBuffer {
         }
 
         this.numQuads += 1;
+    }
+
+    public void writeMeshTo(Mesh mesh) {
+        mesh.writeIndexData(this.indexBuffer);
+        mesh.writePositionData(this.positionBuffer);
+        mesh.writeNormalData(this.normalBuffer);
+        mesh.writeTextureOffsetData(this.textureOffsetBuffer);
+        mesh.writePackedColorData(this.packedColorBuffer);
+        mesh.writePackedLookupIDsData(this.packedLookupIDsBuffer);
     }
 
     public void clear() {

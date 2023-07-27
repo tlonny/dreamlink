@@ -11,65 +11,94 @@ public abstract class AbstractMenuTemplate {
     private Vector2in positionCursor = new Vector2in();
     private Vector2in dimensionsCursor = new Vector2in();
 
-    public void writeMenuTemplate(
+    public void writeMenuTemplateToSpriteBatch(
         SpriteBatch spriteBatch,
         Vector2in position,
         Vector2in dimensions,
-        SpriteBatchHeight height
+        SpriteBatchHeight height,
+        boolean renderTop,
+        boolean renderBottom,
+        boolean renderLeft,
+        boolean renderRight
     ) {
         // Center Block
         var centerTextureSample = this.getCenterTextureSample();
         this.positionCursor.set(position);
         this.dimensionsCursor.set(dimensions);
-        spriteBatch.writeSprite(centerTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        spriteBatch.pushSprite(centerTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
 
         // Top Block
-        var topTextureSample = this.getTopTextureSample();
-        this.positionCursor.set(position);
-        this.dimensionsCursor.set(dimensions.x, topTextureSample.dimensions.y);
-        spriteBatch.writeSprite(topTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderTop) {
+            var topTextureSample = this.getTopTextureSample();
+            this.positionCursor.set(position);
+            this.dimensionsCursor.set(dimensions.x, topTextureSample.dimensions.y);
+            spriteBatch.pushSprite(topTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Bottom Block
-        var bottomTextureSample = this.getBottomTextureSample();
-        this.positionCursor.set(position).add(0, dimensions.y - bottomTextureSample.dimensions.y);
-        this.dimensionsCursor.set(dimensions.x, bottomTextureSample.dimensions.y);
-        spriteBatch.writeSprite(bottomTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderBottom) {
+            var bottomTextureSample = this.getBottomTextureSample();
+            this.positionCursor.set(position).add(0, dimensions.y - bottomTextureSample.dimensions.y);
+            this.dimensionsCursor.set(dimensions.x, bottomTextureSample.dimensions.y);
+            spriteBatch.pushSprite(bottomTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Left Block
-        var leftTextureSample = this.getLeftTextureSample();
-        this.positionCursor.set(position);
-        this.dimensionsCursor.set(leftTextureSample.dimensions.x, dimensions.y);
-        spriteBatch.writeSprite(leftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderLeft) {
+            var leftTextureSample = this.getLeftTextureSample();
+            this.positionCursor.set(position);
+            this.dimensionsCursor.set(leftTextureSample.dimensions.x, dimensions.y);
+            spriteBatch.pushSprite(leftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
         
         // Right Block
-        var rightTextureSample = this.getRightTextureSample();
-        this.positionCursor.set(position).add(dimensions.x - rightTextureSample.dimensions.x, 0);
-        this.dimensionsCursor.set(rightTextureSample.dimensions.x, dimensions.y);
-        spriteBatch.writeSprite(rightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderRight) {
+            var rightTextureSample = this.getRightTextureSample();
+            this.positionCursor.set(position).add(dimensions.x - rightTextureSample.dimensions.x, 0);
+            this.dimensionsCursor.set(rightTextureSample.dimensions.x, dimensions.y);
+            spriteBatch.pushSprite(rightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Top Left Block
-        var topLeftTextureSample = this.getTopLeftTextureSample();
-        this.positionCursor.set(position);
-        this.dimensionsCursor.set(topLeftTextureSample.dimensions);
-        spriteBatch.writeSprite(topLeftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderTop && renderLeft) {
+            var topLeftTextureSample = this.getTopLeftTextureSample();
+            this.positionCursor.set(position);
+            this.dimensionsCursor.set(topLeftTextureSample.dimensions);
+            spriteBatch.pushSprite(topLeftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Top Right Block
-        var topRightTextureSample = this.getTopRightTextureSample();
-        this.positionCursor.set(position).add(dimensions.x - topRightTextureSample.dimensions.x, 0);
-        this.dimensionsCursor.set(topRightTextureSample.dimensions);
-        spriteBatch.writeSprite(topRightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderTop && renderRight) {
+            var topRightTextureSample = this.getTopRightTextureSample();
+            this.positionCursor.set(position).add(dimensions.x - topRightTextureSample.dimensions.x, 0);
+            this.dimensionsCursor.set(topRightTextureSample.dimensions);
+            spriteBatch.pushSprite(topRightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Bottom Left Block
-        var bottomLeftTextureSample = this.getBottomLeftTextureSample();
-        this.positionCursor.set(position).add(0, dimensions.y - bottomLeftTextureSample.dimensions.y);
-        this.dimensionsCursor.set(bottomLeftTextureSample.dimensions);
-        spriteBatch.writeSprite(bottomLeftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderBottom && renderLeft) {
+            var bottomLeftTextureSample = this.getBottomLeftTextureSample();
+            this.positionCursor.set(position).add(0, dimensions.y - bottomLeftTextureSample.dimensions.y);
+            this.dimensionsCursor.set(bottomLeftTextureSample.dimensions);
+            spriteBatch.pushSprite(bottomLeftTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
 
         // Bottom Right Block
-        var bottomRightTextureSample = this.getBottomRightTextureSample();
-        this.positionCursor.set(position).add(dimensions).sub(bottomRightTextureSample.dimensions);
-        this.dimensionsCursor.set(bottomRightTextureSample.dimensions);
-        spriteBatch.writeSprite(bottomRightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        if(renderBottom && renderRight) {
+            var bottomRightTextureSample = this.getBottomRightTextureSample();
+            this.positionCursor.set(position).add(dimensions).sub(bottomRightTextureSample.dimensions);
+            this.dimensionsCursor.set(bottomRightTextureSample.dimensions);
+            spriteBatch.pushSprite(bottomRightTextureSample, this.positionCursor, this.dimensionsCursor, height, Vector3fl.WHITE);
+        }
+    }
+
+    public void writeMenuTemplateToSpriteBatch(
+        SpriteBatch spriteBatch,
+        Vector2in position,
+        Vector2in dimensions,
+        SpriteBatchHeight height
+    ) {
+        this.writeMenuTemplateToSpriteBatch(spriteBatch, position, dimensions, height, true, true, true, true);
     }
 
     public abstract TextureSample getTopTextureSample();

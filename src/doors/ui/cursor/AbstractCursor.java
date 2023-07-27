@@ -23,7 +23,7 @@ public abstract class AbstractCursor {
 
     public void writeCursor(SpriteBatch spriteBatch) {
         this.position.set(Mouse.MOUSE.position).sub(this.offset);
-        spriteBatch.writeSprite(this.textureSample, this.position, this.dimensions, SpriteBatchHeight.UI_CURSOR, Vector3fl.WHITE);
+        spriteBatch.pushSprite(this.textureSample, this.position, this.dimensions, SpriteBatchHeight.UI_CURSOR, Vector3fl.WHITE);
     }
 
 }

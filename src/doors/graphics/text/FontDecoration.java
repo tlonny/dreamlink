@@ -1,9 +1,7 @@
-package doors.graphics.font;
+package doors.graphics.text;
 
 public enum FontDecoration {
     NORMAL,
-    BOLD,
-    ITALIC,
     UNDERLINE
 }
 

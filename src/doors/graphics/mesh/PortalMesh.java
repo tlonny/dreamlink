@@ -27,14 +27,9 @@ public class PortalMesh extends Mesh {
         super();
         this.cullFaces = false;
         this.textureSampleMode = TextureSampleMode.SCREEN;
-    }
-
-    @Override
-    public void setup() {
-        super.setup();
         MeshBuffer.DEFAULT_MESH_BUFFER.clear();
-        PORTAL_SCHEMA.writeCube(MeshBuffer.DEFAULT_MESH_BUFFER);
-        this.loadDataFromMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
+        PORTAL_SCHEMA.writeCubeToMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
+        MeshBuffer.DEFAULT_MESH_BUFFER.writeMeshTo(this);
     }
 
 }

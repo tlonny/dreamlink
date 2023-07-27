@@ -22,6 +22,33 @@ public class Window {
     private double[] cursorXPositionBuffer = new double[1];
     private double[] cursorYPositionBuffer = new double[1];
 
+    public Window() {
+        GLFWErrorCallback.createPrint(System.err).set();
+        GLFW.glfwInit();
+
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
+        var primaryMonitorID = GLFW.glfwGetPrimaryMonitor();
+        var vidMode = GLFW.glfwGetVideoMode(primaryMonitorID);
+        this.dimensions.set(vidMode.width(), vidMode.height());
+        this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, primaryMonitorID, MemoryUtil.NULL);
+    }
+
+    public void setup() {
+        GLFW.glfwMakeContextCurrent(this.windowID);
+        GLFW.glfwSwapInterval(1);
+        GLFW.glfwShowWindow(this.windowID);
+
+        GL.createCapabilities();
+        GL42.glClearColor(0f, 0f, 0f, 1f);
+        GL42.glEnable(GL42.GL_BLEND);
+        GL42.glEnable(GL42.GL_DEPTH_TEST);
+        GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
+        GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
+        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+    }
+
     public boolean isFocused() {
         return GLFW.glfwGetWindowAttrib(this.windowID, GLFW.GLFW_FOCUSED) == 1;
     }
@@ -44,31 +71,6 @@ public class Window {
 
     public void setMouseButtonCallback(GLFWMouseButtonCallbackI callback) {
         GLFW.glfwSetMouseButtonCallback(this.windowID, callback);
-    }
-
-    public void setup() {
-        GLFWErrorCallback.createPrint(System.err).set();
-        GLFW.glfwInit();
-
-        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
-        var primaryMonitorID = GLFW.glfwGetPrimaryMonitor();
-        var vidMode = GLFW.glfwGetVideoMode(primaryMonitorID);
-        this.dimensions.set(vidMode.width(), vidMode.height());
-        this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, primaryMonitorID, MemoryUtil.NULL);
-
-        GLFW.glfwMakeContextCurrent(this.windowID);
-        GLFW.glfwSwapInterval(1);
-        GLFW.glfwShowWindow(this.windowID);
-
-        GL.createCapabilities();
-        GL42.glClearColor(0f, 0f, 0f, 1f);
-        GL42.glEnable(GL42.GL_BLEND);
-        GL42.glEnable(GL42.GL_DEPTH_TEST);
-        GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
-        GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
-        GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
     }
 
     public void update() {

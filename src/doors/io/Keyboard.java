@@ -14,6 +14,10 @@ public class Keyboard {
 
     public Collection<Integer> pressedKeys = new ArrayList<>();
 
+    public Keyboard() {
+        Window.WINDOW.setKeyCallback(this::onKeyEvent);
+    }
+
     private void onKeyEvent(long window, int key, int scancode, int action, int mode) {
         if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
             this.pressedKeyTimes[key] = Window.WINDOW.currentTick;
@@ -35,10 +39,6 @@ public class Keyboard {
 
     public boolean isKeyReleased(int key) {
         return this.releasedKeyTimes[key] == Window.WINDOW.currentTick;
-    }
-
-    public void setup() {
-        Window.WINDOW.setKeyCallback(this::onKeyEvent);
     }
 
     public void update() {

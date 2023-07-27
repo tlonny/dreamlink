@@ -20,7 +20,7 @@ import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.level.Door;
 import doors.level.Level;
-import doors.level.LevelCache;
+import doors.level.cache.LevelCache;
 import doors.level.camera.Camera;
 import doors.level.camera.PlayerMovementSystem;
 import doors.level.terrain.IHasTerrain;
@@ -32,6 +32,7 @@ import doors.utility.vector.Vector3fl;
 
 public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
+    private static float DOOR_OPEN_SPEED = 0.05f;
     private static int SPRITE_BATCH_QUADS = 1_000;
     private static Vector3fl COLLIDER_DIMENSIONS = new Vector3fl(2f,2f,2f);
     private static float MAX_OPEN_DISTANCE = 20;
@@ -45,7 +46,7 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     private Level currentLevel;
     private Door openDoor;
-    private Door shutDoor;
+    private Door desiredOpenDoor;
     private Camera camera;
 
     private float doorOpenFactor;
@@ -68,22 +69,22 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 
-    public void setup() {
-        this.mesh.setup();
-    }
-
-    public void use(String level) {
+    public void use(String levelName) {
         super.use();
-        this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(level);
+        this.currentLevel = LevelCache.LEVEL_CACHE.getLevel(levelName);
         Mouse.MOUSE.setLocked(true);
 
         var mainDoor = this.currentLevel.doors.get("main");
         this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 2f, 0f);
         this.camera.rotation.set(mainDoor.orientation.rotation);
         this.showMenu = false;
+
+        for(var door : this.currentLevel.doors.values()) { 
+            LevelCache.LEVEL_CACHE.requestLevel(door.targetLevel);
+        }
     }
 
-    private void tryOpenDoor() {
+    private void tryOpenNearestDoor() {
         Door target = null;
         float distanceToTarget = MAX_OPEN_DISTANCE;
 
@@ -95,24 +96,26 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
             }
         }
 
-        if(target == null)
-            return;
-
-        var targetLevel = LevelCache.LEVEL_CACHE.getLevel(target.targetLevel);
-        if(this.openDoor == target || !targetLevel.terrain.isReady) {
+        if(target == null) { 
             return;
         }
 
-        this.shutDoor = this.openDoor;
-        this.openDoor = target;
-        this.doorOpenFactor = 0f;
+        if(this.openDoor == target) {
+            return;
+        }
+
+        if(target.targetDoor == null) {
+            return;
+        }
+
+        if(!LevelCache.LEVEL_CACHE.isLevelReady(target.targetLevel)) {
+            return;
+        }
+
+        this.desiredOpenDoor = target;
     }
 
-    private float getPortalRotation() {
-        return (float)Math.PI - this.openDoor.orientation.rotation.y + this.portalDoor.orientation.rotation.y;
-    }
-
-    private void teleport() {
+    private void tryTeleport() {
         var currentDot = new Vector3fl(this.camera.position)
             .sub(this.openDoor.position)
             .getDot(this.openDoor.orientation.normal);
@@ -136,22 +139,27 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         this.camera.rotation.y += this.portalRotation;
         this.camera.velocity.rotateY(this.portalRotation);
 
-        this.portalDoor.targetLevel = this.currentLevel.name;
-        this.portalDoor.targetDoor = this.openDoor.name;
-
         var currentLevel = this.currentLevel;
         this.currentLevel = this.portalLevel;
         this.portalLevel = currentLevel;
 
         var currentDoor = this.openDoor;
-        this.openDoor = this.portalDoor;
+        this.openDoor = this.desiredOpenDoor = this.portalDoor;
         this.portalDoor = currentDoor;
+
+        for(var door : this.currentLevel.doors.values()) { 
+            LevelCache.LEVEL_CACHE.requestLevel(door.targetLevel);
+        }
     }
 
     private void renderPortal() {
         PortalVirtualRenderTarget.PORTAL_VIRTUAL_RENDER_TARGET.useRenderTarget();
         GL42.glEnable(GL42.GL_DEPTH_TEST);
         GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
+
+        if(this.openDoor == null) {
+            return;
+        }
 
         var cameraPosition = new Vector3fl(this.camera.position)
             .sub(this.openDoor.position)
@@ -166,8 +174,8 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         this.portalLevel.terrain.render();
 
         for(var door : this.portalLevel.doors.values()) {
-            var level = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
-            if(!level.terrain.isReady) {
+            var isReady = LevelCache.LEVEL_CACHE.isLevelReady(door.targetLevel);
+            if(!isReady) {
                 DoorMesh.DOOR_MESH.renderLocked(
                     door.position,
                     door.orientation.rotation
@@ -205,8 +213,8 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         }
 
         for(var door : this.currentLevel.doors.values()) {
-            var level = LevelCache.LEVEL_CACHE.getLevel(door.targetLevel);
-            if(!level.terrain.isReady) {
+            var isReady = LevelCache.LEVEL_CACHE.isLevelReady(door.targetLevel);
+            if(!isReady) {
                 DoorMesh.DOOR_MESH.renderLocked(
                     door.position,
                     door.orientation.rotation
@@ -223,21 +231,65 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
                 continue;
             } 
 
-            if (door == this.shutDoor) {
-                DoorMesh.DOOR_MESH.render(
-                    door.position,
-                    door.orientation.rotation,
-                    1f - this.doorOpenFactor
-                );
-                continue;
-            }
-
             DoorMesh.DOOR_MESH.render(
                 door.position,
                 door.orientation.rotation,
                 0f
             );
         }
+    }
+
+    private void updateWorld() {
+        if(this.desiredOpenDoor == this.openDoor) {
+            this.doorOpenFactor = Math.min(1f, this.doorOpenFactor + DOOR_OPEN_SPEED);
+        } else if(this.doorOpenFactor == 0f) {
+            this.openDoor = this.desiredOpenDoor;
+        } else {
+            this.doorOpenFactor = Math.max(0f, this.doorOpenFactor - DOOR_OPEN_SPEED);
+        }
+
+        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
+            this.tryOpenNearestDoor();
+        }
+
+        this.previousCameraPosition.set(this.camera.position);
+        this.camera.update();
+
+        if(this.openDoor != null) {
+            var distance = this.openDoor.position.getDistance(this.camera.position);
+            if(distance > MAX_OPEN_DISTANCE) {
+                this.desiredOpenDoor = null;
+            }
+
+            this.portalLevel = LevelCache.LEVEL_CACHE.getLevel(this.openDoor.targetLevel);
+            this.portalDoor = portalLevel.doors.get(this.openDoor.targetDoor);
+
+            this.portalRotation = 0
+                + (float)Math.PI 
+                - this.openDoor.orientation.rotation.y 
+                + this.portalDoor.orientation.rotation.y;
+
+            this.tryTeleport();
+        }
+
+
+        DebugInformation.DEBUG_INFORMATION.update(this.camera);
+        DebugInformation.DEBUG_INFORMATION.writeDebugInformationToSpriteBatch(this.spriteBatch);
+
+        this.spriteBatch.pushSprite(
+            EntityTexture.ENTITY_TEXTURE.reticule,
+            RETICULE_POSITION,
+            EntityTexture.ENTITY_TEXTURE.reticule.dimensions,
+            SpriteBatchHeight.HUD,
+            Vector3fl.WHITE
+        );
+
+    }
+
+    private void updateMenu() {
+        this.exploreMenu.update();
+        this.exploreMenu.writeUIRoot(this.spriteBatch);
+        this.exploreMenu.selectedCursor.writeCursor(this.spriteBatch);
     }
 
     @Override
@@ -247,47 +299,19 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
             Mouse.MOUSE.setLocked(!this.showMenu);
         }
 
-        if(Keyboard.KEYBOARD.isKeyPressed(GLFW.GLFW_KEY_E)) {
-            this.tryOpenDoor();
-        }
-
         this.meshBuffer.clear();
         this.spriteBatch.clear();
 
         if(this.showMenu) {
-            this.exploreMenu.update();
-            this.exploreMenu.writeUIRoot(this.spriteBatch);
-            this.exploreMenu.selectedCursor.writeCursor(this.spriteBatch);
+            this.updateMenu();
         } else {
-            this.camera.update();
+            this.updateWorld();
         }
 
-        DebugInformation.DEBUG_INFORMATION.update(this.camera);
-
-        this.doorOpenFactor += 0.05f;
-        this.doorOpenFactor = Math.min(this.doorOpenFactor, 1f);
-
-        if(this.openDoor != null) {
-            this.portalLevel = LevelCache.LEVEL_CACHE.getLevel(this.openDoor.targetLevel);
-            this.portalDoor = portalLevel.doors.get(this.openDoor.targetDoor);
-            this.portalRotation = this.getPortalRotation();
-
-            this.teleport();
-            this.renderPortal();
-            this.previousCameraPosition.set(this.camera.position);
-
-            var distance = this.openDoor.position.getDistance(this.camera.position);
-            if(distance > MAX_OPEN_DISTANCE) {
-                this.doorOpenFactor = 0f;
-                this.shutDoor = this.openDoor;
-                this.openDoor = null;
-            }
-
-        }
-
+        this.renderPortal();
         this.renderCurrent();
 
-        this.spriteBatch.writeSprite(
+        this.spriteBatch.pushSprite(
             ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.texture.createTextureSample(),
             Vector2in.ZERO,
             Config.RESOLUTION,
@@ -295,17 +319,8 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
             Vector3fl.WHITE
         );
 
-        this.spriteBatch.writeSprite(
-            EntityTexture.ENTITY_TEXTURE.reticule,
-            RETICULE_POSITION,
-            EntityTexture.ENTITY_TEXTURE.reticule.dimensions,
-            SpriteBatchHeight.HUD,
-            Vector3fl.WHITE
-        );
-
-        DebugInformation.DEBUG_INFORMATION.writeDebugInformation(this.spriteBatch);
-        this.spriteBatch.writeToMeshBuffer(this.meshBuffer);
-        this.mesh.loadDataFromMeshBuffer(this.meshBuffer);
+        this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
+        this.meshBuffer.writeMeshTo(this.mesh);
 
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
         GL42.glDisable(GL42.GL_DEPTH_TEST);

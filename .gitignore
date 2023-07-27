@@ -6,4 +6,4 @@ target/
 .log
 
 scratch/
-level-cache/
+levels/

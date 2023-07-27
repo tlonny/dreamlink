@@ -4,16 +4,21 @@ import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.template.menu.NormalButtonTemplate;
 import doors.io.Mouse;
-import doors.ui.component.IComponent;
+import doors.ui.component.IExplicitDimensions;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 
-public class TableScrollBoxComponent implements IComponent {
+public class TableScrollBoxComponent implements IExplicitDimensions {
 
     public Vector2in dimensions = new Vector2in();
     public Vector2in position = new Vector2in();
     public Vector2in mousePosition = new Vector2in();
+
+    @Override
+    public void setDimensions(int x, int y) {
+        this.dimensions.set(x, y);
+    }
 
     @Override
     public Vector2in getDimensions() {
@@ -43,8 +48,8 @@ public class TableScrollBoxComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        NormalButtonTemplate.NORMAL_BUTTON_TEMPLATE.writeMenuTemplate(
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        NormalButtonTemplate.NORMAL_BUTTON_TEMPLATE.writeMenuTemplateToSpriteBatch(
             spriteBatch,
             this.position,
             this.dimensions,

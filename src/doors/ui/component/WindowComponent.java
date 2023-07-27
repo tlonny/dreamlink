@@ -1,6 +1,6 @@
 package doors.ui.component;
 
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.template.menu.WindowTemplate;
@@ -16,20 +16,19 @@ public class WindowComponent implements IComponent {
     private static int WINDOW_PADDING = 3;
     private static Vector2in TITLE_BAR_PADDING = new Vector2in(5, 2);
 
-    private HorizontalSpanComponent horizontalSpanComponent = new HorizontalSpanComponent(TITLE_BAR_PADDING.x);
-    private IconComponent titleBarComponent = new IconComponent(MenuTexture.MENU_TEXTURE.highlight);
-
-    public IconComponent iconComponent;
+    public TextureComponent iconComponent;
     public TextComponent titleComponent;
     public IComponent contentComponent;
+
+    private HorizontalSpanComponent horizontalSpanComponent = new HorizontalSpanComponent(TITLE_BAR_PADDING.x);
+    private TextureComponent titleBarComponent = new TextureComponent(MenuTexture.MENU_TEXTURE.highlight);
 
     private Vector2in dimensions = new Vector2in();
     private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
 
-
     public WindowComponent(TextureSample icon, String title, IComponent content) {
-        this.iconComponent = new IconComponent(icon);
+        this.iconComponent = new TextureComponent(icon);
         this.titleComponent = new TextComponent(title, FontDecoration.UNDERLINE, Vector3fl.WHITE);
         this.horizontalSpanComponent.components.add(this.iconComponent);
         this.horizontalSpanComponent.components.add(this.titleComponent);
@@ -53,8 +52,11 @@ public class WindowComponent implements IComponent {
         this.dimensions.x += contentDimensions.x;
         this.dimensions.y += spanDimensions.y + contentDimensions.y + TITLE_BAR_PADDING.y * 2 + WINDOW_PADDING;
 
-        this.titleBarComponent.dimensions.set(this.dimensions.x, spanDimensions.y + TITLE_BAR_PADDING.y * 2);
-        this.titleBarComponent.dimensions.x -= WINDOW_PADDING * 2;
+        this.titleBarComponent.setDimensions(
+            this.dimensions.x - WINDOW_PADDING * 2,
+            spanDimensions.y + TITLE_BAR_PADDING.y * 2
+        );
+
         this.titleBarComponent.calculateDimensions();
     }
 
@@ -78,12 +80,12 @@ public class WindowComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        WindowTemplate.WINDOW_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        WindowTemplate.WINDOW_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
 
-        this.titleBarComponent.writeUIComponent(spriteBatch);
-        this.horizontalSpanComponent.writeUIComponent(spriteBatch);
-        this.contentComponent.writeUIComponent(spriteBatch);
+        this.titleBarComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.horizontalSpanComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.contentComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

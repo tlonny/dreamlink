@@ -2,8 +2,9 @@ package doors.ui.component;
 
 import org.lwjgl.glfw.GLFW;
 
-import doors.graphics.font.Font;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.Glyph;
+import doors.graphics.text.GlyphLookup;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.template.menu.BlurredDialogTemplate;
@@ -21,14 +22,15 @@ public class TextInputComponent implements IComponent {
 
     private static int PADDING = 3;
 
-    public boolean isDisabled = false;
-    public StringBuilder stringBuilder = new StringBuilder();
+    public boolean isDisabled;
     public int maxLength;
     public IAction0 onChange;
 
+    private StringBuilder stringBuilder = new StringBuilder();
     private Vector2in originCursor = new Vector2in();
     private Vector2in position = new Vector2in();
     private Vector2in dimensions = new Vector2in();
+
     private boolean isFocused;
     private boolean isHovered;
     private boolean isBlinkingCursor;
@@ -42,6 +44,10 @@ public class TextInputComponent implements IComponent {
         this(maxLength, null);
     }
 
+    public String getText() {
+        return this.stringBuilder.toString();
+    }
+
     @Override
     public Vector2in getDimensions() {
         return this.dimensions;
@@ -50,7 +56,7 @@ public class TextInputComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.dimensions
-            .set(Font.CHARACTER_DIMENSIONS)
+            .set(Glyph.GLYPH_DIMENSIONS)
             .mul(this.maxLength + 1, 1)
             .add(PADDING * 2);
     }
@@ -96,21 +102,28 @@ public class TextInputComponent implements IComponent {
                 }
             }
         }
-
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.isDisabled) {
-            DisabledDialogTemplate.DISABLED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            DisabledDialogTemplate.DISABLED_DIALOG_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         } else if(this.isFocused) {
-            FocusedDialogTemplate.FOCUSED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            FocusedDialogTemplate.FOCUSED_DIALOG_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         } else {
-            BlurredDialogTemplate.BLURRED_DIALOG_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            BlurredDialogTemplate.BLURRED_DIALOG_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         }
 
-        var toRender = this.stringBuilder.toString() + (isBlinkingCursor ? "_" : "");
         this.originCursor.set(this.position).add(PADDING);
-        Font.FONT.writeText(spriteBatch, toRender, this.originCursor, SpriteBatchHeight.UI_NORMAL, FontDecoration.NORMAL, Vector3fl.BLACK);
+
+        var toRender = this.stringBuilder.toString() + (isBlinkingCursor ? "|" : "");
+        GlyphLookup.GLYPH_LOOKUP.writeTextToSpriteBatch(
+            spriteBatch,
+            toRender,
+            this.originCursor,
+            SpriteBatchHeight.UI_NORMAL,
+            FontDecoration.NORMAL,
+            Vector3fl.BLACK
+        );
     }
 }

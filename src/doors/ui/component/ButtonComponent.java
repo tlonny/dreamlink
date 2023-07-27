@@ -11,21 +11,21 @@ import doors.ui.root.UIRoot;
 import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 
-public class ButtonComponent implements IComponent {
+public class ButtonComponent implements IExplicitDimensions {
 
     public IAction0 onClick;
     public IComponent content;
-    public boolean isDisabled = false;
-    private boolean isPressed;
+    public boolean isDisabled;
 
-    private Vector2in dimensions;
+    private boolean isPressed;
     private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
+    private Vector2in dimensions = new Vector2in();
 
     public ButtonComponent(Vector2in dimensions, IComponent content, IAction0 onClick) {
+        this.dimensions.set(dimensions);
         this.content = content;
         this.onClick = onClick;
-        this.dimensions = new Vector2in(dimensions);
     }
 
     public ButtonComponent(Vector2in dimensions, IComponent content) {
@@ -33,8 +33,13 @@ public class ButtonComponent implements IComponent {
     }
 
     @Override
+    public void setDimensions(int x, int y) {
+        this.dimensions.set(x, y);
+    }
+
+    @Override
     public void onMouseClick(UIRoot root) {
-        if(this.onClick != null) {
+        if(this.onClick != null && !this.isDisabled) {
             this.onClick.invoke();
         }
     }
@@ -70,15 +75,15 @@ public class ButtonComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.isDisabled) {
-            DisabledButtonTemplate.DISABLED_BUTTON_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            DisabledButtonTemplate.DISABLED_BUTTON_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         } else if(this.isPressed) {
-            PressedButtonTemplate.PRESSED_BUTTON_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            PressedButtonTemplate.PRESSED_BUTTON_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
             this.originCursor.add(1);
         } else {
-            NormalButtonTemplate.NORMAL_BUTTON_TEMPLATE.writeMenuTemplate(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
+            NormalButtonTemplate.NORMAL_BUTTON_TEMPLATE.writeMenuTemplateToSpriteBatch(spriteBatch, this.position, this.dimensions, SpriteBatchHeight.UI_NORMAL);
         }
-        this.content.writeUIComponent(spriteBatch);
+        this.content.writeComponentToSpriteBatch(spriteBatch);
     }
 }

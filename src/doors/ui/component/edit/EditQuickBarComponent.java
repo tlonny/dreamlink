@@ -6,6 +6,7 @@ import doors.Config;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.template.menu.WindowTemplate;
+import doors.level.block.Block;
 import doors.ui.component.IComponent;
 import doors.ui.component.layout.HorizontalSpanComponent;
 import doors.ui.component.layout.PaddingComponent;
@@ -32,9 +33,8 @@ public class EditQuickBarComponent implements IComponent {
     private static int SPACING = 5;
     private Vector2in position = new Vector2in();
 
-    public BoxedValue<EditQuickBarSlotComponent> selectedSlot = new BoxedValue<>();
-
-    public EditQuickBarSlotComponent[] slots = new EditQuickBarSlotComponent[10];
+    private BoxedValue<EditQuickBarSlotComponent> selectedSlot = new BoxedValue<>();
+    private EditQuickBarSlotComponent[] slots = new EditQuickBarSlotComponent[10];
     private HorizontalSpanComponent layoutComponent = new HorizontalSpanComponent(SPACING);
     private PaddingComponent paddingComponent = new PaddingComponent(this.layoutComponent, SPACING);
 
@@ -44,6 +44,20 @@ public class EditQuickBarComponent implements IComponent {
             var slot = new EditQuickBarSlotComponent(keyCode, selectedSlot);
             this.slots[ix] = slot;
             this.layoutComponent.components.add(slot);
+        }
+    }
+
+    public Block getSelectedBlock() {
+        var slot = this.selectedSlot.value;
+        if(slot == null) {
+            return null;
+        }
+        return slot.block;
+    }
+
+    public void clear() {
+        for(var slot : this.slots) {
+            slot.clear();
         }
     }
 
@@ -66,14 +80,14 @@ public class EditQuickBarComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        WindowTemplate.WINDOW_TEMPLATE.writeMenuTemplate(
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        WindowTemplate.WINDOW_TEMPLATE.writeMenuTemplateToSpriteBatch(
             spriteBatch,
             this.position,
             this.getDimensions(),
             SpriteBatchHeight.UI_NORMAL
         );
-        this.paddingComponent.writeUIComponent(spriteBatch);
+        this.paddingComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
     

@@ -9,16 +9,16 @@ public class TypedCharacters {
 
     public Collection<Character> characters = new LinkedList<>(); 
 
+    public TypedCharacters() {
+        Window.WINDOW.setCharCallback(this::onCharEvent);
+    }
+
     public void onCharEvent(long window, int codePoint) {
         if(codePoint > 127) {
             return;
         }
 
         this.characters.add((char)codePoint);
-    }
-
-    public void setup() {
-        Window.WINDOW.setCharCallback(this::onCharEvent);
     }
 
     public void update() {

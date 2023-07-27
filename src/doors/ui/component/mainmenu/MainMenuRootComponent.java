@@ -1,13 +1,13 @@
 package doors.ui.component.mainmenu;
 
 import doors.Config;
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.io.Window;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
+import doors.ui.component.TextureComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.WindowComponent;
@@ -24,7 +24,7 @@ public class MainMenuRootComponent implements IComponent {
     private static Vector2in BUTTON_DIMENSIONS = new Vector2in(150, 24);
 
     private WindowComponent windowComponent;
-    private IconComponent backgroundComponent = new IconComponent(MenuTexture.MENU_TEXTURE.background);
+    private TextureComponent backgroundComponent = new TextureComponent(MenuTexture.MENU_TEXTURE.background);
     private Vector2in originCursor = new Vector2in();
 
     public MainMenuRootComponent() {
@@ -71,7 +71,7 @@ public class MainMenuRootComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.windowComponent.calculateDimensions();
-        this.backgroundComponent.dimensions.set(Config.RESOLUTION);
+        this.backgroundComponent.setDimensions(Config.RESOLUTION);
     }
 
 
@@ -82,9 +82,9 @@ public class MainMenuRootComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeUIComponent(spriteBatch);
-        this.windowComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.backgroundComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
     private void gotoExploreMenu() {

@@ -8,6 +8,7 @@ import doors.graphics.rendertarget.PhysicalRenderTarget;
 import doors.graphics.shader.Shader;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.io.Mouse;
+import doors.level.cache.LevelCache;
 import doors.ui.component.mainmenu.MainMenuEditComponent;
 import doors.ui.component.mainmenu.MainMenuExploreComponent;
 import doors.ui.component.mainmenu.MainMenuRootComponent;
@@ -16,6 +17,7 @@ import doors.ui.root.UIRoot;
 public class MainMenuGameState extends AbstractGameState {
 
     private static int SPRITE_BATCH_QUADS = 1_000;
+
     public static MainMenuGameState MAIN_MENU_GAME_STATE = new MainMenuGameState();
 
     private MainMenuRootComponent rootMenuComponent = new MainMenuRootComponent();
@@ -37,19 +39,19 @@ public class MainMenuGameState extends AbstractGameState {
         this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 
-    public void setup() {
-        this.mesh.setup();
-        this.editMenuComponent.setup();
-    }
-
     @Override
     public void use() {
         super.use();
         Mouse.MOUSE.setLocked(false);
+        this.editMenuComponent.readLevels();
     }
 
     public void gotoExploreMenu() {
         this.usedRoot = this.exploreMenu;
+    }
+
+    public void gotoExplore(String levelName) {
+        LevelCache.LEVEL_CACHE.requestLevel(levelName);
     }
 
     public void gotoEditMenu() {
@@ -68,8 +70,8 @@ public class MainMenuGameState extends AbstractGameState {
         root.update();
         root.writeUIRoot(this.spriteBatch);
         root.selectedCursor.writeCursor(this.spriteBatch);
-        this.spriteBatch.writeToMeshBuffer(this.meshBuffer);
-        this.mesh.loadDataFromMeshBuffer(this.meshBuffer);
+        this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
+        this.meshBuffer.writeMeshTo(this.mesh);
 
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
         GL42.glDisable(GL42.GL_DEPTH_TEST);

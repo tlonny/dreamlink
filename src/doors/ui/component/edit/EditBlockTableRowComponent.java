@@ -1,13 +1,13 @@
 package doors.ui.component.edit;
 
-import doors.graphics.font.FontDecoration;
+import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
 import doors.io.Mouse;
-import doors.level.terrain.Block;
-import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
+import doors.level.block.Block;
+import doors.ui.component.IExplicitDimensions;
+import doors.ui.component.TextureComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.layout.HorizontalSpanComponent;
 import doors.ui.cursor.PointerCursor;
@@ -15,17 +15,16 @@ import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class EditBlockTableRowComponent implements IComponent {
+public class EditBlockTableRowComponent implements IExplicitDimensions {
     
     private static int SPACING = 4;
     private static Vector2in BLOCK_SIZE = new Vector2in(16);
     private static Vector2in DRAGGED_BLOCK_SIZE = new Vector2in(32);
 
-    public Vector2in dimensions = new Vector2in();
     public Block block;
 
     private HorizontalSpanComponent layoutComponent = new HorizontalSpanComponent(SPACING);
-    private IconComponent blockComponent;
+    private TextureComponent blockComponent;
     private TextComponent nameComponent;
 
     private boolean isDragged;
@@ -33,10 +32,11 @@ public class EditBlockTableRowComponent implements IComponent {
 
     private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
+    private Vector2in dimensions = new Vector2in();
 
     public EditBlockTableRowComponent(Block block) {
         this.block = block;
-        this.blockComponent = new IconComponent(block.textureSample, BLOCK_SIZE);
+        this.blockComponent = new TextureComponent(block.textureSample, BLOCK_SIZE);
         this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
 
         this.layoutComponent.components.add(this.blockComponent);
@@ -46,6 +46,11 @@ public class EditBlockTableRowComponent implements IComponent {
     @Override
     public Vector2in getDimensions() {
         return this.dimensions;
+    }
+
+    @Override
+    public void setDimensions(int width, int height) {
+        this.dimensions.set(width, height);
     }
 
     @Override
@@ -77,9 +82,9 @@ public class EditBlockTableRowComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.isGrabbed) {
-            spriteBatch.writeSprite(
+            spriteBatch.pushSprite(
                 MenuTexture.MENU_TEXTURE.highlight,
                 this.position,
                 this.dimensions,
@@ -88,7 +93,7 @@ public class EditBlockTableRowComponent implements IComponent {
             );
         }
 
-        this.layoutComponent.writeUIComponent(spriteBatch);
+        this.layoutComponent.writeComponentToSpriteBatch(spriteBatch);
 
         if(this.isDragged) {
             this.originCursor
@@ -97,7 +102,7 @@ public class EditBlockTableRowComponent implements IComponent {
                 .mul(-1)
                 .add(Mouse.MOUSE.position);
 
-            spriteBatch.writeSprite(
+            spriteBatch.pushSprite(
                 this.block.textureSample,
                 this.originCursor,
                 DRAGGED_BLOCK_SIZE,

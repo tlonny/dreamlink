@@ -5,9 +5,9 @@ import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.template.menu.BlurredDialogTemplate;
 import doors.graphics.template.menu.FocusedDialogTemplate;
 import doors.io.Keyboard;
-import doors.level.terrain.Block;
+import doors.level.block.Block;
 import doors.ui.component.IComponent;
-import doors.ui.component.IconComponent;
+import doors.ui.component.TextureComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
 import doors.utility.vector.Vector2in;
@@ -22,7 +22,7 @@ public class EditQuickBarSlotComponent implements IComponent {
     private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
     private Vector2in dimensions = new Vector2in();
-    private IconComponent iconComponent = new IconComponent(ICON_DIMENSIONS);
+    private TextureComponent iconComponent = new TextureComponent(ICON_DIMENSIONS);
     private int keyCode;
     private boolean isSelected;
     private BoxedValue<EditQuickBarSlotComponent> selectedSlot;
@@ -32,6 +32,10 @@ public class EditQuickBarSlotComponent implements IComponent {
     public EditQuickBarSlotComponent(int keyCode, BoxedValue<EditQuickBarSlotComponent> selectedSlot) {
         this.keyCode = keyCode;
         this.selectedSlot = selectedSlot;
+    }
+
+    public void clear() {
+        this.block = null;
     }
 
     @Override
@@ -90,19 +94,19 @@ public class EditQuickBarSlotComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         var template = this.isSelected
             ? FocusedDialogTemplate.FOCUSED_DIALOG_TEMPLATE
             : BlurredDialogTemplate.BLURRED_DIALOG_TEMPLATE;
 
-        template.writeMenuTemplate(
+        template.writeMenuTemplateToSpriteBatch(
             spriteBatch,
             this.position,
             this.dimensions,
             SpriteBatchHeight.UI_NORMAL
         );
 
-        this.iconComponent.writeUIComponent(spriteBatch);
+        this.iconComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
 

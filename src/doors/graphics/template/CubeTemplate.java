@@ -101,10 +101,10 @@ public class CubeTemplate {
         Shader.SHADER.setCubeTransformer(this.cubeID, this.positionBuffer, rotation, scale);
     }
 
-    public void writeCube(MeshBuffer meshBuffer) {
+    public void writeCubeToMeshBuffer(MeshBuffer meshBuffer) {
         for(var cubeFace : CubeFace.CUBE_FACES) {
             var textureSample = this.getTextureSample(cubeFace);
-            meshBuffer.writeQuad(
+            meshBuffer.pushQuad(
                 textureSample,
                 this.cubeID,
                 this.position,

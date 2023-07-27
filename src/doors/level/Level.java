@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import doors.level.block.BlockMap;
 import doors.level.terrain.Terrain;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
@@ -13,20 +14,26 @@ import doors.utility.vector.Vector3fl;
 
 public class Level {
 
-    public String levelDirectory;
-    public String name;
+    private static String BLOCKS_PATH = "blocks";
+    private static String TERRAIN_PATH = "terrain";
+
+    private String levelDirectory;
     public Terrain terrain;
+    public BlockMap blockMap;
     public Map<String, Door> doors = new HashMap<>();
 
-    public Level(String levelName, String levelDirectory) {
-        var terrainPath = Paths.get(levelDirectory, "terrain").toString();
-        this.terrain = new Terrain(terrainPath);
-        this.name = levelName;
+    public Level(String levelDirectory) {
+        var blocksPath = Paths.get(levelDirectory, BLOCKS_PATH).toString();
         this.levelDirectory = levelDirectory;
+        this.blockMap = new BlockMap(blocksPath);
+
+        var terrainPath = Paths.get(this.levelDirectory, TERRAIN_PATH).toString();
+        this.terrain = new Terrain(terrainPath, this.blockMap);
+        this.loadDoors();
     }
 
-    private void setupDoors() {
-        var doorsPath = Paths.get(this.levelDirectory, "entities", "doors.json").toString();
+    private void loadDoors() {
+        var doorsPath = Paths.get(this.levelDirectory, "doors.json").toString();
         var doorsString = FileIO.loadText(doorsPath);
         var doorsConfig = new JSONObject(doorsString);
         for(var doorName : doorsConfig.keySet()) {
@@ -48,12 +55,8 @@ public class Level {
         }
     }
 
-    public void setup() {
-        this.terrain.setup();
-        this.setupDoors();
-    }
-
     public void tearDown() {
+
     }
 
 }

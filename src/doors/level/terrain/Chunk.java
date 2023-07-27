@@ -10,20 +10,18 @@ public class Chunk {
 
     public static Vector3in DIMENSIONS = new Vector3in(16, 16, 16);
 
-    private int[] blockData = new int[DIMENSIONS.getIntVolume()];
-    public final Mesh mesh = new Mesh();
+    public int[] blockData = new int[DIMENSIONS.getIntVolume()];
+    public Mesh mesh = new Mesh();
     public boolean isDirty = false;
+    public Vector3in position = new Vector3in();
 
-    public final Vector3in position;
     private String path;
 
-    public Chunk(Vector3in position, String path) {
-        this.position = position;
+    public Chunk(String path) {
         this.path = path;
     }
 
     public void setup() {
-        this.mesh.setup();
         try(var fileInputStream = new FileInputStream(this.path)) {
             for(var ix = 0; ix < this.blockData.length; ix += 1) {
                 var blockID = 0;
@@ -36,20 +34,5 @@ public class Chunk {
             var msg = String.format("Unable to load chunk: %s", this.path);
             throw new RuntimeException(msg);
         }
-    }
-
-    public boolean setBlockID(Vector3in position, int blockID) {
-        var blockIndex = position.serialize(DIMENSIONS);
-        var oldBlockID = this.blockData[blockIndex];
-        var madeDirty = oldBlockID != blockID && !this.isDirty;
-        this.blockData[blockIndex] = blockID;
-        this.isDirty |= madeDirty;
-        return madeDirty;
-
-    }
-
-    public int getBlockID(Vector3in position) {
-        var blockIndex = position.serialize(DIMENSIONS);
-        return this.blockData[blockIndex];
     }
 }

@@ -7,7 +7,7 @@ import doors.utility.vector.Vector2in;
 
 public class PaddingComponent implements IComponent {
 
-    private int padding;
+    public int padding;
     private Vector2in dimensions = new Vector2in();
     private Vector2in originCursor = new Vector2in();
 
@@ -37,8 +37,8 @@ public class PaddingComponent implements IComponent {
     }
 
     @Override
-    public void writeUIComponent(SpriteBatch spriteBatch) {
-        this.contentComponent.writeUIComponent(spriteBatch);
+    public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
+        this.contentComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }
