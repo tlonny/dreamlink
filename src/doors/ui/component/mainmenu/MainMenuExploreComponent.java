@@ -6,16 +6,16 @@ import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.TextureComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
-import doors.ui.component.TextInputComponent;
-import doors.ui.component.WindowComponent;
-import doors.ui.component.layout.HorizontalAlignment;
-import doors.ui.component.layout.HorizontalSpanComponent;
+import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.ColumnComponent;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.VerticalSpanComponent;
+import doors.ui.component.layout.RowComponent;
+import doors.ui.component.textinput.TextInputComponent;
+import doors.ui.component.window.WindowComponent;
 import doors.ui.root.UIRoot;
+import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -24,53 +24,50 @@ public class MainMenuExploreComponent implements IComponent {
     private static int INPUT_MAX_LENGTH = 36;
     private static int SPACING = 10;
     private static int WINDOW_PADDING = 10;
-    private static String DEFAULT_STATUS_MESSAGE = "waiting";
     private static Vector2in BUTTON_DIMENSIONS = new Vector2in(70, 24);
 
     private Vector2in originCursor = new Vector2in();
     private WindowComponent windowComponent;
+    private ButtonComponent exploreButton;
+    private ButtonComponent backButton;
 
-    private TextComponent labelComponent = new TextComponent(
-        "Input level to explore:", FontDecoration.NORMAL, Vector3fl.BLACK
-    );
-
-    private ButtonComponent exploreButtonComponent = new ButtonComponent(
-        BUTTON_DIMENSIONS,
-        new TextComponent("Explore", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoExplore
-    );
-
-    private ButtonComponent backButtonComponent = new ButtonComponent(
-        BUTTON_DIMENSIONS,
-        new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoRootMenu
-    );
-
-    private TextInputComponent textInputComponent = new TextInputComponent(INPUT_MAX_LENGTH);
-
-    private TextureComponent backgroundComponent = new TextureComponent(MenuTexture.MENU_TEXTURE.background);
-
-    private TextComponent statusComponent = new TextComponent(DEFAULT_STATUS_MESSAGE, FontDecoration.NORMAL, Vector3fl.BLACK);
+    private TextInputComponent textInputComponent;
+    private MainMenuExploreStatusComponent statusComponent;
 
     public MainMenuExploreComponent() {
-        var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
+        var layoutSpanComponent = new ColumnComponent(SPACING);
 
-        span.components.add(labelComponent);
-        span.components.add(this.textInputComponent);
+        var labelComponent = new TextComponent("Input level to explore:", FontDecoration.NORMAL, Vector3fl.BLACK);
+        layoutSpanComponent.children.add(labelComponent);
 
-        var buttonSpan = new HorizontalSpanComponent(SPACING);
-        span.components.add(buttonSpan);
+        this.textInputComponent = new TextInputComponent(INPUT_MAX_LENGTH);
+        layoutSpanComponent.children.add(this.textInputComponent);
 
-        buttonSpan.components.add(this.exploreButtonComponent);
-        buttonSpan.components.add(this.backButtonComponent);
+        var buttonSpan = new RowComponent(SPACING);
+        this.exploreButton = this.createButton("Explore", this::gotoExplore);
+        buttonSpan.children.add(this.exploreButton);
+        this.backButton = this.createButton("Back", this::gotoRootMenu);
+        buttonSpan.children.add(this.backButton);
+        layoutSpanComponent.children.add(buttonSpan);
 
-        span.components.add(this.statusComponent);
+        this.statusComponent = new MainMenuExploreStatusComponent();
+        layoutSpanComponent.children.add(this.statusComponent);
 
         this.windowComponent = new WindowComponent(
             MenuTexture.MENU_TEXTURE.iconFolder,
             "Explore Menu",
-            new PaddingComponent(span, WINDOW_PADDING)
+            new PaddingComponent(layoutSpanComponent, WINDOW_PADDING)
         );
+    }
+
+    private ButtonComponent createButton(String text, IAction0 onClick) {
+        var boxComponent = new BoxComponent(
+            BUTTON_DIMENSIONS,
+            BUTTON_DIMENSIONS
+        );
+
+        boxComponent.child = new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK);
+        return new ButtonComponent(boxComponent, onClick);
     }
 
     @Override
@@ -79,21 +76,39 @@ public class MainMenuExploreComponent implements IComponent {
     }
 
     @Override
-    public void calculateDimensions() {
-        this.windowComponent.calculateDimensions();
-        this.backgroundComponent.setDimensions(Config.RESOLUTION);
+    public Vector2in getPosition() {
+        return this.windowComponent.getPosition();
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
+    public void calculateDimensions() {
+        this.windowComponent.calculateDimensions();
+    }
+
+    @Override
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.windowComponent.adjustDimensions(this.getDimensions());
+    }
+
+    @Override
+    public void calculatePosition(Vector2in origin) {
         this.originCursor.set(Config.RESOLUTION).sub(this.getDimensions()).div(2);
-        this.windowComponent.update(this.originCursor, root);
+        this.windowComponent.calculatePosition(this.originCursor);
+    }
+
+    @Override
+    public void update(UIRoot root) {
+        this.windowComponent.update(root);
 
         var exploreState = MainMenuGameState.MAIN_MENU_GAME_STATE.getLevelCacheEntryState();
         var isDisabled = exploreState != null && !exploreState.isTerminal;
-        this.exploreButtonComponent.isDisabled = isDisabled;
-        this.backButtonComponent.isDisabled = isDisabled;
-        this.statusComponent.setText(exploreState == null ? DEFAULT_STATUS_MESSAGE : exploreState.name);
+        this.exploreButton.isDisabled = isDisabled;
+        this.backButton.isDisabled = isDisabled;
+        if(exploreState == null) {
+            this.statusComponent.setStatus("", false);
+        } else {
+            this.statusComponent.setStatus(exploreState.name, exploreState.isError);
+        }
     }
 
     private void gotoRootMenu() {
@@ -106,7 +121,6 @@ public class MainMenuExploreComponent implements IComponent {
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeComponentToSpriteBatch(spriteBatch);
         this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     

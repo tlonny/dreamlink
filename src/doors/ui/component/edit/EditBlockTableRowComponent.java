@@ -6,16 +6,19 @@ import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
 import doors.io.Mouse;
 import doors.level.block.Block;
-import doors.ui.component.IExplicitDimensions;
-import doors.ui.component.TextureComponent;
+import doors.ui.component.IComponent;
+import doors.ui.component.IconComponent;
 import doors.ui.component.TextComponent;
-import doors.ui.component.layout.HorizontalSpanComponent;
+import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.RowComponent;
+import doors.ui.component.layout.alignment.HorizontalAlignment;
+import doors.ui.component.layout.alignment.VerticalAlignment;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class EditBlockTableRowComponent implements IExplicitDimensions {
+public class EditBlockTableRowComponent implements IComponent {
     
     private static int SPACING = 4;
     private static Vector2in BLOCK_SIZE = new Vector2in(16);
@@ -23,39 +26,50 @@ public class EditBlockTableRowComponent implements IExplicitDimensions {
 
     public Block block;
 
-    private HorizontalSpanComponent layoutComponent = new HorizontalSpanComponent(SPACING);
-    private TextureComponent blockComponent;
     private TextComponent nameComponent;
+    private BoxComponent spaceComponent;
 
     private boolean isDragged;
     private boolean isGrabbed;
 
-    private Vector2in position = new Vector2in();
     private Vector2in originCursor = new Vector2in();
-    private Vector2in dimensions = new Vector2in();
 
     public EditBlockTableRowComponent(Block block) {
         this.block = block;
-        this.blockComponent = new TextureComponent(block.textureSample, BLOCK_SIZE);
-        this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
 
-        this.layoutComponent.components.add(this.blockComponent);
-        this.layoutComponent.components.add(this.nameComponent);
+        var layoutComponent = new RowComponent(SPACING);
+        var iconComponent = new IconComponent(block.textureSample, BLOCK_SIZE);
+        layoutComponent.children.add(iconComponent);
+        this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
+        layoutComponent.children.add(this.nameComponent);
+
+        this.spaceComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+        this.spaceComponent.child = layoutComponent;
     }
 
     @Override
     public Vector2in getDimensions() {
-        return this.dimensions;
+        return this.spaceComponent.getDimensions();
     }
 
     @Override
-    public void setDimensions(int width, int height) {
-        this.dimensions.set(width, height);
+    public Vector2in getPosition() {
+        return this.spaceComponent.getPosition();
     }
 
     @Override
     public void calculateDimensions() {
-        this.layoutComponent.calculateDimensions();
+        this.spaceComponent.calculateDimensions();
+    }
+
+    @Override
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.spaceComponent.adjustDimensions(availableSpace);
+    }
+
+    @Override
+    public void calculatePosition(Vector2in origin) {
+        this.spaceComponent.calculatePosition(origin);
     }
 
     @Override
@@ -64,11 +78,8 @@ public class EditBlockTableRowComponent implements IExplicitDimensions {
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
-        this.position.set(origin);
-        this.originCursor.set(origin);
-        this.originCursor.y += this.dimensions.y / 2 - this.layoutComponent.getDimensions().y / 2;
-        this.layoutComponent.update(this.originCursor, root);
+    public void update(UIRoot root) {
+        this.spaceComponent.update(root);
         this.isDragged = root.draggedComponent == this;
         this.isGrabbed = root.grabbedComponent == this;
 
@@ -78,7 +89,7 @@ public class EditBlockTableRowComponent implements IExplicitDimensions {
 
         this.nameComponent.color.set(this.isGrabbed ? Vector3fl.WHITE : Vector3fl.BLACK);
 
-        root.captureMouse(this, this.position, this.dimensions, 0);
+        root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);
     }
 
     @Override
@@ -86,14 +97,14 @@ public class EditBlockTableRowComponent implements IExplicitDimensions {
         if(this.isGrabbed) {
             spriteBatch.pushSprite(
                 MenuTexture.MENU_TEXTURE.highlight,
-                this.position,
-                this.dimensions,
+                this.getPosition(),
+                this.getDimensions(),
                 SpriteBatchHeight.UI_NORMAL,
                 Vector3fl.WHITE
             );
         }
 
-        this.layoutComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.spaceComponent.writeComponentToSpriteBatch(spriteBatch);
 
         if(this.isDragged) {
             this.originCursor

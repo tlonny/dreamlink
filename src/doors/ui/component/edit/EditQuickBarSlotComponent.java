@@ -1,37 +1,40 @@
 package doors.ui.component.edit;
 
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.template.menu.BlurredDialogTemplate;
-import doors.graphics.template.menu.FocusedDialogTemplate;
 import doors.io.Keyboard;
 import doors.level.block.Block;
 import doors.ui.component.IComponent;
-import doors.ui.component.TextureComponent;
+import doors.ui.component.border.DialogBorderComponent;
+import doors.ui.component.border.DialogState;
+import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.PaddingComponent;
+import doors.ui.component.BackgroundComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
 import doors.utility.vector.Vector2in;
 
 public class EditQuickBarSlotComponent implements IComponent {
 
-    private static Vector2in TOP_LEFT_PADDING = new Vector2in(2);
-    private static Vector2in BOTTOM_RIGHT_PADDING = new Vector2in(1);
     private static Vector2in SLOT_DIMENSIONS = new Vector2in(32);
-    private static Vector2in ICON_DIMENSIONS = new Vector2in(24);
+    private static int SLOT_PADDING = 4;
 
-    private Vector2in position = new Vector2in();
-    private Vector2in originCursor = new Vector2in();
-    private Vector2in dimensions = new Vector2in();
-    private TextureComponent iconComponent = new TextureComponent(ICON_DIMENSIONS);
     private int keyCode;
-    private boolean isSelected;
     private BoxedValue<EditQuickBarSlotComponent> selectedSlot;
+
+    private DialogBorderComponent borderComponent;
+    private BackgroundComponent slotComponent;
 
     public Block block;
     
     public EditQuickBarSlotComponent(int keyCode, BoxedValue<EditQuickBarSlotComponent> selectedSlot) {
         this.keyCode = keyCode;
         this.selectedSlot = selectedSlot;
+
+        var spacerComponent = new BoxComponent(SLOT_DIMENSIONS, SLOT_DIMENSIONS);
+        this.slotComponent = new BackgroundComponent(spacerComponent, null);
+
+        var paddingComponent = new PaddingComponent(this.slotComponent, SLOT_PADDING);
+        this.borderComponent = new DialogBorderComponent(paddingComponent);
     }
 
     public void clear() {
@@ -40,7 +43,27 @@ public class EditQuickBarSlotComponent implements IComponent {
 
     @Override
     public Vector2in getDimensions() {
-        return this.dimensions;
+        return this.borderComponent.getDimensions();
+    }
+
+    @Override
+    public Vector2in getPosition() {
+        return this.borderComponent.getPosition();
+    }
+
+    @Override
+    public void calculateDimensions() {
+        this.borderComponent.calculateDimensions();
+    }
+
+    @Override
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.borderComponent.adjustDimensions(availableSpace);
+    }
+
+    @Override
+    public void calculatePosition(Vector2in origin) {
+        this.borderComponent.calculatePosition(origin);
     }
 
     @Override
@@ -53,26 +76,8 @@ public class EditQuickBarSlotComponent implements IComponent {
     }
 
     @Override
-    public void calculateDimensions() {
-        this.iconComponent.calculateDimensions();
-        this.dimensions
-            .set(SLOT_DIMENSIONS)
-            .add(TOP_LEFT_PADDING)
-            .add(BOTTOM_RIGHT_PADDING);
-    }
-
-    @Override
-    public void update(Vector2in origin, UIRoot root) {
-        this.position.set(origin);
-        this.originCursor
-            .set(SLOT_DIMENSIONS)
-            .sub(ICON_DIMENSIONS)
-            .div(2)
-            .add(TOP_LEFT_PADDING)
-            .add(this.position);
-
-        this.iconComponent.update(this.originCursor, root);
-        this.isSelected = this.selectedSlot.value == this;
+    public void update(UIRoot root) {
+        this.borderComponent.update(root);
 
         var isDragged = root.draggedComponent instanceof EditBlockTableRowComponent;
         var isHovered = root.hoveredComponent == this;
@@ -83,30 +88,23 @@ public class EditQuickBarSlotComponent implements IComponent {
 
         if(isDragged && isHovered) {
             var draggedBlock = ((EditBlockTableRowComponent)root.draggedComponent).block;
-            this.iconComponent.textureSample = draggedBlock.textureSample;
+            this.slotComponent.textureSample = draggedBlock.textureSample;
         } else if(this.block != null) {
-            this.iconComponent.textureSample = this.block.textureSample;
+            this.slotComponent.textureSample = this.block.textureSample;
         } else {
-            this.iconComponent.textureSample = null;
+            this.slotComponent.textureSample = null;
         }
 
-        root.captureMouse(this, this.position, this.dimensions, 0);
+        this.borderComponent.state = this.selectedSlot.value == this
+            ? DialogState.FOCUSED
+            : DialogState.BLURRED;
+
+        root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);
     }
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        var template = this.isSelected
-            ? FocusedDialogTemplate.FOCUSED_DIALOG_TEMPLATE
-            : BlurredDialogTemplate.BLURRED_DIALOG_TEMPLATE;
-
-        template.writeMenuTemplateToSpriteBatch(
-            spriteBatch,
-            this.position,
-            this.dimensions,
-            SpriteBatchHeight.UI_NORMAL
-        );
-
-        this.iconComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.borderComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
 

@@ -1,60 +1,74 @@
 package doors.ui.component.table;
 
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.template.menu.NormalButtonTemplate;
 import doors.io.Mouse;
-import doors.ui.component.IExplicitDimensions;
+import doors.ui.component.IComponent;
+import doors.ui.component.border.ButtonBorderComponent;
+import doors.ui.component.border.ButtonState;
+import doors.ui.component.layout.BoxComponent;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 
-public class TableScrollBoxComponent implements IExplicitDimensions {
+public class TableScrollBoxComponent implements IComponent {
 
-    public Vector2in dimensions = new Vector2in();
-    public Vector2in position = new Vector2in();
-    public Vector2in mousePosition = new Vector2in();
+    public Vector2in lastMousePosition = new Vector2in();
+    private ButtonBorderComponent borderComponent;
+    public boolean isDisabled;
 
-    @Override
-    public void setDimensions(int x, int y) {
-        this.dimensions.set(x, y);
+    public TableScrollBoxComponent() {
+        var boxComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX);
+        this.borderComponent = new ButtonBorderComponent(boxComponent);
     }
 
     @Override
     public Vector2in getDimensions() {
-        return this.dimensions;
+        return this.borderComponent.getDimensions();
+    }
+
+    @Override
+    public Vector2in getPosition() {
+        return this.borderComponent.getPosition();
     }
 
     @Override
     public void calculateDimensions() {
+        this.borderComponent.calculateDimensions();
+    }
+    
+    @Override
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.borderComponent.adjustDimensions(availableSpace);
+    }
 
+    @Override
+    public void calculatePosition(Vector2in origin) {
+        this.borderComponent.calculatePosition(origin);
     }
 
     @Override
     public void onMousePress(UIRoot root) {
+        if(this.isDisabled) {
+            return;
+        }
+
         root.draggedComponent = this;
-        this.mousePosition.set(Mouse.MOUSE.position);
+        this.lastMousePosition.set(Mouse.MOUSE.position);
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
-        this.position.set(origin);
-
+    public void update(UIRoot root) {
         if(root.hoveredComponent == this) {
             root.selectedCursor = PointerCursor.POINTER_CURSOR;
         }
 
-        root.captureMouse(this, this.position, this.dimensions, 0);
+        this.borderComponent.setState(this.isDisabled ? ButtonState.DISABLED : ButtonState.NORMAL);
+        root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);
     }
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        NormalButtonTemplate.NORMAL_BUTTON_TEMPLATE.writeMenuTemplateToSpriteBatch(
-            spriteBatch,
-            this.position,
-            this.dimensions,
-            SpriteBatchHeight.UI_NORMAL
-        );
+        this.borderComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     
 }

@@ -8,6 +8,9 @@ public class Vector2in implements IVector2fl {
     public static Vector2in ZERO = new Vector2in(0);
     public static Vector2in ONE = new Vector2in(1);
     public static Vector2in TWO = new Vector2in(2);
+    public static Vector2in MAX = new Vector2in(Integer.MAX_VALUE, Integer.MAX_VALUE);
+    public static Vector2in MAX_X = new Vector2in(Integer.MAX_VALUE, 0);
+    public static Vector2in MAX_Y = new Vector2in(0, Integer.MAX_VALUE);
 
     public int x;
     public int y;
@@ -129,6 +132,16 @@ public class Vector2in implements IVector2fl {
 
     public Vector2in max(Vector2in other) {
         return this.max(other.x, other.y);
+    }
+
+    public Vector2in min(int x, int y) {
+        this.x = Math.min(this.x, x);
+        this.y = Math.min(this.y, y);
+        return this;
+    }
+
+    public Vector2in min(Vector2in other) {
+        return this.min(other.x, other.y);
     }
 
     public boolean isWithinBounds(Vector2in position, Vector2in dimensions) {

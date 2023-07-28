@@ -8,7 +8,15 @@ public interface IComponent {
 
     public Vector2in getDimensions();
 
+    public Vector2in getPosition();
+
     public void calculateDimensions();
+    
+    public void adjustDimensions(Vector2in availableSpace);
+
+    public void calculatePosition(Vector2in origin);
+
+    public void update(UIRoot root);
 
     public default void onMousePress(UIRoot root) { }
  
@@ -19,8 +27,6 @@ public interface IComponent {
     public default void onDragStart(UIRoot root) { }
 
     public default void onDragDrop(UIRoot root, IComponent droppedComponent) { }
-
-    public void update(Vector2in origin, UIRoot root);
 
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch);
 

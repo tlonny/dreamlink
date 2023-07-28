@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 
+import doors.Config;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.io.Mouse;
 import doors.ui.component.IComponent;
@@ -110,10 +111,13 @@ public class UIRoot {
 
     public void update() {
         this.selectedCursor = ArrowCursor.ARROW_CURSOR;
+
         this.clearComponentCaptures();
         for(var rootComponent : this.rootComponents) {
             rootComponent.calculateDimensions();
-            rootComponent.update(Vector2in.ZERO, this);
+            rootComponent.adjustDimensions(Config.RESOLUTION);
+            rootComponent.calculatePosition(Vector2in.ZERO);
+            rootComponent.update(this);
         }
 
         if(this.draggedComponent != null) {

@@ -28,7 +28,7 @@ public class MainMenuGameState extends AbstractGameState {
     private UIRoot rootMenu = new UIRoot();
     private UIRoot editMenu = new UIRoot();
     private UIRoot exploreMenu = new UIRoot();
-    private UIRoot usedRoot = this.rootMenu;
+    private UIRoot usedRoot = this.editMenu;
 
     private String levelToExplore;
 
@@ -38,7 +38,9 @@ public class MainMenuGameState extends AbstractGameState {
 
     public MainMenuGameState() {
         this.rootMenu.rootComponents.add(this.rootMenuComponent);
+
         this.editMenu.rootComponents.add(this.editMenuComponent);
+
         this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 

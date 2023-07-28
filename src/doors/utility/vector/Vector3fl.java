@@ -22,6 +22,7 @@ public class Vector3fl implements IVector3fl {
     public static Vector3fl WHITE = fromHex(0xFFFFFF);
     public static Vector3fl BLACK = fromHex(0x000000);
     public static Vector3fl GREEN = fromHex(0x00FF00);
+    public static Vector3fl RED = fromHex(0xFF0000);
 
     public float x;
     public float y;

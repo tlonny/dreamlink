@@ -1,6 +1,7 @@
 package doors.ui.component.mainmenu;
 
 import java.io.File;
+import java.util.Random;
 
 import doors.Config;
 import doors.graphics.text.FontDecoration;
@@ -9,17 +10,17 @@ import doors.graphics.texture.MenuTexture;
 import doors.state.EditGameState;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
-import doors.ui.component.TextureComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
-import doors.ui.component.WindowComponent;
-import doors.ui.component.layout.HorizontalAlignment;
-import doors.ui.component.layout.HorizontalSpanComponent;
+import doors.ui.component.layout.RowComponent;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.VerticalSpanComponent;
+import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.ColumnComponent;
 import doors.ui.component.table.TableComponent;
+import doors.ui.component.window.WindowComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
+import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -27,61 +28,64 @@ public class MainMenuEditComponent implements IComponent {
 
     private static int SPACING = 10;
     private static int NUM_ROWS = 10;
+    private static int ROW_HEIGHT = 18;
     private static int WINDOW_PADDING = 10;
-    private static Vector2in ROW_DIMENSIONS = new Vector2in(160, 18);
     private static Vector2in BUTTON_DIMENSIONS = new Vector2in(60, 24);
 
     private BoxedValue<MainMenuEditLevelTableRow> selectedLevel = new BoxedValue<>();
 
     private Vector2in originCursor = new Vector2in();
     private WindowComponent windowComponent;
-
-    private TextureComponent backgroundComponent = new TextureComponent(MenuTexture.MENU_TEXTURE.background);
-    private TableComponent<MainMenuEditLevelTableRow> tableComponent = new TableComponent<>(NUM_ROWS, ROW_DIMENSIONS);
-    private ButtonComponent editButtonComponent = new ButtonComponent(
-        BUTTON_DIMENSIONS,
-        new TextComponent("Edit", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoEdit
-    );
-
-    private ButtonComponent quitButtonComponent = new ButtonComponent(
-        BUTTON_DIMENSIONS,
-        new TextComponent("Back", FontDecoration.NORMAL, Vector3fl.BLACK),
-        this::gotoRootMenu
-    );
-
-    private VerticalSpanComponent layoutSpanComponent = new VerticalSpanComponent(
-        HorizontalAlignment.LEFT, 
-        SPACING
-    );
-
-    private HorizontalSpanComponent buttonSpanComponent = new HorizontalSpanComponent(SPACING);
+    private TableComponent<MainMenuEditLevelTableRow> tableComponent;
+    private ButtonComponent editButtonComponent;
 
     public MainMenuEditComponent() {
+        var layoutComponent = new ColumnComponent(SPACING);
 
-        this.layoutSpanComponent.components.add(
-            new TextComponent("Select level to edit:", FontDecoration.NORMAL, Vector3fl.BLACK)
-        );
+        var labelComponent = new TextComponent("Select level to edit:", FontDecoration.NORMAL, Vector3fl.BLACK);
+        layoutComponent.children.add(labelComponent);
 
-        this.layoutSpanComponent.components.add(this.tableComponent);
-        this.layoutSpanComponent.components.add(this.buttonSpanComponent);
+        this.tableComponent = new TableComponent<>(NUM_ROWS, ROW_HEIGHT);
+        layoutComponent.children.add(this.tableComponent);
 
-        this.buttonSpanComponent.components.add(this.editButtonComponent);
-        this.buttonSpanComponent.components.add(this.quitButtonComponent);
+        var buttonSpan = new RowComponent(SPACING);
+        this.editButtonComponent = this.createButton("Edit", this::gotoEdit);
+        buttonSpan.children.add(this.editButtonComponent);
+        var quitButton = this.createButton("Back", this::gotoRootMenu);
+        buttonSpan.children.add(quitButton);
+        layoutComponent.children.add(buttonSpan);
 
         this.windowComponent = new WindowComponent(
             MenuTexture.MENU_TEXTURE.iconFolder,
             "Edit Menu",
-            new PaddingComponent(this.layoutSpanComponent, WINDOW_PADDING)
+            new PaddingComponent(layoutComponent, WINDOW_PADDING)
         );
     }
 
+    private ButtonComponent createButton(String text, IAction0 onClick) {
+        var boxComponent = new BoxComponent(
+            BUTTON_DIMENSIONS,
+            BUTTON_DIMENSIONS
+        );
+
+        boxComponent.child = new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK);
+        return new ButtonComponent(boxComponent, onClick);
+    }
+
     public void readLevels() {
-        this.tableComponent.rows.clear();
+        this.tableComponent.getRows().clear();
         var directory = new File(Config.WORKSPACE_PATH);
         for(var file : directory.listFiles(File::isDirectory)) {
             var row = new MainMenuEditLevelTableRow(this.selectedLevel, file.getName());
-            this.tableComponent.rows.add(row);
+            this.tableComponent.getRows().add(row);
+        }
+
+        this.tableComponent.getRows().add(new MainMenuEditLevelTableRow(this.selectedLevel, "fusdfjsdgfsdgf dfgkdfgkdf gkdfg dfg "));
+        var rand = new Random();
+        for(var ix = 0; ix < 10; ix += 1) {
+            var name = "foo_" + rand.nextInt();
+            var row = new MainMenuEditLevelTableRow(this.selectedLevel, name);
+            this.tableComponent.getRows().add(row);
         }
     }
 
@@ -91,16 +95,29 @@ public class MainMenuEditComponent implements IComponent {
     }
 
     @Override
-    public void calculateDimensions() {
-        this.windowComponent.calculateDimensions();
-        this.backgroundComponent.setDimensions(Config.RESOLUTION);
+    public Vector2in getPosition() {
+        return Vector2in.ZERO;
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
+    public void calculateDimensions() {
+        this.windowComponent.calculateDimensions();
+    }
+
+    @Override
+    public void calculatePosition(Vector2in origin) {
         this.originCursor.set(Config.RESOLUTION).sub(this.getDimensions()).div(2);
-        this.windowComponent.update(this.originCursor, root);
-        this.editButtonComponent.isDisabled = this.selectedLevel.value == null;
+        this.windowComponent.calculatePosition(this.originCursor);
+    }
+
+    @Override
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.windowComponent.adjustDimensions(this.getDimensions());
+    }
+
+    @Override
+    public void update(UIRoot root) {
+        this.windowComponent.update(root);
     }
 
     private void gotoRootMenu() {
@@ -114,7 +131,6 @@ public class MainMenuEditComponent implements IComponent {
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        this.backgroundComponent.writeComponentToSpriteBatch(spriteBatch);
         this.windowComponent.writeComponentToSpriteBatch(spriteBatch);
     }
     

@@ -1,43 +1,38 @@
-package doors.ui.component.table;
-
-import java.util.Collection;
+package doors.ui.component.mainmenu;
 
 import doors.graphics.spritebatch.SpriteBatch;
+import doors.graphics.text.FontDecoration;
 import doors.ui.component.IComponent;
+import doors.ui.component.TextComponent;
 import doors.ui.component.border.DialogBorderComponent;
-import doors.ui.component.border.DialogState;
 import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.RowComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
+import doors.utility.vector.Vector3fl;
 
-public class TableComponent<T extends IComponent> implements IComponent {
+public class MainMenuExploreStatusComponent implements IComponent {
 
-    private static int CONTENT_PADDING = 2;
+    private static int PADDING = 2;
 
-    private TableRowsComponent<T> tableRowsComponent;
-    private TableScrollBarComponent<T> tableScrollBarComponent;
+    private TextComponent statusComponent;
     private DialogBorderComponent borderComponent;
-    private TableState<T> tableState;
 
-    public TableComponent(int numRows, int cellHeight) {
-        this.tableState = new TableState<>(numRows);
-        this.tableRowsComponent = new TableRowsComponent<>(this.tableState, cellHeight);
-        this.tableScrollBarComponent = new TableScrollBarComponent<T>(this.tableState);
+    public MainMenuExploreStatusComponent() {
+        this.statusComponent = new TextComponent("", FontDecoration.NORMAL, Vector3fl.BLACK);
+        
+        var paddingComponent = new PaddingComponent(this.statusComponent, PADDING);
 
-        var layoutComponent = new RowComponent(0);
-        layoutComponent.children.add(new PaddingComponent(this.tableRowsComponent, CONTENT_PADDING));
-        layoutComponent.children.add(this.tableScrollBarComponent);
-
-        var spaceComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX_X);
-        spaceComponent.child = layoutComponent;
+        var spaceComponent = new BoxComponent(
+            Vector2in.ZERO,
+            Vector2in.MAX_X
+        );
+        spaceComponent.child = paddingComponent;
         this.borderComponent = new DialogBorderComponent(spaceComponent);
-        this.borderComponent.state = DialogState.FOCUSED;
     }
 
-    public Collection<T> getRows() {
-        return this.tableState.rows;
+    public void setStatus(String text, boolean isError) {
+
     }
 
     @Override

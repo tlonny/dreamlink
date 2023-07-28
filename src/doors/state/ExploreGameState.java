@@ -25,7 +25,6 @@ import doors.level.camera.Camera;
 import doors.level.camera.PlayerMovementSystem;
 import doors.level.terrain.IHasTerrain;
 import doors.level.terrain.Terrain;
-import doors.ui.component.explore.ExploreMenuComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
@@ -57,7 +56,6 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     private MeshBuffer meshBuffer = new MeshBuffer(SPRITE_BATCH_QUADS);
     private SpriteBatch spriteBatch = new SpriteBatch();
-    private ExploreMenuComponent exploreMenuComponent = new ExploreMenuComponent();
     private UIRoot exploreMenu = new UIRoot();
     private Mesh mesh = new Mesh();
     private boolean showMenu;
@@ -66,7 +64,6 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
 
     public ExploreGameState() {
         this.camera = new Camera(new PlayerMovementSystem(this));
-        this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 
     public void use(String levelName) {

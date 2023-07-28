@@ -4,11 +4,10 @@ import org.lwjgl.glfw.GLFW;
 
 import doors.Config;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.template.menu.WindowTemplate;
 import doors.level.block.Block;
 import doors.ui.component.IComponent;
-import doors.ui.component.layout.HorizontalSpanComponent;
+import doors.ui.component.border.WindowBorderComponent;
+import doors.ui.component.layout.RowComponent;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
@@ -31,20 +30,23 @@ public class EditQuickBarComponent implements IComponent {
 
     private static int SCREEN_PADDING = 10;
     private static int SPACING = 5;
-    private Vector2in position = new Vector2in();
+    private Vector2in positionCursor = new Vector2in();
 
-    private BoxedValue<EditQuickBarSlotComponent> selectedSlot = new BoxedValue<>();
     private EditQuickBarSlotComponent[] slots = new EditQuickBarSlotComponent[10];
-    private HorizontalSpanComponent layoutComponent = new HorizontalSpanComponent(SPACING);
-    private PaddingComponent paddingComponent = new PaddingComponent(this.layoutComponent, SPACING);
+    private BoxedValue<EditQuickBarSlotComponent> selectedSlot = new BoxedValue<>();
+    private WindowBorderComponent borderComponent;
 
     public EditQuickBarComponent() {
+        var layoutComponent = new RowComponent(SPACING);
         for(var ix = 0; ix < 10; ix += 1) {
             var keyCode = KEY_CODES[ix];
             var slot = new EditQuickBarSlotComponent(keyCode, selectedSlot);
             this.slots[ix] = slot;
-            this.layoutComponent.components.add(slot);
+            layoutComponent.children.add(slot);
         }
+
+        var paddingComponent = new PaddingComponent(layoutComponent, SPACING);
+        this.borderComponent = new WindowBorderComponent(paddingComponent);
     }
 
     public Block getSelectedBlock() {
@@ -63,32 +65,39 @@ public class EditQuickBarComponent implements IComponent {
 
     @Override
     public Vector2in getDimensions() {
-        return this.paddingComponent.getDimensions();
+        return this.borderComponent.getDimensions();
+    }
+
+    @Override
+    public Vector2in getPosition() {
+        return this.borderComponent.getPosition();
     }
 
     @Override
     public void calculateDimensions() {
-        this.paddingComponent.calculateDimensions();
+        this.borderComponent.calculateDimensions();
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.borderComponent.adjustDimensions(this.getDimensions());
+    }
+
+    @Override
+    public void calculatePosition(Vector2in origin) {
         var dimensions = this.getDimensions();
-        this.position.x = (Config.RESOLUTION.x - dimensions.x) / 2;
-        this.position.y = Config.RESOLUTION.y - dimensions.y - SCREEN_PADDING;
-        this.paddingComponent.update(this.position, root);
+        this.positionCursor.x = (Config.RESOLUTION.x - dimensions.x) / 2;
+        this.positionCursor.y = Config.RESOLUTION.y - dimensions.y - SCREEN_PADDING;
+        this.borderComponent.calculatePosition(this.positionCursor);
+    }
+
+    @Override
+    public void update(UIRoot root) {
+        this.borderComponent.update(root);
     }
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        WindowTemplate.WINDOW_TEMPLATE.writeMenuTemplateToSpriteBatch(
-            spriteBatch,
-            this.position,
-            this.getDimensions(),
-            SpriteBatchHeight.UI_NORMAL
-        );
-        this.paddingComponent.writeComponentToSpriteBatch(spriteBatch);
+        this.borderComponent.writeComponentToSpriteBatch(spriteBatch);
     }
-
-    
 }

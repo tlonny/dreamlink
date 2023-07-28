@@ -12,10 +12,16 @@ public class MenuTexture extends ImageTexture {
     public static MenuTexture MENU_TEXTURE = new MenuTexture();
 
     public TextureSample background = this.createTextureSample(new Vector2in(0, 0), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample windowBackground = this.createTextureSample(new Vector2in(2, 0), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample highlight = this.createTextureSample(new Vector2in(1, 0), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample white = this.createTextureSample(new Vector2in(3, 0), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample black = this.createTextureSample(new Vector2in(4, 0), Vector2in.ONE, TEXTURE_SCALE);
 
     public TextureSample iconFolder = this.createTextureSample(new Vector2in(1, 10), Vector2in.TWO, TEXTURE_SCALE);
+    public TextureSample iconFile = this.createTextureSample(new Vector2in(1, 12), Vector2in.TWO, TEXTURE_SCALE);
+    public TextureSample iconRestrict = this.createTextureSample(new Vector2in(1, 14), Vector2in.TWO, TEXTURE_SCALE);
+    public TextureSample iconPermit = this.createTextureSample(new Vector2in(1, 16), Vector2in.TWO, TEXTURE_SCALE);
+    public TextureSample iconCable = this.createTextureSample(new Vector2in(1, 18), Vector2in.TWO, TEXTURE_SCALE);
 
     public TextureSample windowTopLeft = this.createTextureSample(new Vector2in(1, 6), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample windowLeft = this.createTextureSample(new Vector2in(1, 7), Vector2in.ONE, TEXTURE_SCALE);
@@ -65,29 +71,29 @@ public class MenuTexture extends ImageTexture {
     public TextureSample buttonDisabledRight = this.createTextureSample(new Vector2in(16, 3), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample buttonDisabledBottomRight = this.createTextureSample(new Vector2in(16, 4), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogBlurTopLeft = this.createTextureSample(new Vector2in(6, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurLeft = this.createTextureSample(new Vector2in(6, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurBottomLeft = this.createTextureSample(new Vector2in(6, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredTopLeft = this.createTextureSample(new Vector2in(6, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredLeft = this.createTextureSample(new Vector2in(6, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredBottomLeft = this.createTextureSample(new Vector2in(6, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogBlurTop = this.createTextureSample(new Vector2in(7, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurCenter = this.createTextureSample(new Vector2in(7, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurBottom = this.createTextureSample(new Vector2in(7, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredTop = this.createTextureSample(new Vector2in(7, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredCenter = this.createTextureSample(new Vector2in(7, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredBottom = this.createTextureSample(new Vector2in(7, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogBlurTopRight = this.createTextureSample(new Vector2in(8, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurRight = this.createTextureSample(new Vector2in(8, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogBlurBottomRight = this.createTextureSample(new Vector2in(8, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredTopRight = this.createTextureSample(new Vector2in(8, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredRight = this.createTextureSample(new Vector2in(8, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogBlurredBottomRight = this.createTextureSample(new Vector2in(8, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogFocusTopLeft = this.createTextureSample(new Vector2in(10, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusLeft = this.createTextureSample(new Vector2in(10, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusBottomLeft = this.createTextureSample(new Vector2in(10, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedTopLeft = this.createTextureSample(new Vector2in(10, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedLeft = this.createTextureSample(new Vector2in(10, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedBottomLeft = this.createTextureSample(new Vector2in(10, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogFocusTop = this.createTextureSample(new Vector2in(11, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusCenter = this.createTextureSample(new Vector2in(11, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusBottom = this.createTextureSample(new Vector2in(11, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedTop = this.createTextureSample(new Vector2in(11, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedCenter = this.createTextureSample(new Vector2in(11, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedBottom = this.createTextureSample(new Vector2in(11, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample dialogFocusTopRight = this.createTextureSample(new Vector2in(12, 6), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusRight = this.createTextureSample(new Vector2in(12, 7), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample dialogFocusBottomRight = this.createTextureSample(new Vector2in(12, 8), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedTopRight = this.createTextureSample(new Vector2in(12, 6), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedRight = this.createTextureSample(new Vector2in(12, 7), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample dialogFocusedBottomRight = this.createTextureSample(new Vector2in(12, 8), Vector2in.ONE, TEXTURE_SCALE);
 
     public TextureSample dialogDisabledTopLeft = this.createTextureSample(new Vector2in(14, 6), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample dialogDisabledLeft = this.createTextureSample(new Vector2in(14, 7), Vector2in.ONE, TEXTURE_SCALE);
@@ -101,24 +107,23 @@ public class MenuTexture extends ImageTexture {
     public TextureSample dialogDisabledRight = this.createTextureSample(new Vector2in(16, 7), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample dialogDisabledBottomRight = this.createTextureSample(new Vector2in(16, 8), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample borderTopLeft = this.createTextureSample(new Vector2in(6, 10), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderLeft = this.createTextureSample(new Vector2in(6, 11), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderBottomLeft = this.createTextureSample(new Vector2in(6, 12), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorTopLeft = this.createTextureSample(new Vector2in(6, 10), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorLeft = this.createTextureSample(new Vector2in(6, 11), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorBottomLeft = this.createTextureSample(new Vector2in(6, 12), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample borderTop = this.createTextureSample(new Vector2in(7, 10), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderCenter = this.createTextureSample(new Vector2in(7, 11), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderBottom = this.createTextureSample(new Vector2in(7, 12), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorTop = this.createTextureSample(new Vector2in(7, 10), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorCenter = this.createTextureSample(new Vector2in(7, 11), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorBottom = this.createTextureSample(new Vector2in(7, 12), Vector2in.ONE, TEXTURE_SCALE);
 
-    public TextureSample borderTopRight = this.createTextureSample(new Vector2in(8, 10), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderRight = this.createTextureSample(new Vector2in(8, 11), Vector2in.ONE, TEXTURE_SCALE);
-    public TextureSample borderBottomRight = this.createTextureSample(new Vector2in(8, 12), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorTopRight = this.createTextureSample(new Vector2in(8, 10), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorRight = this.createTextureSample(new Vector2in(8, 11), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample seperatorBottomRight = this.createTextureSample(new Vector2in(8, 12), Vector2in.ONE, TEXTURE_SCALE);
 
     public TextureSample cursorPointer = this.createTextureSample(new Vector2in(1, 1), Vector2in.TWO, TEXTURE_SCALE);
     public TextureSample cursorArrow = this.createTextureSample(new Vector2in(1, 3), Vector2in.TWO, TEXTURE_SCALE);
     public TextureSample cursorGrab = this.createTextureSample(new Vector2in(3, 3), Vector2in.TWO, TEXTURE_SCALE);
     public TextureSample cursorForbidden = this.createTextureSample(new Vector2in(3, 1), Vector2in.TWO, TEXTURE_SCALE);
 
-    public TextureSample dither = this.createTextureSample(new Vector2in(2, 0), Vector2in.ONE, TEXTURE_SCALE);
 
     public MenuTexture() {
         super(

@@ -1,28 +1,26 @@
 package doors.ui.component;
 
 import doors.graphics.spritebatch.SpriteBatch;
+import doors.graphics.spritebatch.SpriteBatchHeight;
+import doors.graphics.texture.TextureSample;
 import doors.ui.component.IComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
+import doors.utility.vector.Vector3fl;
 
-public class HiddenComponent implements IComponent {
+public class BackgroundComponent implements IComponent {
 
-    private IComponent content;
-    public boolean isHidden;
-    private Vector2in dimensions = new Vector2in();
+    public TextureSample textureSample;
+    public IComponent content;
 
-    public HiddenComponent(IComponent content, boolean isHidden) {
+    public BackgroundComponent(IComponent content, TextureSample textureSample) {
         this.content = content;
-        this.isHidden = isHidden;
-    }
-
-    public HiddenComponent(IComponent content) {
-        this(content, false);
+        this.textureSample = textureSample;
     }
 
     @Override
     public Vector2in getDimensions() {
-        return this.getDimensions();
+        return this.content.getDimensions();
     }
 
     @Override
@@ -33,7 +31,6 @@ public class HiddenComponent implements IComponent {
     @Override
     public void calculateDimensions() {
         this.content.calculateDimensions();
-        this.dimensions.set(this.isHidden ? Vector2in.ZERO : this.content.getDimensions());
     }
 
     @Override
@@ -53,10 +50,17 @@ public class HiddenComponent implements IComponent {
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        if(this.isHidden) {
-            return;
+        if(this.textureSample != null) {
+            spriteBatch.pushSprite(
+                this.textureSample,
+                this.getPosition(),
+                this.getDimensions(),
+                SpriteBatchHeight.UI_NORMAL,
+                Vector3fl.WHITE
+            );
         }
         this.content.writeComponentToSpriteBatch(spriteBatch);
     }
+
     
 }

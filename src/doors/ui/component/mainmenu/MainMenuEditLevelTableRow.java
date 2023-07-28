@@ -4,39 +4,38 @@ import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
-import doors.ui.component.IExplicitDimensions;
+import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
+import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.alignment.HorizontalAlignment;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
-public class MainMenuEditLevelTableRow implements IExplicitDimensions {
+public class MainMenuEditLevelTableRow implements IComponent {
 
     private BoxedValue<MainMenuEditLevelTableRow> boxedSelection;
 
-    private TextComponent content;
-    private Vector2in dimensions = new Vector2in();
-    private Vector2in position = new Vector2in();
-    private Vector2in originCursor = new Vector2in();
+    private TextComponent levelNameComponent;
+    private BoxComponent layoutComponent;
 
     public MainMenuEditLevelTableRow(BoxedValue<MainMenuEditLevelTableRow> boxedSelection, String levelName) {
         this.boxedSelection = boxedSelection;
-        this.content = new TextComponent(levelName, FontDecoration.NORMAL, Vector3fl.BLACK);
+        this.levelNameComponent = new TextComponent(levelName, FontDecoration.NORMAL, Vector3fl.BLACK);
+
+        this.layoutComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX);
+        this.layoutComponent.horizontalAlignment = HorizontalAlignment.LEFT;
+        this.layoutComponent.child = this.levelNameComponent;
     }
 
     public String getLevelName() {
-        return this.content.getText();
+        return this.levelNameComponent.text;
     }
 
     public void setLevelName(String levelName) {
-        this.content.setText(levelName);
-    }
-
-    @Override
-    public void setDimensions(int width, int height) {
-        this.dimensions.set(width, height);
+        this.levelNameComponent.text = levelName;
     }
 
     @Override
@@ -47,33 +46,44 @@ public class MainMenuEditLevelTableRow implements IExplicitDimensions {
 
     @Override
     public Vector2in getDimensions() {
-        return this.dimensions;
+        return this.layoutComponent.getDimensions();
+    }
+
+    @Override
+    public Vector2in getPosition() {
+        return this.layoutComponent.getPosition();
     }
 
     @Override
     public void calculateDimensions() {
-        this.content.calculateDimensions();
+        this.layoutComponent.calculateDimensions();
     }
 
     @Override
-    public void update(Vector2in origin, UIRoot root) {
-        this.position.set(origin);
+    public void adjustDimensions(Vector2in availableSpace) {
+        this.layoutComponent.adjustDimensions(availableSpace);
+    }
 
+    @Override
+    public void calculatePosition(Vector2in origin) {
+        this.layoutComponent.calculatePosition(origin);
+    }
+
+    @Override
+    public void update(UIRoot root) {
         if(root.hoveredComponent == this) {
             root.selectedCursor = PointerCursor.POINTER_CURSOR;
         }
 
         if(this.boxedSelection.value == this) {
-            this.content.color.set(Vector3fl.WHITE);
+            this.levelNameComponent.color.set(Vector3fl.WHITE);
         } else {
-            this.content.color.set(Vector3fl.BLACK);
+            this.levelNameComponent.color.set(Vector3fl.BLACK);
         }
 
-        this.originCursor.set(origin);
-        this.originCursor.y += this.dimensions.y / 2 - this.content.getDimensions().y / 2;
-        this.content.update(this.originCursor, root);
+        this.layoutComponent.update(root);
 
-        root.captureMouse(this, this.position, this.dimensions, 0);
+        root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);
     }
 
     @Override
@@ -81,14 +91,14 @@ public class MainMenuEditLevelTableRow implements IExplicitDimensions {
         if(this.boxedSelection.value == this) {
             spriteBatch.pushSprite(
                 MenuTexture.MENU_TEXTURE.highlight,
-                this.position,
-                this.dimensions,
+                this.getPosition(),
+                this.getDimensions(),
                 SpriteBatchHeight.UI_NORMAL,
                 Vector3fl.WHITE
             );
         }
 
-        this.content.writeComponentToSpriteBatch(spriteBatch);
+        this.levelNameComponent.writeComponentToSpriteBatch(spriteBatch);
     }
 
 
