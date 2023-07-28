@@ -9,6 +9,7 @@ import doors.graphics.shader.Shader;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.io.Mouse;
 import doors.level.cache.LevelCache;
+import doors.level.cache.LevelCacheEntryState;
 import doors.ui.component.mainmenu.MainMenuEditComponent;
 import doors.ui.component.mainmenu.MainMenuExploreComponent;
 import doors.ui.component.mainmenu.MainMenuRootComponent;
@@ -29,6 +30,8 @@ public class MainMenuGameState extends AbstractGameState {
     private UIRoot exploreMenu = new UIRoot();
     private UIRoot usedRoot = this.rootMenu;
 
+    private String levelToExplore;
+
     private SpriteBatch spriteBatch = new SpriteBatch();
     private MeshBuffer meshBuffer = new MeshBuffer(SPRITE_BATCH_QUADS);
     private Mesh mesh = new Mesh();
@@ -44,6 +47,7 @@ public class MainMenuGameState extends AbstractGameState {
         super.use();
         Mouse.MOUSE.setLocked(false);
         this.editMenuComponent.readLevels();
+        this.levelToExplore = null;
     }
 
     public void gotoExploreMenu() {
@@ -51,6 +55,7 @@ public class MainMenuGameState extends AbstractGameState {
     }
 
     public void gotoExplore(String levelName) {
+        this.levelToExplore = levelName;
         LevelCache.LEVEL_CACHE.requestLevel(levelName);
     }
 
@@ -62,14 +67,28 @@ public class MainMenuGameState extends AbstractGameState {
         this.usedRoot = this.rootMenu;
     }
 
+    public LevelCacheEntryState getLevelCacheEntryState() {
+        if(this.levelToExplore == null) {
+            return null;
+        }
+
+        return LevelCache.LEVEL_CACHE.getLevelCacheEntryState(this.levelToExplore);
+    }
+
     @Override
     public void update() {
         this.meshBuffer.clear();
         this.spriteBatch.clear();
+
+        if(this.levelToExplore != null && LevelCache.LEVEL_CACHE.isLevelReady(this.levelToExplore)) {
+            ExploreGameState.EXPLORE_GAME_STATE.use(this.levelToExplore);
+        }
+
         var root = this.usedRoot;
         root.update();
         root.writeUIRoot(this.spriteBatch);
         root.selectedCursor.writeCursor(this.spriteBatch);
+
         this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
         this.meshBuffer.writeMeshTo(this.mesh);
 

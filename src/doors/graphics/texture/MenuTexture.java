@@ -13,6 +13,7 @@ public class MenuTexture extends ImageTexture {
 
     public TextureSample background = this.createTextureSample(new Vector2in(0, 0), Vector2in.ONE, TEXTURE_SCALE);
     public TextureSample highlight = this.createTextureSample(new Vector2in(1, 0), Vector2in.ONE, TEXTURE_SCALE);
+    public TextureSample white = this.createTextureSample(new Vector2in(3, 0), Vector2in.ONE, TEXTURE_SCALE);
 
     public TextureSample iconFolder = this.createTextureSample(new Vector2in(1, 10), Vector2in.TWO, TEXTURE_SCALE);
 

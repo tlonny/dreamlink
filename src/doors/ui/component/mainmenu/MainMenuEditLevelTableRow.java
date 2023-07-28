@@ -27,11 +27,11 @@ public class MainMenuEditLevelTableRow implements IExplicitDimensions {
     }
 
     public String getLevelName() {
-        return this.content.text;
+        return this.content.getText();
     }
 
     public void setLevelName(String levelName) {
-        this.content.text = levelName;
+        this.content.setText(levelName);
     }
 
     @Override

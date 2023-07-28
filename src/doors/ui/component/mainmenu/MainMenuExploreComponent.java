@@ -4,9 +4,6 @@ import doors.Config;
 import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.MenuTexture;
-import doors.level.cache.LevelCache;
-import doors.level.cache.LevelCacheEntryState;
-import doors.state.ExploreGameState;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextureComponent;
@@ -55,8 +52,6 @@ public class MainMenuExploreComponent implements IComponent {
 
     private TextComponent statusComponent = new TextComponent(DEFAULT_STATUS_MESSAGE, FontDecoration.NORMAL, Vector3fl.BLACK);
 
-    private String levelToExplore;
-
     public MainMenuExploreComponent() {
         var span = new VerticalSpanComponent(HorizontalAlignment.LEFT, SPACING);
 
@@ -94,21 +89,11 @@ public class MainMenuExploreComponent implements IComponent {
         this.originCursor.set(Config.RESOLUTION).sub(this.getDimensions()).div(2);
         this.windowComponent.update(this.originCursor, root);
 
-        if(this.levelToExplore == null) {
-            this.exploreButtonComponent.isDisabled = this.backButtonComponent.isDisabled = false;
-            return;
-        }
-
-        var state = LevelCache.LEVEL_CACHE.getLevelCacheEntryState(this.levelToExplore);
-        this.exploreButtonComponent.isDisabled = this.backButtonComponent.isDisabled = !state.isError && state != LevelCacheEntryState.LOADED;
-
-        if(state == LevelCacheEntryState.LOADED) {
-            ExploreGameState.EXPLORE_GAME_STATE.use(this.levelToExplore);
-            this.levelToExplore = null;
-            this.statusComponent.text = DEFAULT_STATUS_MESSAGE;
-        } else {
-            this.statusComponent.text = state.name;
-        }
+        var exploreState = MainMenuGameState.MAIN_MENU_GAME_STATE.getLevelCacheEntryState();
+        var isDisabled = exploreState != null && !exploreState.isTerminal;
+        this.exploreButtonComponent.isDisabled = isDisabled;
+        this.backButtonComponent.isDisabled = isDisabled;
+        this.statusComponent.setText(exploreState == null ? DEFAULT_STATUS_MESSAGE : exploreState.name);
     }
 
     private void gotoRootMenu() {
@@ -116,8 +101,7 @@ public class MainMenuExploreComponent implements IComponent {
     }
 
     private void gotoExplore() {
-        this.levelToExplore = this.textInputComponent.getText();
-        LevelCache.LEVEL_CACHE.requestLevel(this.levelToExplore);
+        MainMenuGameState.MAIN_MENU_GAME_STATE.gotoExplore(this.textInputComponent.getText());
     }
 
     @Override

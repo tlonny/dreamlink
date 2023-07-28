@@ -3,19 +3,13 @@ package doors.graphics.text;
 import java.util.HashMap;
 import java.util.Map;
 
-import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.FontTexture;
-import doors.utility.vector.Vector2in;
-import doors.utility.vector.Vector3fl;
 
 public class GlyphLookup {
 
     public static GlyphLookup GLYPH_LOOKUP = new GlyphLookup();
 
     public Map<Character, Glyph> glyphLookup = new HashMap<>();
-
-    private Vector2in positionCursor = new Vector2in();
 
     public GlyphLookup() {
         this.glyphLookup.put(' ', new Glyph(FontTexture.FONT_TEXTURE.symSpace, FontTexture.FONT_TEXTURE.symSpaceUnderline));
@@ -120,26 +114,8 @@ public class GlyphLookup {
         this.glyphLookup.put('~', new Glyph(FontTexture.FONT_TEXTURE.symTilde, FontTexture.FONT_TEXTURE.symTildeUnderline));
     }
 
-    public void writeTextToSpriteBatch(
-        SpriteBatch spriteBatch,
-        String text,
-        Vector2in position,
-        SpriteBatchHeight height,
-        FontDecoration fontDecoration,
-        Vector3fl color
-    ) {
-        this.positionCursor.set(position);
-        for(var ix = 0; ix < text.length(); ix += 1) {
-            var character = text.charAt(ix);
-            this.glyphLookup.get(character).writeGlyphToSpriteBatch(
-                spriteBatch,
-                this.positionCursor,
-                height,
-                fontDecoration,
-                color
-            );
-            this.positionCursor.x += Glyph.GLYPH_DIMENSIONS.x;
-        }
+    public Glyph getGlyph(char character) {
+        return this.glyphLookup.get(character);
     }
     
 }

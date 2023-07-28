@@ -1,11 +1,10 @@
 package doors.debug;
 
 import doors.graphics.text.Glyph;
-import doors.graphics.text.GlyphLookup;
+import doors.graphics.text.TextFragment;
 import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.io.Mouse;
 import doors.level.camera.Camera;
 import doors.state.AbstractGameState;
 import doors.utility.vector.Vector3fl;
@@ -25,16 +24,13 @@ public class DebugInformation {
     private Vector2in positionCursor = new Vector2in();
     private Vector3fl cameraPosition = new Vector3fl();
     private Vector3fl cameraNormal = new Vector3fl();
+    private TextFragment textFragment = new TextFragment();
 
-    private void writeLine(SpriteBatch spriteBatch, String text) {
-        GlyphLookup.GLYPH_LOOKUP.writeTextToSpriteBatch(
-            spriteBatch,
-            text,
-            this.positionCursor,
-            SpriteBatchHeight.HUD,
-            FontDecoration.NORMAL,
-            Vector3fl.WHITE
-        );
+    private void writeLine(SpriteBatch spriteBatch, String key, String value) {
+        this.textFragment.clear();
+        this.textFragment.pushText(String.format("%s: ", key), FontDecoration.NORMAL, Vector3fl.WHITE);
+        this.textFragment.pushText(value, FontDecoration.NORMAL, Vector3fl.GREEN);
+        this.textFragment.writeTextFragmentToSpriteBatch(spriteBatch, this.positionCursor, SpriteBatchHeight.HUD);
         this.positionCursor.y += Glyph.GLYPH_DIMENSIONS.y;
     }
 
@@ -54,11 +50,10 @@ public class DebugInformation {
     }
 
     public void writeDebugInformationToSpriteBatch(SpriteBatch spriteBatch) {
-        this.writeLine(spriteBatch, String.format("frames per second: %.2f", this.fps));
-        this.writeLine(spriteBatch, String.format("camera position: %s", this.cameraPosition));
-        this.writeLine(spriteBatch, String.format("camera normal: %s", this.cameraNormal));
-        this.writeLine(spriteBatch, String.format("game state: %s", AbstractGameState.USED_GAME_STATE.getClass().getSimpleName()));
-        this.writeLine(spriteBatch, String.format("mouse position: %s", Mouse.MOUSE.position));
+        this.writeLine(spriteBatch, "frames per second", String.format("%.2f", this.fps));
+        this.writeLine(spriteBatch, "camera position", this.cameraPosition.toString());
+        this.writeLine(spriteBatch, "camera normal", this.cameraNormal.toString());
+        this.writeLine(spriteBatch, "game state", AbstractGameState.USED_GAME_STATE.getClass().getSimpleName());
         this.count += 1;
     }
 

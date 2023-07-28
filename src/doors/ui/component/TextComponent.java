@@ -2,7 +2,7 @@ package doors.ui.component;
 
 import doors.graphics.text.FontDecoration;
 import doors.graphics.text.Glyph;
-import doors.graphics.text.GlyphLookup;
+import doors.graphics.text.TextFragment;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.ui.root.UIRoot;
@@ -16,10 +16,12 @@ public class TextComponent implements IComponent {
     
     private Vector2in dimensions = new Vector2in();
     private Vector2in position = new Vector2in();
-    public String text;
+    private TextFragment textFragment = new TextFragment();
+    private String text;
 
     public TextComponent(String text, FontDecoration fontDecoration, Vector3fl color) {
         this.text = text;
+        this.textFragment.pushText(text, fontDecoration, color);
         this.fontDecoration = fontDecoration;
         this.color.set(color);
     }
@@ -27,6 +29,16 @@ public class TextComponent implements IComponent {
     @Override
     public Vector2in getDimensions() {
         return this.dimensions;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setText(String text) {
+        this.textFragment.clear();
+        this.textFragment.pushText(text, this.fontDecoration, this.color);
+        this.text = text;
     }
 
     @Override
@@ -41,13 +53,10 @@ public class TextComponent implements IComponent {
 
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
-        GlyphLookup.GLYPH_LOOKUP.writeTextToSpriteBatch(
+        this.textFragment.writeTextFragmentToSpriteBatch(
             spriteBatch,
-            this.text,
             this.position,
-            SpriteBatchHeight.UI_NORMAL,
-            this.fontDecoration,
-            this.color
+            SpriteBatchHeight.UI_NORMAL
         );
     }
     

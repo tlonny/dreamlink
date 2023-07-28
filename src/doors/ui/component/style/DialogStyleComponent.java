@@ -33,11 +33,13 @@ public class DialogStyleComponent implements IComponent {
     public void calculateDimensions() {
         this.content.calculateDimensions();
     }
+
     @Override
     public void update(Vector2in origin, UIRoot root) {
         this.position.set(origin);
         this.content.update(origin, root);
     }
+
     @Override
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.state == DialogState.DISABLED) {

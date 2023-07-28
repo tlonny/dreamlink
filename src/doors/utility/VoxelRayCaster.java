@@ -50,20 +50,14 @@ public class VoxelRayCaster {
             // Get the current position of the ray along the axis.
             var positionProjection = cubeFace.normal.getDot(this.position) * normalSignum;
 
-            // Now calculate the distance to the next voxel boundary we encounter...
-            // Consider the following situation:
-            // Position: 1.3, Cursor: 1, Next Voxel Boundaries: [1, 2]
-            // Observe how when travelling in a positive direction, the position of the next voxel boundary
-            // is <cursor> + 1, however in the negative direction, it is just <cursor>.
-
-            //Apologies if future Tim doesn't understand the comment below - but its late and I'm tired...
-
-            // N.B. its very important we use the cursor instead of trying to do it all with just the position
-            // in the scenario where the position is an integer value, the min distance to the voxel boundary
-            // will always be 0 and thus we'll continue going in the same direction forever. By using the cursor
-            // we introduce a sort of "error term" that corrects for this. Indeed the first iteration will advance
-            // as the distance is zero, but the second iteration will have a distance of 1. 
-
+            // Get the distance from the current position to the boundary of the next voxel.
+            // We use the cursor to "quantize" our current position and tell us which voxel we're in.
+            // You would think this could be inferred from the position with some rounding but
+            // unfortunately there is a problem. Consider the scenario where we are in voxel (x,y,z) and
+            // our position is (x,q,w). How far do we need to move until we reach the voxel (x-1, y, z)?
+            // The answer is 0, but if we move 0, then the position won't change. Therefore, for certain
+            // position values, the voxel we are in is ambigious and therefore needs to be tracked
+            // separately using the cursor object.
             var shiftedPositionProjection = cubeFace.normal.getDot(this.rayCursor) * normalSignum;
             shiftedPositionProjection += normalSignum > 0 ? 1 : 0;
             var distanceToVoxelBoundary = Math.abs(shiftedPositionProjection - positionProjection);
