@@ -2,7 +2,8 @@ package doors.ui.component;
 
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.texture.TextureSample;
-import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 
@@ -12,7 +13,12 @@ public class IconComponent implements IComponent {
     private BoxComponent spaceComponent;
 
     public IconComponent(TextureSample textureSample, Vector2in dimensions) {
-        this.spaceComponent = new BoxComponent(dimensions, dimensions);
+        this.spaceComponent = new BoxComponent(
+            null,
+            new FixedDimension(dimensions.x),
+            new FixedDimension(dimensions.y)
+        );
+
         this.backgroundComponent = new BackgroundComponent(this.spaceComponent, textureSample);
     }
 

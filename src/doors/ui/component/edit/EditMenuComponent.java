@@ -10,8 +10,11 @@ import doors.ui.component.ButtonComponent;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.layout.RowComponent;
+import doors.ui.component.layout.alignment.HorizontalAlignment;
+import doors.ui.component.layout.alignment.VerticalAlignment;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.ColumnComponent;
 import doors.ui.component.table.TableComponent;
 import doors.ui.component.window.WindowComponent;
@@ -39,7 +42,7 @@ public class EditMenuComponent implements IComponent {
         layoutComponent.children.add(labelComponent);
 
         this.tableComponent = new TableComponent<>(NUM_ROWS, ROW_HEIGHT);
-        layoutComponent.children.add(tableComponent);
+        layoutComponent.children.add(this.tableComponent);
 
         var buttonSpan = new RowComponent(SPACING);
         var saveButton = this.createButton("Save", null);
@@ -58,11 +61,13 @@ public class EditMenuComponent implements IComponent {
 
     private ButtonComponent createButton(String text, IAction0 onClick) {
         var boxComponent = new BoxComponent(
-            BUTTON_DIMENSIONS,
-            BUTTON_DIMENSIONS
+            new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK),
+            new FixedDimension(BUTTON_DIMENSIONS.x),
+            new FixedDimension(BUTTON_DIMENSIONS.y),
+            HorizontalAlignment.CENTER,
+            VerticalAlignment.CENTER
         );
 
-        boxComponent.child = new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK);
         return new ButtonComponent(boxComponent, onClick);
     }
 

@@ -6,8 +6,9 @@ import doors.level.block.Block;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.DialogBorderComponent;
 import doors.ui.component.border.DialogState;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.PaddingComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.BackgroundComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
@@ -30,7 +31,12 @@ public class EditQuickBarSlotComponent implements IComponent {
         this.keyCode = keyCode;
         this.selectedSlot = selectedSlot;
 
-        var spacerComponent = new BoxComponent(SLOT_DIMENSIONS, SLOT_DIMENSIONS);
+        var spacerComponent = new BoxComponent(
+            null,
+            new FixedDimension(SLOT_DIMENSIONS.x),
+            new FixedDimension(SLOT_DIMENSIONS.y)
+        );
+
         this.slotComponent = new BackgroundComponent(spacerComponent, null);
 
         var paddingComponent = new PaddingComponent(this.slotComponent, SLOT_PADDING);

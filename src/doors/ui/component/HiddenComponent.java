@@ -1,7 +1,6 @@
 package doors.ui.component;
 
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.ui.component.IComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 

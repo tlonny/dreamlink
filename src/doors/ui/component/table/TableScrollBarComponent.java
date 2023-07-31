@@ -5,7 +5,9 @@ import doors.graphics.texture.MenuTexture;
 import doors.io.Mouse;
 import doors.ui.component.BackgroundComponent;
 import doors.ui.component.IComponent;
-import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
+import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 
@@ -25,8 +27,9 @@ public class TableScrollBarComponent<T extends IComponent> implements IComponent
         this.tableState = tableState;
 
         var scrollBarSpaceComponent = new BoxComponent(
-            new Vector2in(SCROLL_BAR_WIDTH, 0),
-            new Vector2in(SCROLL_BAR_WIDTH, Integer.MAX_VALUE)
+            null,
+            new FixedDimension(SCROLL_BAR_WIDTH),
+            new GrowDimension()
         );
 
         this.scrollBarBackgroundComponent = new BackgroundComponent(
@@ -79,21 +82,23 @@ public class TableScrollBarComponent<T extends IComponent> implements IComponent
         this.scrollBarBackgroundComponent.update(root);
         this.scrollBoxComponent.update(root);
 
-        if(root.draggedComponent == this.scrollBoxComponent) {
-            var mousePosition = Mouse.MOUSE.position;
-            var scrollRange = this.getDimensions().y - this.scrollBoxComponent.getDimensions().y;
-            var scrollBoxStart = this.scrollBoxComponent.getPosition().y;
-            var scrollBoxStop = scrollBoxStart + this.scrollBoxComponent.getDimensions().y;
-
-            if(mousePosition.y >= scrollBoxStart && mousePosition.y <= scrollBoxStop) {
-                this.scrollAmount += mousePosition.y - this.scrollBoxComponent.lastMousePosition.y;
-            }
-
-            this.scrollAmount = Math.max(0, Math.min(this.scrollAmount, scrollRange));
-            this.scrollBoxComponent.lastMousePosition.set(mousePosition);
-
-            this.tableState.setScrollFactor((float)this.scrollAmount / scrollRange);
+        if(root.draggedComponent != this.scrollBoxComponent) {
+            return;
         }
+
+        var mousePosition = Mouse.MOUSE.position;
+        var scrollRange = this.getDimensions().y - this.scrollBoxComponent.getDimensions().y;
+        var scrollBoxStart = this.scrollBoxComponent.getPosition().y;
+        var scrollBoxStop = scrollBoxStart + this.scrollBoxComponent.getDimensions().y;
+
+        if(mousePosition.y >= scrollBoxStart && mousePosition.y <= scrollBoxStop) {
+            this.scrollAmount += mousePosition.y - this.scrollBoxComponent.lastMousePosition.y;
+        }
+
+        this.scrollAmount = Math.max(0, Math.min(this.scrollAmount, scrollRange));
+        this.scrollBoxComponent.lastMousePosition.set(mousePosition);
+
+        this.tableState.setScrollFactor((float)this.scrollAmount / scrollRange);
     }
 
     @Override

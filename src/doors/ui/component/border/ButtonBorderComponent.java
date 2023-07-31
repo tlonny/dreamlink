@@ -1,7 +1,5 @@
 package doors.ui.component.border;
 
-import org.lwjgl.system.CallbackI.S;
-
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.ui.border.DisabledButtonBorderSchema;

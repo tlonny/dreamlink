@@ -9,10 +9,11 @@ import doors.level.block.Block;
 import doors.ui.component.IComponent;
 import doors.ui.component.IconComponent;
 import doors.ui.component.TextComponent;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.RowComponent;
 import doors.ui.component.layout.alignment.HorizontalAlignment;
 import doors.ui.component.layout.alignment.VerticalAlignment;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
@@ -43,8 +44,13 @@ public class EditBlockTableRowComponent implements IComponent {
         this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
         layoutComponent.children.add(this.nameComponent);
 
-        this.spaceComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
-        this.spaceComponent.child = layoutComponent;
+        this.spaceComponent = new BoxComponent(
+            layoutComponent,
+            new GrowDimension(),
+            new GrowDimension(),
+            HorizontalAlignment.LEFT,
+            VerticalAlignment.CENTER
+        );
     }
 
     @Override

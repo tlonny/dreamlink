@@ -33,13 +33,11 @@ public class TableRowsComponent<T extends IComponent> implements IComponent {
 
     @Override
     public void calculateDimensions() {
-        var maxWidth = 10;
+        this.dimensions.set(0, this.tableState.numVisibleRows * this.cellHeight);
         for(var row : this.tableState.rows) {
             row.calculateDimensions();
-            maxWidth = Math.max(maxWidth, row.getDimensions().x);
+            this.dimensions.x = Math.max(this.dimensions.x, row.getDimensions().x);
         }
-
-        this.dimensions.set(maxWidth, this.tableState.numVisibleRows * this.cellHeight);
     }
 
     @Override
@@ -49,10 +47,11 @@ public class TableRowsComponent<T extends IComponent> implements IComponent {
             this.cellHeight
         );
 
+        this.dimensions.x = 0;
         for(var row : this.tableState.rows) {
             row.adjustDimensions(this.spaceCursor);
+            this.dimensions.x = Math.max(this.dimensions.x, row.getDimensions().x);
         }
-        this.dimensions.x = availableSpace.x;
     }
 
     @Override

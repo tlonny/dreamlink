@@ -5,7 +5,8 @@ import doors.io.Mouse;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.ButtonBorderComponent;
 import doors.ui.component.border.ButtonState;
-import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
@@ -17,7 +18,12 @@ public class TableScrollBoxComponent implements IComponent {
     public boolean isDisabled;
 
     public TableScrollBoxComponent() {
-        var boxComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX);
+        var boxComponent = new BoxComponent(
+            null,
+            new GrowDimension(),
+            new GrowDimension()
+        );
+
         this.borderComponent = new ButtonBorderComponent(boxComponent);
     }
 

@@ -6,9 +6,11 @@ import doors.graphics.spritebatch.SpriteBatch;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.DialogBorderComponent;
 import doors.ui.component.border.DialogState;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.component.layout.RowComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
+import doors.ui.component.layout.box.WrapDimension;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 
@@ -30,8 +32,12 @@ public class TableComponent<T extends IComponent> implements IComponent {
         layoutComponent.children.add(new PaddingComponent(this.tableRowsComponent, CONTENT_PADDING));
         layoutComponent.children.add(this.tableScrollBarComponent);
 
-        var spaceComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX_X);
-        spaceComponent.child = layoutComponent;
+        var spaceComponent = new BoxComponent(
+            layoutComponent,
+            new GrowDimension(),
+            new WrapDimension()
+        );
+
         this.borderComponent = new DialogBorderComponent(spaceComponent);
         this.borderComponent.state = DialogState.FOCUSED;
     }

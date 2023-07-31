@@ -5,8 +5,10 @@ import doors.graphics.text.FontDecoration;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.border.DialogBorderComponent;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.PaddingComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
+import doors.ui.component.layout.box.WrapDimension;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
@@ -24,10 +26,11 @@ public class MainMenuExploreStatusComponent implements IComponent {
         var paddingComponent = new PaddingComponent(this.statusComponent, PADDING);
 
         var spaceComponent = new BoxComponent(
-            Vector2in.ZERO,
-            Vector2in.MAX_X
+            paddingComponent,
+            new GrowDimension(),
+            new WrapDimension()
         );
-        spaceComponent.child = paddingComponent;
+
         this.borderComponent = new DialogBorderComponent(spaceComponent);
     }
 

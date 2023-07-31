@@ -1,7 +1,6 @@
 package doors.ui.component.mainmenu;
 
 import java.io.File;
-import java.util.Random;
 
 import doors.Config;
 import doors.graphics.text.FontDecoration;
@@ -13,8 +12,9 @@ import doors.ui.component.IComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.layout.RowComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.ColumnComponent;
 import doors.ui.component.table.TableComponent;
 import doors.ui.component.window.WindowComponent;
@@ -64,11 +64,10 @@ public class MainMenuEditComponent implements IComponent {
 
     private ButtonComponent createButton(String text, IAction0 onClick) {
         var boxComponent = new BoxComponent(
-            BUTTON_DIMENSIONS,
-            BUTTON_DIMENSIONS
+            new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK),
+            new FixedDimension(BUTTON_DIMENSIONS.x),
+            new FixedDimension(BUTTON_DIMENSIONS.y)
         );
-
-        boxComponent.child = new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK);
         return new ButtonComponent(boxComponent, onClick);
     }
 
@@ -77,14 +76,6 @@ public class MainMenuEditComponent implements IComponent {
         var directory = new File(Config.WORKSPACE_PATH);
         for(var file : directory.listFiles(File::isDirectory)) {
             var row = new MainMenuEditLevelTableRow(this.selectedLevel, file.getName());
-            this.tableComponent.getRows().add(row);
-        }
-
-        this.tableComponent.getRows().add(new MainMenuEditLevelTableRow(this.selectedLevel, "fusdfjsdgfsdgf dfgkdfgkdf gkdfg dfg "));
-        var rand = new Random();
-        for(var ix = 0; ix < 10; ix += 1) {
-            var name = "foo_" + rand.nextInt();
-            var row = new MainMenuEditLevelTableRow(this.selectedLevel, name);
             this.tableComponent.getRows().add(row);
         }
     }

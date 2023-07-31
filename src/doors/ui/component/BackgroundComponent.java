@@ -3,7 +3,6 @@ package doors.ui.component;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.TextureSample;
-import doors.ui.component.IComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;

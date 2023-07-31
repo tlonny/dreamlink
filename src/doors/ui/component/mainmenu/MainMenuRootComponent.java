@@ -10,7 +10,8 @@ import doors.ui.component.IComponent;
 import doors.ui.component.ButtonComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.layout.PaddingComponent;
-import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.layout.ColumnComponent;
 import doors.ui.component.window.WindowComponent;
 import doors.ui.root.UIRoot;
@@ -43,11 +44,11 @@ public class MainMenuRootComponent implements IComponent {
 
     private ButtonComponent createButton(String text, IAction0 onClick) {
         var boxComponent = new BoxComponent(
-            BUTTON_DIMENSIONS,
-            BUTTON_DIMENSIONS
+            new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK),
+            new FixedDimension(BUTTON_DIMENSIONS.x),
+            new FixedDimension(BUTTON_DIMENSIONS.y)
         );
         
-        boxComponent.child = new TextComponent(text, FontDecoration.NORMAL, Vector3fl.BLACK);
         return new ButtonComponent(boxComponent, onClick);
     }
 

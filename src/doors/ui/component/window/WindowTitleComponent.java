@@ -11,7 +11,9 @@ import doors.ui.component.BackgroundComponent;
 import doors.ui.component.layout.RowComponent;
 import doors.ui.component.layout.alignment.HorizontalAlignment;
 import doors.ui.component.layout.alignment.VerticalAlignment;
-import doors.ui.component.layout.BoxComponent;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
+import doors.ui.component.layout.box.WrapDimension;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.vector.Vector2in;
@@ -42,13 +44,13 @@ public class WindowTitleComponent implements IComponent {
         );
 
         var boxComponent = new BoxComponent(
-            Vector2in.ZERO, 
-            new Vector2in(Integer.MAX_VALUE, 0),
-            HorizontalAlignment.LEFT, 
+            paddingComponent,
+            new GrowDimension(),
+            new WrapDimension(),
+            HorizontalAlignment.LEFT,
             VerticalAlignment.CENTER
         );
-        boxComponent.child = paddingComponent;
-        
+
         this.backgroundComponent = new BackgroundComponent(boxComponent, MenuTexture.MENU_TEXTURE.highlight);
     }
 

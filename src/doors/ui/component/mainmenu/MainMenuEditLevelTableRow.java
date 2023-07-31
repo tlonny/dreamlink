@@ -6,8 +6,10 @@ import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
-import doors.ui.component.layout.BoxComponent;
 import doors.ui.component.layout.alignment.HorizontalAlignment;
+import doors.ui.component.layout.alignment.VerticalAlignment;
+import doors.ui.component.layout.box.BoxComponent;
+import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
@@ -25,9 +27,13 @@ public class MainMenuEditLevelTableRow implements IComponent {
         this.boxedSelection = boxedSelection;
         this.levelNameComponent = new TextComponent(levelName, FontDecoration.NORMAL, Vector3fl.BLACK);
 
-        this.layoutComponent = new BoxComponent(Vector2in.ZERO, Vector2in.MAX);
-        this.layoutComponent.horizontalAlignment = HorizontalAlignment.LEFT;
-        this.layoutComponent.child = this.levelNameComponent;
+        this.layoutComponent = new BoxComponent(
+            this.levelNameComponent,
+            new GrowDimension(),
+            new GrowDimension(),
+            HorizontalAlignment.LEFT,
+            VerticalAlignment.CENTER
+        );
     }
 
     public String getLevelName() {
