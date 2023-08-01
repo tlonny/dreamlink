@@ -115,7 +115,7 @@ public class UIRoot {
         this.clearComponentCaptures();
         for(var rootComponent : this.rootComponents) {
             rootComponent.calculateDimensions();
-            rootComponent.adjustDimensions(Config.RESOLUTION);
+            rootComponent.adjustDimensions(Config.CONFIG.getResolution());
             rootComponent.calculatePosition(Vector2in.ZERO);
             rootComponent.update(this);
         }

@@ -28,7 +28,7 @@ public class Camera {
 
         this.mouseDelta
             .set(Mouse.MOUSE.position)
-            .div(Config.RESOLUTION)
+            .div(Config.CONFIG.getResolution())
             .sub(0.5f)
             .mul(MOUSE_SENSITIVITY)
             // in 2D screen space, left and up are negative, right and down are positive.

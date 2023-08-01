@@ -73,7 +73,7 @@ public class MainMenuEditComponent implements IComponent {
 
     public void readLevels() {
         this.tableComponent.getRows().clear();
-        var directory = new File(Config.WORKSPACE_PATH);
+        var directory = new File(Config.CONFIG.getWorkspacePath());
         for(var file : directory.listFiles(File::isDirectory)) {
             var row = new MainMenuEditLevelTableRow(this.selectedLevel, file.getName());
             this.tableComponent.getRows().add(row);
@@ -97,7 +97,7 @@ public class MainMenuEditComponent implements IComponent {
 
     @Override
     public void calculatePosition(Vector2in origin) {
-        this.originCursor.set(Config.RESOLUTION).sub(this.getDimensions()).div(2);
+        this.originCursor.set(Config.CONFIG.getResolution()).sub(this.getDimensions()).div(2);
         this.windowComponent.calculatePosition(this.originCursor);
     }
 

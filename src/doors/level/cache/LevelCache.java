@@ -26,7 +26,7 @@ public class LevelCache {
 
     public void requestLevel(String levelName) {
         if(!this.levelMap.containsKey(levelName)) {
-            var levelDirectory = Paths.get(Config.CACHE_PATH, levelName).toString();
+            var levelDirectory = Paths.get(Config.CONFIG.getCachePath(), levelName).toString();
             var initialState = new File(levelDirectory).isDirectory() 
                 ? LevelCacheEntryState.DOWNLOADED
                 : LevelCacheEntryState.MISSING;

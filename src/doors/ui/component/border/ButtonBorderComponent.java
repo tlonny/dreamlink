@@ -22,7 +22,7 @@ public class ButtonBorderComponent implements IComponent {
     private static int PRESSED_PADDING_BOTTOM = 1;
     private static int PRESSED_PADDING_RIGHT = 1;
 
-    private ButtonState state;
+    public ButtonState state;
 
     private PaddingComponent paddingComponent;
 
@@ -33,21 +33,6 @@ public class ButtonBorderComponent implements IComponent {
 
     public ButtonBorderComponent(IComponent content) {
         this(content, ButtonState.NORMAL);
-    }
-
-    public void setState(ButtonState state) {
-        this.state = state;
-        if(this.state == ButtonState.PRESSED) {
-            this.paddingComponent.paddingTop = PRESSED_PADDING_TOP;
-            this.paddingComponent.paddingBottom = PRESSED_PADDING_BOTTOM;
-            this.paddingComponent.paddingLeft = PRESSED_PADDING_LEFT;
-            this.paddingComponent.paddingRight = PRESSED_PADDING_RIGHT;
-        } else {
-            this.paddingComponent.paddingTop = PADDING_TOP;
-            this.paddingComponent.paddingBottom = PADDING_BOTTOM;
-            this.paddingComponent.paddingLeft = PADDING_LEFT;
-            this.paddingComponent.paddingRight = PADDING_RIGHT;
-        }
     }
 
     public void setContent(IComponent content) {
@@ -66,6 +51,17 @@ public class ButtonBorderComponent implements IComponent {
 
     @Override
     public void calculateDimensions() {
+        if(this.state == ButtonState.PRESSED) {
+            this.paddingComponent.paddingTop = PRESSED_PADDING_TOP;
+            this.paddingComponent.paddingBottom = PRESSED_PADDING_BOTTOM;
+            this.paddingComponent.paddingLeft = PRESSED_PADDING_LEFT;
+            this.paddingComponent.paddingRight = PRESSED_PADDING_RIGHT;
+        } else {
+            this.paddingComponent.paddingTop = PADDING_TOP;
+            this.paddingComponent.paddingBottom = PADDING_BOTTOM;
+            this.paddingComponent.paddingLeft = PADDING_LEFT;
+            this.paddingComponent.paddingRight = PADDING_RIGHT;
+        }
         this.paddingComponent.calculateDimensions();
     }
 

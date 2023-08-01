@@ -86,8 +86,8 @@ public class EditQuickBarComponent implements IComponent {
     @Override
     public void calculatePosition(Vector2in origin) {
         var dimensions = this.getDimensions();
-        this.positionCursor.x = (Config.RESOLUTION.x - dimensions.x) / 2;
-        this.positionCursor.y = Config.RESOLUTION.y - dimensions.y - SCREEN_PADDING;
+        this.positionCursor.x = (Config.CONFIG.getResolution().x - dimensions.x) / 2;
+        this.positionCursor.y = Config.CONFIG.getResolution().y - dimensions.y - SCREEN_PADDING;
         this.borderComponent.calculatePosition(this.positionCursor);
     }
 

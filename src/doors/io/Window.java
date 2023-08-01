@@ -1,12 +1,16 @@
 package doors.io;
 
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallbackI;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL42;
 import org.lwjgl.system.MemoryUtil;
 
-import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector2fl;
+import doors.utility.vector.Vector2in;
 
 public class Window {
 
@@ -83,12 +87,5 @@ public class Window {
             (float)this.cursorYPositionBuffer[0]
         ).div(this.dimensions);
     }
-
-    public void bind() {
-        GL42.glBindFramebuffer(GL42.GL_FRAMEBUFFER, 0);
-        GL42.glViewport(0, 0, this.dimensions.x, this.dimensions.y);
-        GL42.glClear(GL42.GL_COLOR_BUFFER_BIT | GL42.GL_DEPTH_BUFFER_BIT);
-    }
-
 
 }

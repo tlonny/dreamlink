@@ -5,5 +5,5 @@ target/
 .settings/
 .log
 
-scratch/
 levels/
+.config.json

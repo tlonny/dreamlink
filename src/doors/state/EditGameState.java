@@ -37,7 +37,7 @@ public class EditGameState extends AbstractGameState {
     public static EditGameState EDIT_GAME_STATE = new EditGameState();
 
     private static Vector2in RETICULE_POSITION = new Vector2in()
-        .set(Config.RESOLUTION)
+        .set(Config.CONFIG.getResolution())
         .sub(EntityTexture.ENTITY_TEXTURE.reticule.dimensions)
         .div(2);
 
@@ -110,7 +110,7 @@ public class EditGameState extends AbstractGameState {
         super.use();
 
         // TODO: Dispose of old level
-        var levelDirectory = Paths.get(Config.WORKSPACE_PATH, levelName).toString();
+        var levelDirectory = Paths.get(Config.CONFIG.getWorkspacePath(), levelName).toString();
         this.currentLevel = new Level(levelDirectory);
 
         Mouse.MOUSE.setLocked(true);
@@ -162,7 +162,7 @@ public class EditGameState extends AbstractGameState {
         this.spriteBatch.pushSprite(
             ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.texture.createTextureSample(),
             Vector2in.ZERO,
-            Config.RESOLUTION,
+            Config.CONFIG.getResolution(),
             SpriteBatchHeight.SCREEN,
             Vector3fl.WHITE
         );

@@ -68,7 +68,7 @@ public class TableScrollBoxComponent implements IComponent {
             root.selectedCursor = PointerCursor.POINTER_CURSOR;
         }
 
-        this.borderComponent.setState(this.isDisabled ? ButtonState.DISABLED : ButtonState.NORMAL);
+        this.borderComponent.state = this.isDisabled ? ButtonState.DISABLED : ButtonState.NORMAL;
         root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);
     }
 

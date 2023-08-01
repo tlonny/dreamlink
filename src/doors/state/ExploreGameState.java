@@ -37,7 +37,7 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
     private static float MAX_OPEN_DISTANCE = 20;
 
     private static Vector2in RETICULE_POSITION = new Vector2in()
-        .set(Config.RESOLUTION)
+        .set(Config.CONFIG.getResolution())
         .sub(EntityTexture.ENTITY_TEXTURE.reticule.dimensions)
         .div(2);
 
@@ -311,7 +311,7 @@ public class ExploreGameState extends AbstractGameState implements IHasTerrain {
         this.spriteBatch.pushSprite(
             ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.texture.createTextureSample(),
             Vector2in.ZERO,
-            Config.RESOLUTION,
+            Config.CONFIG.getResolution(),
             SpriteBatchHeight.SCREEN,
             Vector3fl.WHITE
         );

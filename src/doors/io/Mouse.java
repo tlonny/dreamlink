@@ -46,7 +46,7 @@ public class Mouse {
         // we should also zero the buffered cursor position as if the camera does
         // a read before the next update loop, it will pick up the "unlocked" mouse
         // position.
-        this.position.set(Config.RESOLUTION).div(2);
+        this.position.set(Config.CONFIG.getResolution()).div(2);
     }
 
     private void onMouseButtonEvent(long window, int button, int action, int mode) {
@@ -93,8 +93,8 @@ public class Mouse {
         GLFW.glfwGetCursorPos(Window.WINDOW.windowID, this.cursorXBuffer, this.cursorYBuffer);
 
         this.position.set(
-            (int)(this.cursorXBuffer[0] / Window.WINDOW.dimensions.x * Config.RESOLUTION.x),
-            (int)(this.cursorYBuffer[0] / Window.WINDOW.dimensions.y * Config.RESOLUTION.y)
+            (int)(this.cursorXBuffer[0] / Window.WINDOW.dimensions.x * Config.CONFIG.getResolution().x),
+            (int)(this.cursorYBuffer[0] / Window.WINDOW.dimensions.y * Config.CONFIG.getResolution().y)
         );
 
         if(this.isLocked) {

@@ -68,11 +68,11 @@ public class ButtonComponent implements IComponent {
         }
 
         if(this.isDisabled) {
-            this.borderComponent.setState(ButtonState.DISABLED);
+            this.borderComponent.state = ButtonState.DISABLED;
         } else if(this.isPressed) {
-            this.borderComponent.setState(ButtonState.PRESSED);
+            this.borderComponent.state = ButtonState.PRESSED;
         } else {
-            this.borderComponent.setState(ButtonState.NORMAL);
+            this.borderComponent.state = ButtonState.NORMAL;
         }
 
         root.captureMouse(this, this.getPosition(), this.getDimensions(), 0);

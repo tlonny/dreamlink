@@ -120,7 +120,7 @@ public class Shader {
         this.workingMatrix.identity().rotateY((float)Math.PI).rotateX(-rotation.x).rotateY(-rotation.y);
         this.setUniform(this.uniformViewRotationMatrixID, this.workingMatrix);
 
-        var aspectRatio = Config.RESOLUTION.getAspectRatio();
+        var aspectRatio = Config.CONFIG.getResolution().getAspectRatio();
         this.workingMatrix.identity().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
         this.setUniform(this.uniformViewProjectionMatrixID, this.workingMatrix);
     }

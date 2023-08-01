@@ -55,14 +55,14 @@ public class SpriteBatch {
 
         for(var sprite : this.batchedSprites) {
             this.worldPosition.set(
-                sprite.position.getFloatX() / Config.RESOLUTION.x * 2f - 1f,
-                (Config.RESOLUTION.y - sprite.position.getFloatY() - sprite.dimensions.getFloatY()) / Config.RESOLUTION.y * 2f - 1f, 
+                sprite.position.getFloatX() / Config.CONFIG.getResolution().x * 2f - 1f,
+                (Config.CONFIG.getResolution().y - sprite.position.getFloatY() - sprite.dimensions.getFloatY()) / Config.CONFIG.getResolution().y * 2f - 1f, 
                 1f
             );
 
             this.worldDimensions.set(
-                sprite.dimensions.getFloatX() / Config.RESOLUTION.x * 2f, 
-                sprite.dimensions.getFloatY() / Config.RESOLUTION.y * 2f,
+                sprite.dimensions.getFloatX() / Config.CONFIG.getResolution().x * 2f, 
+                sprite.dimensions.getFloatY() / Config.CONFIG.getResolution().y * 2f,
                 0f
             );
 

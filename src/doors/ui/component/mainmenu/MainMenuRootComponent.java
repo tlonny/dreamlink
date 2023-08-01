@@ -74,7 +74,7 @@ public class MainMenuRootComponent implements IComponent {
 
     @Override
     public void calculatePosition(Vector2in origin) {
-        this.originCursor.set(Config.RESOLUTION).sub(this.getDimensions()).div(2);
+        this.originCursor.set(Config.CONFIG.getResolution()).sub(this.getDimensions()).div(2);
         this.windowComponent.calculatePosition(this.originCursor);
     }
 

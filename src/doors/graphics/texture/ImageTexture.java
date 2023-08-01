@@ -4,13 +4,13 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL42;
 
-import doors.Config;
 import doors.utility.FileIO;
 import doors.utility.vector.Vector2in;
 
 public class ImageTexture extends AbstractTexture {
 
-    private static int BYTE_BUFFER_BYTES = Config.MAX_IMAGE_TEXTURE_DIMENSIONS.getIntArea() * 4;
+    private static Vector2in MAX_IMAGE_TEXTURE_DIMENSIONS = new Vector2in(1024, 1024);
+    private static int BYTE_BUFFER_BYTES = MAX_IMAGE_TEXTURE_DIMENSIONS.getIntArea() * 4;
     private static ByteBuffer BYTE_BUFFER = ByteBuffer.allocateDirect(BYTE_BUFFER_BYTES);
 
     private String path;

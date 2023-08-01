@@ -15,7 +15,7 @@ public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
     public EmptyTexture texture;
 
     public AbstractVirtualRenderTarget() {
-         this.texture = new EmptyTexture(this.getTextureChannel(), Config.RESOLUTION);
+         this.texture = new EmptyTexture(this.getTextureChannel(), Config.CONFIG.getResolution());
     }
 
     public void setup() {        
@@ -28,7 +28,7 @@ public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
 
         this.depthBufferID = GL42.glGenRenderbuffers();
         GL42.glBindRenderbuffer(GL42.GL_RENDERBUFFER, this.depthBufferID);
-        GL42.glRenderbufferStorage(GL42.GL_RENDERBUFFER, GL42.GL_DEPTH_COMPONENT, Config.RESOLUTION.x, Config.RESOLUTION.y);
+        GL42.glRenderbufferStorage(GL42.GL_RENDERBUFFER, GL42.GL_DEPTH_COMPONENT, Config.CONFIG.getResolution().x, Config.CONFIG.getResolution().y);
         GL42.glFramebufferRenderbuffer(GL42.GL_FRAMEBUFFER, GL42.GL_DEPTH_ATTACHMENT, GL42.GL_RENDERBUFFER, this.depthBufferID);
     }
 
@@ -41,6 +41,6 @@ public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
 
     @Override
     protected Vector2in getViewport() {
-        return Config.RESOLUTION;
+        return Config.CONFIG.getResolution();
     }
 }
