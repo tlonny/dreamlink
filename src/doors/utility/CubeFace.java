@@ -1,6 +1,5 @@
 package doors.utility;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,17 +50,13 @@ public class CubeFace {
         FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM
     };
 
-    public static CubeFace[] HORIZONTAL_CUBE_FACES = {
-        FRONT, LEFT, BACK, RIGHT
-    };
-
-    public static CubeFace[] VERTICAL_CUBE_FACES = {
-        TOP, BOTTOM
-    };
-
     public Vector3in normal;
     public Vector3fl rotation;
     public String name;
+
+    public String toString() {
+        return String.format("CubeFace(%s)", this.name);
+    }
 
     CubeFace(String name, Vector3in normal, Vector3fl rotation) {
         this.name = name;

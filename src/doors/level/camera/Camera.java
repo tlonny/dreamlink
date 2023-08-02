@@ -3,6 +3,7 @@ package doors.level.camera;
 import doors.Config;
 import doors.io.Mouse;
 import doors.utility.CubeFace;
+import doors.utility.Orientation;
 import doors.utility.vector.Vector2fl;
 import doors.utility.vector.Vector3fl;
 
@@ -21,6 +22,22 @@ public class Camera {
 
     public Camera(ICameraMovementSystem movementSystem) {
         this.movementSystem = movementSystem;
+    }
+
+    public Orientation getOrientation() {
+        var bestOrientation = Orientation.FRONT;
+        var bestDotProduct = Float.NEGATIVE_INFINITY;
+
+        for(var orientation : Orientation.ORIENTATION_MAP.values()) {
+            var dotProduct = this.direction.getDot(orientation.getCubeFace().normal);
+
+            if(dotProduct > bestDotProduct) {
+                bestDotProduct = dotProduct;
+                bestOrientation = orientation;
+            }
+        }
+
+        return bestOrientation;
     }
 
     public void update() {

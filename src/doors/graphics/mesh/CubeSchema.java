@@ -3,6 +3,7 @@ package doors.graphics.mesh;
 import doors.graphics.shader.Shader;
 import doors.graphics.texture.TextureSample;
 import doors.utility.CubeFace;
+import doors.utility.Orientation;
 import doors.utility.vector.Vector3fl;
 
 public class CubeSchema {
@@ -107,6 +108,7 @@ public class CubeSchema {
                 textureSample,
                 this.cubeID,
                 this.position,
+                Orientation.FRONT,
                 this.dimensions,
                 cubeFace,
                 Vector3fl.WHITE

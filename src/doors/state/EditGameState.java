@@ -77,15 +77,16 @@ public class EditGameState extends AbstractGameState {
             // Can accidentally trap yourself...
             this.voxelRayCaster.advance();
 
-            var block = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
-            if(block != null) {
+            var blockPacker = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
+            if(blockPacker.block != null) {
                 break;
             }
         }
 
         this.currentLevel.terrain.setBlock(
             this.voxelRayCaster.previousRayCursor,
-            selectedBlock
+            selectedBlock,
+            this.camera.getOrientation()
         );
     }
 
@@ -96,14 +97,18 @@ public class EditGameState extends AbstractGameState {
 
         this.voxelRayCaster.cast(this.camera.position, this.camera.direction);
         for(var ix = 0; ix < MAX_RAY_ITERATIONS; ix += 1) {
-            var block = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
-            if(block != null) {
+            var blockPacker = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
+            if(blockPacker.block != null) {
                 break;
             }
             this.voxelRayCaster.advance();
         }
 
-        this.currentLevel.terrain.setBlock(this.voxelRayCaster.rayCursor, null);
+        this.currentLevel.terrain.setBlock(
+            this.voxelRayCaster.rayCursor, 
+            null,
+            this.camera.getOrientation()
+        );
     }
 
     public void use(String levelName) {

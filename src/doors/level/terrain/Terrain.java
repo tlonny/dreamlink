@@ -7,9 +7,11 @@ import org.json.JSONObject;
 import doors.graphics.mesh.MeshBuffer;
 import doors.level.block.Block;
 import doors.level.block.BlockMap;
+import doors.level.block.BlockPacker;
 import doors.queue.IncrementalWorkQueue;
 import doors.utility.CubeFace;
 import doors.utility.FileIO;
+import doors.utility.Orientation;
 import doors.utility.vector.Vector3fl;
 import doors.utility.vector.Vector3in;
 
@@ -31,10 +33,12 @@ public class Terrain {
     private Vector3in adjacentGlobalPositionCursor = new Vector3in();
 
     private BlockMap blockMap;
+    private BlockPacker blockPacker;
     public boolean isReady = false;
 
     public Terrain(String terrainDirectory, BlockMap blockMap) {
         this.blockMap = blockMap;
+        this.blockPacker = new BlockPacker(blockMap);
 
         var terrainConfigPath = Paths.get(terrainDirectory, CONFIG_FILE_NAME).toString();
         var terrainConfigString = FileIO.loadText(terrainConfigPath);
@@ -67,9 +71,10 @@ public class Terrain {
         }
     }
 
-    public Block getBlock(Vector3in position) {
+    public BlockPacker getBlock(Vector3in position) {
         if(!position.isWithinBounds(Vector3in.ZERO, this.blockDimensions)) {
-            return null;
+            this.blockPacker.block = null;
+            return this.blockPacker;
         }
 
         this.chunkCursor.set(position).div(Chunk.DIMENSIONS);
@@ -79,12 +84,13 @@ public class Terrain {
         var chunk = this.chunks[chunkIndex];
 
         var blockIndex = this.blockCursor.serialize(Chunk.DIMENSIONS);
-        var blockID = chunk.blockData[blockIndex];
-        return this.blockMap.getBlock(blockID);
+        var blockData = chunk.blockData[blockIndex];
+        this.blockPacker.unpackBlock(blockData);
+        return this.blockPacker;
     }
 
 
-    public void setBlock(Vector3in position, Block block) {
+    public void setBlock(Vector3in position, Block block, Orientation orientation) {
         if(!position.isWithinBounds(Vector3in.ZERO, this.blockDimensions)) {
             return;
         }
@@ -95,10 +101,12 @@ public class Terrain {
 
         this.blockCursor.set(chunkCursor).mul(Chunk.DIMENSIONS).mul(-1).add(position);
         var blockIndex = this.blockCursor.serialize(Chunk.DIMENSIONS);
-        var oldBlockID = chunk.blockData[blockIndex];
-        var blockID = block == null ? 0 : block.blockID;
+        var oldBlockData = chunk.blockData[blockIndex];
+        this.blockPacker.block = block;
+        this.blockPacker.orientation = orientation;
+        var blockData = this.blockPacker.packBlock();
 
-        if(oldBlockID == blockID) {
+        if(oldBlockData == blockData) {
             return;
         }
 
@@ -110,11 +118,16 @@ public class Terrain {
 
             this.chunkCursor.set(this.positionCursor).div(Chunk.DIMENSIONS);
             var adjacentChunk = this.chunks[this.chunkCursor.serialize(this.chunkDimensions)];
+
+            if(adjacentChunk == chunk) {
+                continue;
+            }
+
             adjacentChunk.isDirty |= true;
             IncrementalWorkQueue.INCREMENTAL_WORK_QUEUE.submitTask(() -> this.processDirtyChunk(adjacentChunk));
         }
 
-        chunk.blockData[blockIndex] = blockID;
+        chunk.blockData[blockIndex] = blockData;
         chunk.isDirty |= true;
         IncrementalWorkQueue.INCREMENTAL_WORK_QUEUE.submitTask(() -> this.processDirtyChunk(chunk));
     }
@@ -123,6 +136,7 @@ public class Terrain {
         var maxIndex = Chunk.DIMENSIONS.getIntVolume();
 
         MeshBuffer.DEFAULT_MESH_BUFFER.clear();
+        System.out.println("oof");
         for(var blockIndex = 0; blockIndex < maxIndex; blockIndex += 1) {
             this.localPositionCursor
                 .set(blockIndex, Chunk.DIMENSIONS);
@@ -131,7 +145,9 @@ public class Terrain {
                 .set(chunk.position)
                 .add(this.localPositionCursor);
 
-            var block = this.getBlock(this.globalPositionCursor);
+            var blockPacker = this.getBlock(this.globalPositionCursor);
+            var block = blockPacker.block;
+            var orientation = blockPacker.orientation;
 
             if(block == null) {
                 continue;
@@ -139,11 +155,13 @@ public class Terrain {
 
             for(var cubeFace : CubeFace.CUBE_FACES) {
                 this.adjacentGlobalPositionCursor.set(globalPositionCursor).add(cubeFace.normal);
-                var adjacentBlock = this.getBlock(this.adjacentGlobalPositionCursor);
+                var adjacentBlockPacker = this.getBlock(this.adjacentGlobalPositionCursor);
+                var adjacentBlock = adjacentBlockPacker.block;
             
                 block.writeBlockFaceToMeshBuffer(
                     MeshBuffer.DEFAULT_MESH_BUFFER, 
                     this.localPositionCursor, 
+                    orientation,
                     cubeFace,
                     adjacentBlock
                 );

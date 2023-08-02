@@ -4,6 +4,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import doors.graphics.texture.TextureSample;
 import doors.utility.CubeFace;
+import doors.utility.Maths;
+import doors.utility.Orientation;
 import doors.utility.vector.Vector3fl;
 import doors.utility.vector.IVector2fl;
 import doors.utility.vector.IVector3fl;
@@ -75,7 +77,7 @@ public class MeshBuffer {
         return packed;
     }
 
-    public void pushQuad(TextureSample textureSample, int transformerID, IVector3fl position, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
+    public void pushQuad(TextureSample textureSample, int transformerID, IVector3fl position, Orientation orientation, IVector3fl dimensions, CubeFace cubeFace, Vector3fl color) {
         var packedColor = this.packColor(color);
         var packedLookupIDs = this.packLookupIDs(textureSample.textureChannel.getTextureUnitID(), transformerID);
         var vertexPosition = new Vector3fl();
@@ -126,8 +128,9 @@ public class MeshBuffer {
             this.normalBuffer.put(cubeFace.normal.getFloatX());
             this.normalBuffer.put(cubeFace.normal.getFloatY());
             this.normalBuffer.put(cubeFace.normal.getFloatZ());
-            this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].x);
-            this.textureOffsetBuffer.put(textureSample.textureOffsets[ix].y);
+            var textureOffsetIndex = Maths.mod(ix - orientation.index, 4);
+            this.textureOffsetBuffer.put(textureSample.textureOffsets[textureOffsetIndex].x);
+            this.textureOffsetBuffer.put(textureSample.textureOffsets[textureOffsetIndex].y);
             this.packedColorBuffer.put(packedColor);
             this.packedLookupIDsBuffer.put(packedLookupIDs);
         }

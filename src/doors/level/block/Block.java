@@ -5,6 +5,7 @@ import java.util.HashMap;
 import doors.graphics.mesh.MeshBuffer;
 import doors.graphics.texture.TextureSample;
 import doors.utility.CubeFace;
+import doors.utility.Orientation;
 import doors.utility.vector.IVector3fl;
 import doors.utility.vector.Vector3fl;
 import doors.utility.vector.Vector3in;
@@ -29,17 +30,24 @@ public class Block {
         return this.textureSamples.get(cubeFace);
     }
 
-    public void writeBlockFaceToMeshBuffer(MeshBuffer meshBuffer, IVector3fl position, CubeFace cubeFace, Block adjacentBlock) {
+    public void writeBlockFaceToMeshBuffer(MeshBuffer meshBuffer, IVector3fl position, Orientation orientation, CubeFace cubeFace, Block adjacentBlock) {
         if(adjacentBlock != null) {
             return;
         }
 
-        var textureSample = this.textureSamples.get(cubeFace);
+        var remappedCubeFace = orientation.remapCubeFace(cubeFace);
+        var textureSample = this.textureSamples.get(remappedCubeFace);
+
+        if(orientation.index != 0) {
+            System.out.println(cubeFace);
+            System.out.println(remappedCubeFace);
+        }
 
         meshBuffer.pushQuad(
             textureSample, 
             0,
             position,
+            orientation,
             DIMENSIONS, 
             cubeFace, 
             Vector3fl.WHITE
