@@ -12,6 +12,7 @@ import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.BackgroundComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
+import doors.utility.CubeFace;
 import doors.utility.vector.Vector2in;
 
 public class EditQuickBarSlotComponent implements IComponent {
@@ -94,9 +95,9 @@ public class EditQuickBarSlotComponent implements IComponent {
 
         if(isDragged && isHovered) {
             var draggedBlock = ((EditBlockTableRowComponent)root.draggedComponent).block;
-            this.slotComponent.textureSample = draggedBlock.textureSample;
+            this.slotComponent.textureSample = draggedBlock.getTextureSample(CubeFace.FRONT);
         } else if(this.block != null) {
-            this.slotComponent.textureSample = this.block.textureSample;
+            this.slotComponent.textureSample = this.block.getTextureSample(CubeFace.FRONT);
         } else {
             this.slotComponent.textureSample = null;
         }

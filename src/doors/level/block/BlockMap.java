@@ -10,6 +10,7 @@ import doors.graphics.texture.AbstractTexture;
 import doors.graphics.texture.ImageTexture;
 import doors.graphics.texture.channel.BlockTextureChannel;
 import doors.queue.IncrementalWorkQueue;
+import doors.utility.CubeFace;
 import doors.utility.FileIO;
 import doors.utility.vector.Vector2in;
 
@@ -46,28 +47,34 @@ public class BlockMap {
 
         var blockArray = config.getJSONArray("blocks");
         for(var ix = 0; ix < blockArray.length(); ix += 1) {
-            var block = blockArray.getJSONObject(ix);
-            var blockID = block.getInt("id") + RESERVED_BLOCK_RANGE;
-            var blockName = block.getString("name");
-            var textureSampleArray = block.getJSONArray("textureSample");
+            var blockConfig = blockArray.getJSONObject(ix);
+            var blockID = blockConfig.getInt("id") + RESERVED_BLOCK_RANGE;
+            var blockName = blockConfig.getString("name");
+            var textureSampleObject = blockConfig.getJSONObject("textureSample");
 
-            var textureSamplePosition = new Vector2in(
-                textureSampleArray.getInt(0),
-                textureSampleArray.getInt(1)
-            );
-            var textureSampleDimensions = new Vector2in(
-                textureSampleArray.getInt(2),
-                textureSampleArray.getInt(3)
-            );
+            var block = new Block(blockID, blockName);
+            for(var cubeFace : CubeFace.CUBE_FACES) {
+                var textureSampleArray = textureSampleObject.getJSONArray(cubeFace.name);
 
-            this.blockMap.put(blockID, new Block(
-                blockID,
-                blockName,
-                this.imageTexture.createTextureSample(
+                var textureSamplePosition = new Vector2in(
+                    textureSampleArray.getInt(0),
+                    textureSampleArray.getInt(1)
+                );
+
+                var textureSampleDimensions = new Vector2in(
+                    textureSampleArray.getInt(2),
+                    textureSampleArray.getInt(3)
+                );
+
+                var textureSample = this.imageTexture.createTextureSample(
                     textureSamplePosition, 
                     textureSampleDimensions
-                )               
-            ));
+                );
+
+                block.setTextureSample(cubeFace, textureSample);
+            }
+
+            this.blockMap.put(blockID, block);
         }
 
         IncrementalWorkQueue.INCREMENTAL_WORK_QUEUE.submitTask(() -> this.imageTexture.setup());

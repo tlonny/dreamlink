@@ -1,9 +1,11 @@
 package doors.ui.component.edit;
 
 import doors.graphics.text.FontDecoration;
+
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
 import doors.graphics.texture.MenuTexture;
+import doors.graphics.texture.TextureSample;
 import doors.io.Mouse;
 import doors.level.block.Block;
 import doors.ui.component.IComponent;
@@ -16,6 +18,7 @@ import doors.ui.component.layout.box.BoxComponent;
 import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
+import doors.utility.CubeFace;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -39,7 +42,7 @@ public class EditBlockTableRowComponent implements IComponent {
         this.block = block;
 
         var layoutComponent = new RowComponent(SPACING);
-        var iconComponent = new IconComponent(block.textureSample, BLOCK_SIZE);
+        var iconComponent = new IconComponent(this.getBlockTextureSample(), BLOCK_SIZE);
         layoutComponent.children.add(iconComponent);
         this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
         layoutComponent.children.add(this.nameComponent);
@@ -51,6 +54,10 @@ public class EditBlockTableRowComponent implements IComponent {
             HorizontalAlignment.LEFT,
             VerticalAlignment.CENTER
         );
+    }
+
+    private TextureSample getBlockTextureSample() {
+        return this.block.getTextureSample(CubeFace.FRONT);
     }
 
     @Override
@@ -120,7 +127,7 @@ public class EditBlockTableRowComponent implements IComponent {
                 .add(Mouse.MOUSE.position);
 
             spriteBatch.pushSprite(
-                this.block.textureSample,
+                this.getBlockTextureSample(),
                 this.originCursor,
                 DRAGGED_BLOCK_SIZE,
                 SpriteBatchHeight.UI_CURSOR_PAYLOAD,

@@ -47,9 +47,17 @@ public class CubeFace {
         new Vector3fl(-0.5f, 0f, 0f).mul(Math.PI)
     );
 
-    public static Iterable<CubeFace> CUBE_FACES = Arrays.asList(
+    public static CubeFace[] CUBE_FACES = {
         FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM
-    );
+    };
+
+    public static CubeFace[] HORIZONTAL_CUBE_FACES = {
+        FRONT, LEFT, BACK, RIGHT
+    };
+
+    public static CubeFace[] VERTICAL_CUBE_FACES = {
+        TOP, BOTTOM
+    };
 
     public Vector3in normal;
     public Vector3fl rotation;

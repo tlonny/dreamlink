@@ -140,12 +140,13 @@ public class Terrain {
             for(var cubeFace : CubeFace.CUBE_FACES) {
                 this.adjacentGlobalPositionCursor.set(globalPositionCursor).add(cubeFace.normal);
                 var adjacentBlock = this.getBlock(this.adjacentGlobalPositionCursor);
-
-                if(adjacentBlock != null) {
-                    continue;
-                }
             
-                block.writeBlockFaceToMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER, this.localPositionCursor, cubeFace);
+                block.writeBlockFaceToMeshBuffer(
+                    MeshBuffer.DEFAULT_MESH_BUFFER, 
+                    this.localPositionCursor, 
+                    cubeFace,
+                    adjacentBlock
+                );
             }
         }
 
