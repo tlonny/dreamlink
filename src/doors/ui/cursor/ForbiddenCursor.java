@@ -1,6 +1,6 @@
 package doors.ui.cursor;
 
-import doors.graphics.texture.MenuTexture;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.utility.vector.Vector2in;
 
 public class ForbiddenCursor extends AbstractCursor {
@@ -10,7 +10,7 @@ public class ForbiddenCursor extends AbstractCursor {
     public static ForbiddenCursor FORBIDDEN_CURSOR = new ForbiddenCursor();
 
     public ForbiddenCursor() {
-        super(MenuTexture.MENU_TEXTURE.cursorForbidden, OFFSET);
+        super(MenuTextureSample.CURSOR_FORBIDDEN, OFFSET);
     }
 
 

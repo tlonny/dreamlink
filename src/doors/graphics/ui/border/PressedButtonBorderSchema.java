@@ -1,54 +1,55 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class PressedButtonBorderSchema extends AbstractBorderSchema {
 
     public static PressedButtonBorderSchema SCHEMA = new PressedButtonBorderSchema();
 
     @Override
-    public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedTop;
-    }
 
-    @Override
-    public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedBottom;
-    }
+        public TextureSample getTopTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_TOP;
+        }
 
-    @Override
-    public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedLeft;
-    }
+        @Override
+        public TextureSample getBottomTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_BOTTOM;
+        }
 
-    @Override
-    public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedRight;
-    }
+        @Override
+        public TextureSample getLeftTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_LEFT;
+        }
 
-    @Override
-    public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedCenter;
-    }
+        @Override
+        public TextureSample getRightTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_RIGHT;
+        }
 
-    @Override
-    public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedTopLeft;
-    }
+        @Override
+        public TextureSample getCenterTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_CENTER;
+        }
 
-    @Override
-    public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedTopRight;
-    }
+        @Override
+        public TextureSample getTopLeftTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_TOP_LEFT;
+        }
 
-    @Override
-    public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedBottomLeft;
-    }
+        @Override
+        public TextureSample getTopRightTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_TOP_RIGHT;
+        }
 
-    @Override
-    public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonPressedBottomRight;
+        @Override
+        public TextureSample getBottomLeftTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_BOTTOM_LEFT;
+        }
+
+        @Override
+        public TextureSample getBottomRightTextureSample() {
+            return MenuTextureSample.BUTTON_PRESSED_BOTTOM_RIGHT;
+        }
     }
-}

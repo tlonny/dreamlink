@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class WindowBorderSchema extends AbstractBorderSchema {
 
@@ -9,47 +9,47 @@ public class WindowBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowTop;
+        return MenuTextureSample.WINDOW_TOP;
     }
 
     @Override
     public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowBottom;
+        return MenuTextureSample.WINDOW_BOTTOM;
     }
 
     @Override
     public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowLeft;
+        return MenuTextureSample.WINDOW_LEFT;
     }
 
     @Override
     public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowRight;   
+        return MenuTextureSample.WINDOW_RIGHT;   
     }
 
     @Override
     public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowCenter;
+        return MenuTextureSample.WINDOW_CENTER;
     }
 
     @Override
     public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowTopLeft;
+        return MenuTextureSample.WINDOW_TOP_LEFT;
     }
 
     @Override
     public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowTopRight;
+        return MenuTextureSample.WINDOW_TOP_RIGHT;
     }
 
     @Override
     public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowBottomLeft;
+        return MenuTextureSample.WINDOW_BOTTOM_LEFT;
     }
 
     @Override
     public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.windowBottomRight;
+        return MenuTextureSample.WINDOW_BOTTOM_RIGHT;
     }
     
 }

@@ -126,6 +126,7 @@ public class Mesh {
         } else {
             GL42.glDisable(GL42.GL_CULL_FACE);
         }
+        GL42.glDisable(GL42.GL_CULL_FACE);
 
         Shader.SHADER.setTextureSampleMode(this.textureSampleMode);
         Shader.SHADER.setModelMatrix(position, rotation, scale);

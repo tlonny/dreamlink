@@ -8,9 +8,8 @@ import java.util.Queue;
 
 import doors.Config;
 import doors.graphics.mesh.MeshBuffer;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.utility.CubeFace;
-import doors.utility.Orientation;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -71,7 +70,7 @@ public class SpriteBatch {
                 sprite.textureSample, 
                 0,
                 worldPosition,
-                Orientation.FRONT,
+                0f,
                 worldDimensions,
                 CubeFace.FRONT, 
                 sprite.color

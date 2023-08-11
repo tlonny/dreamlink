@@ -1,9 +1,9 @@
 package doors.ui.component.mainmenu;
 
 import doors.graphics.text.FontDecoration;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.texture.MenuTexture;
 import doors.ui.component.IComponent;
 import doors.ui.component.TextComponent;
 import doors.ui.component.layout.alignment.HorizontalAlignment;
@@ -96,7 +96,7 @@ public class MainMenuEditLevelTableRow implements IComponent {
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.boxedSelection.value == this) {
             spriteBatch.pushSprite(
-                MenuTexture.MENU_TEXTURE.highlight,
+                MenuTextureSample.HIGHLIGHT,
                 this.getPosition(),
                 this.getDimensions(),
                 SpriteBatchHeight.UI_NORMAL,

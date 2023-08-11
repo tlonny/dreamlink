@@ -11,6 +11,7 @@ uniform mat4 view_rotation_matrix;
 uniform mat4 view_translation_matrix;
 uniform mat4 model_matrix;
 uniform mat4 cube_transformer_matrices[64];
+uniform vec2 texture_dimensions[10];
 
 out vec2 vert_texture_offset;
 out vec3 vert_color;
@@ -28,7 +29,11 @@ void main()
 
     mat4 transformer_matrix = cube_transformer_matrices[transformer_id];
 
-    vert_texture_offset = vec2(texture.x, 1.0 - texture.y);
+    vert_texture_offset = vec2(
+        texture.x / texture_dimensions[vert_texture_unit].x, 
+        1.0 - texture.y / texture_dimensions[vert_texture_unit].y
+    );
+    
     vert_color = vec3(color_red, color_green, color_blue);
 
     vert_position = view_projection_matrix

@@ -1,50 +1,50 @@
 package doors.graphics.mesh;
 
-import doors.graphics.texture.EntityTexture;
+import doors.graphics.texture.sample.EntityTextureSample;
 import doors.utility.vector.Vector3fl;
 
 public class DoorMesh extends Mesh {
 
-    // TODO: scaling for the top/bottom faces is a bit wrong. Need to tweak texture atlas...
-    private static Vector3fl DOOR_FACE_DIMENSIONS = new Vector3fl(1f, 2f, 0.25f);
+    private static Vector3fl DOOR_FACE_DIMENSIONS = new Vector3fl(1f, 2f, 0f);
+    private static Vector3fl DOOR_ORIGIN = new Vector3fl(1f, 0f, 0.5f);
     private static float DOOR_OPEN_ROTATION = (float)Math.PI * 0.45f;
 
-    private static CubeSchema RIGHT_DOOR_SCHEMA = new CubeSchema(
-        new Vector3fl(0f, 0f, 0f),
-        new Vector3fl(1f, 0f, 0f),
+    private static CubeSchema LEFT_DOOR_SCHEMA = new CubeSchema(
+        new Vector3fl(1f, 0f, 1f).sub(DOOR_ORIGIN),
+        new Vector3fl(2f, 0f, 1f).sub(DOOR_ORIGIN),
         DOOR_FACE_DIMENSIONS,
-        EntityTexture.ENTITY_TEXTURE.doorRightFace,
-        EntityTexture.ENTITY_TEXTURE.doorLeftFace,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
+        EntityTextureSample.DOOR_RIGHT_FACE,
+        EntityTextureSample.DOOR_LEFT_FACE,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
         1
     );
 
-    private static CubeSchema LEFT_DOOR_SCHEMA = new CubeSchema(
-        new Vector3fl(-1f, 0f, 0f),
-        new Vector3fl(-1f, 0f, 0f),
+    private static CubeSchema RIGHT_DOOR_SCHEMA = new CubeSchema(
+        new Vector3fl(0f, 0f, 1f).sub(DOOR_ORIGIN),
+        new Vector3fl(0f, 0f, 1f).sub(DOOR_ORIGIN),
         DOOR_FACE_DIMENSIONS,
-        EntityTexture.ENTITY_TEXTURE.doorLeftFace,
-        EntityTexture.ENTITY_TEXTURE.doorRightFace,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
+        EntityTextureSample.DOOR_LEFT_FACE,
+        EntityTextureSample.DOOR_RIGHT_FACE,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
         2
     );
 
     private static CubeSchema LOCKED_SCHEMA = new CubeSchema(
-        new Vector3fl(-1f, 0f, 0f),
-        new Vector3fl(0f, 0f, 0f),
-        new Vector3fl(2f, 2f, 0.25f),
-        EntityTexture.ENTITY_TEXTURE.doorLockedDoubleFace,
-        EntityTexture.ENTITY_TEXTURE.doorLockedDoubleFace,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorEnd,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
-        EntityTexture.ENTITY_TEXTURE.doorSide,
+        new Vector3fl(0, 0f, 0f).sub(DOOR_ORIGIN),
+        new Vector3fl(1f, 0f, 1f).sub(DOOR_ORIGIN),
+        new Vector3fl(2f, 2f, 0f).sub(DOOR_ORIGIN),
+        EntityTextureSample.DOOR_LOCKED_DOUBLE_FACE,
+        EntityTextureSample.DOOR_LOCKED_DOUBLE_FACE,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
+        EntityTextureSample.DEBUG,
         3
     );
 
@@ -64,7 +64,7 @@ public class DoorMesh extends Mesh {
         for(var cubeSchema : CUBE_SCHEMAS) {
             cubeSchema.writeCubeToMeshBuffer(MeshBuffer.DEFAULT_MESH_BUFFER);
         }
-        MeshBuffer.DEFAULT_MESH_BUFFER.writeMeshTo(this);
+        MeshBuffer.DEFAULT_MESH_BUFFER.writeMeshBufferToMesh(this);
     }
 
     public void renderLocked(Vector3fl position, Vector3fl rotation) {
@@ -84,9 +84,9 @@ public class DoorMesh extends Mesh {
 
         LOCKED_SCHEMA.transform(Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ZERO);
         this.rotationBuffer.set(0f, doorRotation, 0f);
-        RIGHT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer, Vector3fl.ONE);
-        this.rotationBuffer.mul(-1f);
         LEFT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer, Vector3fl.ONE);
+        this.rotationBuffer.mul(-1f);
+        RIGHT_DOOR_SCHEMA.transform(Vector3fl.ZERO, this.rotationBuffer, Vector3fl.ONE);
         super.render(position, rotation);
     }
 

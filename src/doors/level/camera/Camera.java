@@ -28,8 +28,8 @@ public class Camera {
         var bestOrientation = Orientation.FRONT;
         var bestDotProduct = Float.NEGATIVE_INFINITY;
 
-        for(var orientation : Orientation.ORIENTATION_MAP.values()) {
-            var dotProduct = this.direction.getDot(orientation.getCubeFace().normal);
+        for(var orientation : Orientation.ORIENTATIONS) {
+            var dotProduct = this.direction.getDot(orientation.cubeFace.normal);
 
             if(dotProduct > bestDotProduct) {
                 bestDotProduct = dotProduct;
@@ -49,9 +49,9 @@ public class Camera {
             .sub(0.5f)
             .mul(MOUSE_SENSITIVITY)
             // in 2D screen space, left and up are negative, right and down are positive.
-            // in 3D world space, left and up are positive, right and down are negative. 
-            // Thus both axes need to be scaled by -1f.
-            .mul(-1f, -1f);
+            // in 3D world space, right and down are negative, left and up are positive. 
+            // Thus both axes need to be scaled by -1.
+            .mul(-1, -1);
 
         // Using the right hand rule, stick your thumb up (+ve Y) and notice your fingers curl left.
         // In our coordinate system, left is positive, so we ADD the mouse delta.

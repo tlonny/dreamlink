@@ -1,7 +1,7 @@
 package doors.ui.component.table;
 
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.MenuTexture;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.io.Mouse;
 import doors.ui.component.BackgroundComponent;
 import doors.ui.component.IComponent;
@@ -33,7 +33,7 @@ public class TableScrollBarComponent<T extends IComponent> implements IComponent
         );
 
         this.scrollBarBackgroundComponent = new BackgroundComponent(
-            scrollBarSpaceComponent, MenuTexture.MENU_TEXTURE.windowBackground
+            scrollBarSpaceComponent, MenuTextureSample.WINDOW_BACKGROUND
         );
     }
 

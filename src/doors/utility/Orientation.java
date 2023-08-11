@@ -1,45 +1,50 @@
 package doors.utility;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Orientation {
 
-    private static CubeFace[] CUBE_FACE_MAPPING = {
-        CubeFace.FRONT,
-        CubeFace.LEFT,
-        CubeFace.BACK,
-        CubeFace.RIGHT
+    public static Orientation FRONT = new Orientation("front", CubeFace.FRONT);
+
+    public static Orientation LEFT = new Orientation("left", CubeFace.LEFT);
+
+    public static Orientation BACK = new Orientation("back", CubeFace.BACK);
+
+    public static Orientation RIGHT = new Orientation("right", CubeFace.RIGHT);
+
+    public static Orientation[] ORIENTATIONS = {
+        FRONT, LEFT, BACK, RIGHT
     };
 
-    public static Map<Integer,Orientation> ORIENTATION_MAP = new HashMap<>();
-
-    public static Orientation FRONT = new Orientation("front", 0);
-
-    public static Orientation LEFT = new Orientation("left", 1);
-
-    public static Orientation BACK = new Orientation("back", 2);
-
-    public static Orientation RIGHT = new Orientation("right", 3);
-
-    public int index;
+    private int index = -1;
     private String name;
+    public CubeFace cubeFace;
 
-    public Orientation(String name, int index) {
+    public Orientation(String name, CubeFace cubeFace) {
         this.name = name;
-        this.index = index;
-        ORIENTATION_MAP.put(index, this);
+        this.cubeFace = cubeFace;
     }
 
-    public CubeFace getCubeFace() {
-        return CUBE_FACE_MAPPING[this.index];
+    public int getIndex() {
+        if(this.index == -1) {
+            for(var i = 0; i < ORIENTATIONS.length; i++) {
+                if(ORIENTATIONS[i] == this) {
+                    this.index = i;
+                    break;
+                }
+            }
+        }
+        return this.index;
+    }
+
+    public Orientation getOpposite() {
+        var index = (this.getIndex() + 2) % 4;
+        return ORIENTATIONS[index];
     }
 
     public CubeFace remapCubeFace(CubeFace cubeFace) {
         var cubeFaceIndex = -1;
-        for(var i = 0; i < CUBE_FACE_MAPPING.length; i++) {
-            if(CUBE_FACE_MAPPING[i] == cubeFace) {
-                cubeFaceIndex = i;
+        for(var ix = 0; ix < ORIENTATIONS.length; ix++) {
+            if(ORIENTATIONS[ix].cubeFace == cubeFace) {
+                cubeFaceIndex = ix;
                 break;
             }
         }
@@ -48,8 +53,8 @@ public class Orientation {
             return cubeFace;
         }
 
-        var remappedindex = Maths.mod(cubeFaceIndex - this.index, CUBE_FACE_MAPPING.length);
-        return CUBE_FACE_MAPPING[remappedindex];
+        var remappedindex = Maths.mod(cubeFaceIndex - this.getIndex(), ORIENTATIONS.length);
+        return ORIENTATIONS[remappedindex].cubeFace;
     }
 
     public String toString() {

@@ -1,15 +1,11 @@
 package doors.level.cache;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import doors.Config;
-import doors.level.Level;
-import doors.queue.IncrementalWorkQueue;
-import doors.queue.ThreadPoolWorkQueue;
 
 public class LevelCache {
 
@@ -24,82 +20,24 @@ public class LevelCache {
         this.cacheSize = cacheSize;
     }
 
-    public void requestLevel(String levelName) {
+    public LevelCacheEntry getLevelCacheEntry(String levelName) {
         if(!this.levelMap.containsKey(levelName)) {
             var levelDirectory = Paths.get(Config.CONFIG.getCachePath(), levelName).toString();
-            var initialState = new File(levelDirectory).isDirectory() 
-                ? LevelCacheEntryState.DOWNLOADED
-                : LevelCacheEntryState.MISSING;
-
-            var entry = new LevelCacheEntry(levelDirectory, initialState);
+            var entry = new LevelCacheEntry(levelDirectory);
             this.levelMap.put(levelName, entry);
+        } else {
+            this.accessList.remove(this.levelMap.get(levelName));
         }
         var entry = this.levelMap.get(levelName);
-        entry.isRequested = true;
-    }
-
-    // TODO: mock implementation - need to replace
-    private void downloadFile(LevelCacheEntry entry) {
-        try {
-            var downloadTime = 1000;
-            Thread.sleep(downloadTime);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        entry.state = LevelCacheEntryState.DOWNLOADED;
-    }
-
-    public void update() {
-        for(var entry : this.levelMap.values()) {
-            if(!entry.isRequested) {
-                continue;
-            }
-
-            if(entry.state == LevelCacheEntryState.MISSING) {
-                entry.state = LevelCacheEntryState.DOWNLOADING;
-                ThreadPoolWorkQueue.THREAD_POOL_WORK_QUEUE.submitTask(() -> this.downloadFile(entry));
-            }
-
-            if(entry.state == LevelCacheEntryState.DOWNLOADED) {
-                entry.state = LevelCacheEntryState.LOADING;
-                try {
-                    entry.level = new Level(entry.levelDirectory);
-                // TODO: use a more specific exception
-                } catch(Exception e) {
-                    entry.state = LevelCacheEntryState.LOAD_FAILED;
-                    continue;
-                }
-                IncrementalWorkQueue.INCREMENTAL_WORK_QUEUE.submitTask(entry::setLoaded);
-                continue;
-            }
-
-            if(entry.state == LevelCacheEntryState.LOADED || entry.state.isError) {
-                entry.isRequested = false;
-                this.accessList.remove(entry);
-                this.accessList.addLast(entry);
-                continue;
-            }
-        }
+        this.accessList.addFirst(entry);
 
         while(this.accessList.size() > this.cacheSize) {
-            var entry = this.accessList.removeFirst();
-            entry.state = LevelCacheEntryState.DOWNLOADED;
-            entry.level.tearDown();
-            entry.level = null;
+            var lastEntry = this.accessList.removeLast();
+            this.levelMap.remove(lastEntry.levelName);
+            lastEntry.tearDown();
         }
-    }
 
-    public LevelCacheEntryState getLevelCacheEntryState(String levelName) {
-        return this.levelMap.get(levelName).state;
-    }
-
-    public boolean isLevelReady(String levelName) {
-        return this.getLevelCacheEntryState(levelName) == LevelCacheEntryState.LOADED;
-    }
-
-    public Level getLevel(String levelName) {
-        return this.levelMap.get(levelName).level;
+        return entry;
     }
 
 }

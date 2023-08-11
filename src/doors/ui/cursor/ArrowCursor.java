@@ -1,6 +1,6 @@
 package doors.ui.cursor;
 
-import doors.graphics.texture.MenuTexture;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.utility.vector.Vector2in;
 
 public class ArrowCursor extends AbstractCursor {
@@ -10,7 +10,7 @@ public class ArrowCursor extends AbstractCursor {
     public static ArrowCursor ARROW_CURSOR = new ArrowCursor();
 
     public ArrowCursor() {
-        super(MenuTexture.MENU_TEXTURE.cursorArrow, OFFSET);
+        super(MenuTextureSample.CURSOR_ARROW, OFFSET);
     }
 
 }

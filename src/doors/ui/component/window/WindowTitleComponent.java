@@ -2,8 +2,8 @@ package doors.ui.component.window;
 
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.text.FontDecoration;
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.ui.component.IComponent;
 import doors.ui.component.IconComponent;
 import doors.ui.component.TextComponent;
@@ -51,7 +51,7 @@ public class WindowTitleComponent implements IComponent {
             VerticalAlignment.CENTER
         );
 
-        this.backgroundComponent = new BackgroundComponent(boxComponent, MenuTexture.MENU_TEXTURE.highlight);
+        this.backgroundComponent = new BackgroundComponent(boxComponent, MenuTextureSample.HIGHLIGHT);
     }
 
     @Override

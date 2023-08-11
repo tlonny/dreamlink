@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL42;
 
 import doors.Config;
 import doors.debug.DebugInformation;
-import doors.graphics.mesh.DoorMesh;
 import doors.graphics.mesh.Mesh;
 import doors.graphics.mesh.MeshBuffer;
 import doors.graphics.rendertarget.PhysicalRenderTarget;
@@ -15,10 +14,12 @@ import doors.graphics.rendertarget.ScreenVirtualRenderTarget;
 import doors.graphics.shader.Shader;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.texture.EntityTexture;
+import doors.graphics.texture.sample.EntityTextureSample;
+import doors.graphics.texture.sample.ScreenRenderTextureSample;
 import doors.io.Keyboard;
 import doors.io.Mouse;
 import doors.level.Level;
+import doors.level.block.BlockData;
 import doors.level.camera.Camera;
 import doors.level.camera.NoClipMovementSystem;
 import doors.ui.component.HiddenComponent;
@@ -38,13 +39,15 @@ public class EditGameState extends AbstractGameState {
 
     private static Vector2in RETICULE_POSITION = new Vector2in()
         .set(Config.CONFIG.getResolution())
-        .sub(EntityTexture.ENTITY_TEXTURE.reticule.dimensions)
+        .sub(EntityTextureSample.RETICULE.dimensions)
         .div(2);
 
     private Level currentLevel;
 
-    private VoxelRayCaster voxelRayCaster = new VoxelRayCaster();
     public EditMenuState menuState = EditMenuState.HIDDEN;
+
+    private BlockData blockDataBuffer = new BlockData();
+    private VoxelRayCaster voxelRayCaster = new VoxelRayCaster();
     private MeshBuffer meshBuffer = new MeshBuffer(MAX_QUADS);
     private SpriteBatch spriteBatch = new SpriteBatch();
     private Mesh mesh = new Mesh();
@@ -77,16 +80,16 @@ public class EditGameState extends AbstractGameState {
             // Can accidentally trap yourself...
             this.voxelRayCaster.advance();
 
-            var blockPacker = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
-            if(blockPacker.block != null) {
+            this.currentLevel.terrainData.getBlockData(this.voxelRayCaster.rayCursor, this.blockDataBuffer);
+            if(this.blockDataBuffer.block != null) {
                 break;
             }
         }
 
-        this.currentLevel.terrain.setBlock(
+        this.currentLevel.terrainData.setBlock(
             this.voxelRayCaster.previousRayCursor,
             selectedBlock,
-            this.camera.getOrientation()
+            this.camera.getOrientation().getOpposite()
         );
     }
 
@@ -97,14 +100,14 @@ public class EditGameState extends AbstractGameState {
 
         this.voxelRayCaster.cast(this.camera.position, this.camera.direction);
         for(var ix = 0; ix < MAX_RAY_ITERATIONS; ix += 1) {
-            var blockPacker = this.currentLevel.terrain.getBlock(this.voxelRayCaster.rayCursor);
-            if(blockPacker.block != null) {
+            this.currentLevel.terrainData.getBlockData(this.voxelRayCaster.rayCursor, this.blockDataBuffer);
+            if(this.blockDataBuffer.block != null) {
                 break;
             }
             this.voxelRayCaster.advance();
         }
 
-        this.currentLevel.terrain.setBlock(
+        this.currentLevel.terrainData.setBlock(
             this.voxelRayCaster.rayCursor, 
             null,
             this.camera.getOrientation()
@@ -120,11 +123,6 @@ public class EditGameState extends AbstractGameState {
 
         Mouse.MOUSE.setLocked(true);
         this.editMenuComponent.setLevel(this.currentLevel);
-        var mainDoor = this.currentLevel.doors.get("main");
-
-        this.camera.position.set(mainDoor.orientation.normal).mul(2f).add(mainDoor.position).add(0f, 1f, 0f);
-        this.camera.rotation.set(mainDoor.orientation.rotation);
-        this.camera.position.y = 6;
         this.menuState = EditMenuState.HIDDEN;
 
     }
@@ -139,15 +137,7 @@ public class EditGameState extends AbstractGameState {
             this.camera.rotation
         );
 
-        this.currentLevel.terrain.render();
-
-        for(var door : this.currentLevel.doors.values()) {
-            DoorMesh.DOOR_MESH.render(
-                door.position,
-                door.orientation.rotation,
-                0f
-            );
-        }
+        this.currentLevel.terrainData.render();
     }
 
     @Override
@@ -165,7 +155,7 @@ public class EditGameState extends AbstractGameState {
         DebugInformation.DEBUG_INFORMATION.update(this.camera);
 
         this.spriteBatch.pushSprite(
-            ScreenVirtualRenderTarget.SCREEN_VIRTUAL_RENDER_TARGET.texture.createTextureSample(),
+            ScreenRenderTextureSample.SCREEN_RENDER,
             Vector2in.ZERO,
             Config.CONFIG.getResolution(),
             SpriteBatchHeight.SCREEN,
@@ -173,9 +163,9 @@ public class EditGameState extends AbstractGameState {
         );
 
         this.spriteBatch.pushSprite(
-            EntityTexture.ENTITY_TEXTURE.reticule,
+            EntityTextureSample.RETICULE,
             RETICULE_POSITION,
-            EntityTexture.ENTITY_TEXTURE.reticule.dimensions,
+            EntityTextureSample.RETICULE.dimensions,
             SpriteBatchHeight.SCREEN,
             Vector3fl.WHITE
         );
@@ -196,7 +186,7 @@ public class EditGameState extends AbstractGameState {
         }
 
         this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
-        this.meshBuffer.writeMeshTo(this.mesh);
+        this.meshBuffer.writeMeshBufferToMesh(this.mesh);
 
         this.renderLevel();
 

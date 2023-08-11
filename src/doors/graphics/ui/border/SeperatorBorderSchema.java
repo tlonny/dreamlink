@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class SeperatorBorderSchema extends AbstractBorderSchema {
 
@@ -9,47 +9,47 @@ public class SeperatorBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorTop;
+        return MenuTextureSample.SEPERATOR_TOP;
     }
 
     @Override
     public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorBottom;
+        return MenuTextureSample.SEPERATOR_BOTTOM;
     }
 
     @Override
     public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorLeft;
+        return MenuTextureSample.SEPERATOR_LEFT;
     }
 
     @Override
     public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorRight;   
+        return MenuTextureSample.SEPERATOR_RIGHT;   
     }
 
     @Override
     public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorCenter;
+        return MenuTextureSample.SEPERATOR_CENTER;
     }
 
     @Override
     public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorTopLeft;
+        return MenuTextureSample.SEPERATOR_TOP_LEFT;
     }
 
     @Override
     public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorTopRight;
+        return MenuTextureSample.SEPERATOR_TOP_RIGHT;
     }
 
     @Override
     public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorBottomLeft;
+        return MenuTextureSample.SEPERATOR_BOTTOM_LEFT;
     }
 
     @Override
     public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.seperatorBottomRight;
+        return MenuTextureSample.SEPERATOR_BOTTOM_RIGHT;
     }
-    
+        
 }

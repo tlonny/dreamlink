@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class FocusedDialogBorderSchema extends AbstractBorderSchema {
 
@@ -9,47 +9,47 @@ public class FocusedDialogBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedTop;
+        return MenuTextureSample.DIALOG_FOCUSED_TOP;
     }
 
     @Override
-    public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedBottom;
-    }
+        public TextureSample getBottomTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_BOTTOM;
+        }
 
-    @Override
-    public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedLeft;
-    }
+        @Override
+        public TextureSample getLeftTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_LEFT;
+        }
 
-    @Override
-    public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedRight;
-    }
+        @Override
+        public TextureSample getRightTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_RIGHT;
+        }
 
-    @Override
-    public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedCenter;
-    }
+        @Override
+        public TextureSample getCenterTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_CENTER;
+        }
 
-    @Override
-    public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedTopLeft;
-    }
+        @Override
+        public TextureSample getTopLeftTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_TOP_LEFT;
+        }
 
-    @Override
-    public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedTopRight;
-    }
+        @Override
+        public TextureSample getTopRightTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_TOP_RIGHT;
+        }
 
-    @Override
-    public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedBottomLeft;
-    }
+        @Override
+        public TextureSample getBottomLeftTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_BOTTOM_LEFT;
+        }
 
-    @Override
-    public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogFocusedBottomRight;
+        @Override
+        public TextureSample getBottomRightTextureSample() {
+            return MenuTextureSample.DIALOG_FOCUSED_BOTTOM_RIGHT;
+        }
+        
     }
-    
-}

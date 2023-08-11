@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class DisabledButtonBorderSchema extends AbstractBorderSchema {
 
@@ -9,46 +9,47 @@ public class DisabledButtonBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledTop;
+        return MenuTextureSample.BUTTON_DISABLED_TOP;
     }
 
     @Override
     public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledBottom;
+        return MenuTextureSample.BUTTON_DISABLED_BOTTOM;
     }
 
     @Override
     public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledLeft;
+        return MenuTextureSample.BUTTON_DISABLED_LEFT;
     }
 
     @Override
     public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledRight;
+        return MenuTextureSample.BUTTON_DISABLED_RIGHT;
     }
 
     @Override
     public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledCenter;
+        return MenuTextureSample.BUTTON_DISABLED_CENTER;
     }
 
     @Override
     public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledTopLeft;
+        return MenuTextureSample.BUTTON_DISABLED_TOP_LEFT;
     }
 
     @Override
     public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledTopRight;
+        return MenuTextureSample.BUTTON_DISABLED_TOP_RIGHT;
     }
 
     @Override
     public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledBottomLeft;
+        return MenuTextureSample.BUTTON_DISABLED_BOTTOM_LEFT;
     }
 
     @Override
     public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonDisabledBottomRight;
+        return MenuTextureSample.BUTTON_DISABLED_BOTTOM_RIGHT;
     }
+
 }

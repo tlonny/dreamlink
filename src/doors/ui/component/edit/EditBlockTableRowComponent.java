@@ -4,10 +4,10 @@ import doors.graphics.text.FontDecoration;
 
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.io.Mouse;
-import doors.level.block.Block;
+import doors.level.block.AbstractBlock;
 import doors.ui.component.IComponent;
 import doors.ui.component.IconComponent;
 import doors.ui.component.TextComponent;
@@ -18,7 +18,6 @@ import doors.ui.component.layout.box.BoxComponent;
 import doors.ui.component.layout.box.GrowDimension;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
-import doors.utility.CubeFace;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -28,7 +27,7 @@ public class EditBlockTableRowComponent implements IComponent {
     private static Vector2in BLOCK_SIZE = new Vector2in(16);
     private static Vector2in DRAGGED_BLOCK_SIZE = new Vector2in(32);
 
-    public Block block;
+    public AbstractBlock block;
 
     private TextComponent nameComponent;
     private BoxComponent spaceComponent;
@@ -38,13 +37,13 @@ public class EditBlockTableRowComponent implements IComponent {
 
     private Vector2in originCursor = new Vector2in();
 
-    public EditBlockTableRowComponent(Block block) {
+    public EditBlockTableRowComponent(AbstractBlock block) {
         this.block = block;
 
         var layoutComponent = new RowComponent(SPACING);
         var iconComponent = new IconComponent(this.getBlockTextureSample(), BLOCK_SIZE);
         layoutComponent.children.add(iconComponent);
-        this.nameComponent = new TextComponent(block.name, FontDecoration.NORMAL, Vector3fl.BLACK);
+        this.nameComponent = new TextComponent(block.getName(), FontDecoration.NORMAL, Vector3fl.BLACK);
         layoutComponent.children.add(this.nameComponent);
 
         this.spaceComponent = new BoxComponent(
@@ -57,7 +56,7 @@ public class EditBlockTableRowComponent implements IComponent {
     }
 
     private TextureSample getBlockTextureSample() {
-        return this.block.getTextureSample(CubeFace.FRONT);
+        return this.block.getIconTextureSample();
     }
 
     @Override
@@ -109,7 +108,7 @@ public class EditBlockTableRowComponent implements IComponent {
     public void writeComponentToSpriteBatch(SpriteBatch spriteBatch) {
         if(this.isGrabbed) {
             spriteBatch.pushSprite(
-                MenuTexture.MENU_TEXTURE.highlight,
+                MenuTextureSample.HIGHLIGHT,
                 this.getPosition(),
                 this.getDimensions(),
                 SpriteBatchHeight.UI_NORMAL,

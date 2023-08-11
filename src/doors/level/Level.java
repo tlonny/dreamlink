@@ -6,53 +6,66 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import doors.level.block.BlockMap;
-import doors.level.terrain.Terrain;
-import doors.utility.CubeFace;
+import doors.graphics.texture.LevelTexture;
+import doors.level.block.AbstractBlock;
+import doors.level.block.BlockDataPacker;
+import doors.level.block.CubeBlock;
+import doors.level.terrain.TerrainData;
 import doors.utility.FileIO;
-import doors.utility.vector.Vector3fl;
+import doors.work.WorkUnit;
 
 public class Level {
 
-    private static String BLOCKS_PATH = "blocks";
-    private static String TERRAIN_PATH = "terrain";
+    private static String CUBE_TYPE = "cube";
+    private static String MANIFEST_FILE = "manifest.json";
 
-    private String levelDirectory;
-    public Terrain terrain;
-    public BlockMap blockMap;
-    public Map<String, Door> doors = new HashMap<>();
+    private Map<Integer, AbstractBlock> blockMap = new HashMap<>();
+    private BlockDataPacker blockPacker = new BlockDataPacker(this);
+
+    private LevelTexture levelTexture;
+    public TerrainData terrainData;
+    public WorkUnit setupWorkUnit = new WorkUnit();
 
     public Level(String levelDirectory) {
-        var blocksPath = Paths.get(levelDirectory, BLOCKS_PATH).toString();
-        this.levelDirectory = levelDirectory;
-        this.blockMap = new BlockMap(blocksPath);
+        var manifestPath = Paths.get(levelDirectory, MANIFEST_FILE).toString();
+        var manifestStr = FileIO.loadText(manifestPath);
+        var manifestObj = new JSONObject(manifestStr);
 
-        var terrainPath = Paths.get(this.levelDirectory, TERRAIN_PATH).toString();
-        this.terrain = new Terrain(terrainPath, this.blockMap);
-        this.loadDoors();
+        var pathsConfig = manifestObj.getJSONObject("paths");
+
+        var texturePath = pathsConfig.getString("texture");
+        this.levelTexture = new LevelTexture(texturePath);
+        this.setupWorkUnit.registerDependency(this.levelTexture.setupWorkUnit);
+
+        var terrainPath = pathsConfig.getString("terrain");
+        this.terrainData = new TerrainData(this.blockPacker, terrainPath);
+        this.setupWorkUnit.registerDependency(this.terrainData.setupDependency);
+
+        var blocksConfig = pathsConfig.getJSONArray("blocks");
+        for(var ix = 0; ix < blocksConfig.length(); ix++) {
+            var blockConfig = blocksConfig.getJSONObject(ix);
+            var blockID = blockConfig.getInt("id");
+            var blockType = blockConfig.getString("type");
+            var blockPath = blockConfig.getString("path");
+            if(blockType == CUBE_TYPE) {
+                var cubeBlock = new CubeBlock(blockID, blockPath);
+                this.setupWorkUnit.registerDependency(cubeBlock.setupWorkUnit);
+                this.blockMap.put(blockID, cubeBlock); 
+            } else {
+                var msg = String.format("Unknown block type: %s", blockType);
+                throw new RuntimeException(msg);
+            }
+        }
+
+        this.setupWorkUnit.submit();
     }
 
-    private void loadDoors() {
-        var doorsPath = Paths.get(this.levelDirectory, "doors.json").toString();
-        var doorsString = FileIO.loadText(doorsPath);
-        var doorsConfig = new JSONObject(doorsString);
-        for(var doorName : doorsConfig.keySet()) {
-            var doorConfig = doorsConfig.getJSONObject(doorName);
-            var position = doorConfig.getJSONArray("position");
-            var target = doorConfig.getJSONObject("target");
-            var door = new Door(
-                doorName,
-                target.getString("level"),
-                target.getString("door"),
-                new Vector3fl(
-                    position.getFloat(0),
-                    position.getFloat(1),
-                    position.getFloat(2)
-                ),
-                CubeFace.CUBE_FACE_MAP.get(doorConfig.getString("orientation"))
-            );
-            this.doors.put(doorName, door);
-        }
+    public AbstractBlock getBlock(int blockID) {
+        return this.blockMap.get(blockID);
+    }
+
+    public Iterable<AbstractBlock> getBlocks() {
+        return this.blockMap.values();
     }
 
     public void tearDown() {

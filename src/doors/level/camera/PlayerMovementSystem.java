@@ -3,7 +3,8 @@ package doors.level.camera;
 import org.lwjgl.glfw.GLFW;
 
 import doors.io.Keyboard;
-import doors.level.terrain.IHasTerrain;
+import doors.level.ILevelProvider;
+import doors.level.block.BlockData;
 import doors.utility.CubeFace;
 import doors.utility.vector.Vector3fl;
 import doors.utility.vector.Vector3in;
@@ -23,10 +24,11 @@ public class PlayerMovementSystem implements ICameraMovementSystem {
     private Vector3fl collisionPosition = new Vector3fl();
 
     private boolean isOnGround = false;
-    private IHasTerrain terrainProvider;
+    private BlockData blockDataBuffer = new BlockData();
+    private ILevelProvider levelProvider;
 
-    public PlayerMovementSystem(IHasTerrain terrainProvider) {
-        this.terrainProvider = terrainProvider;
+    public PlayerMovementSystem(ILevelProvider terrainProvider) {
+        this.levelProvider = terrainProvider;
     }
 
     private boolean isCollisionWithTerrain(Vector3fl position) {
@@ -39,13 +41,13 @@ public class PlayerMovementSystem implements ICameraMovementSystem {
         var endY = (int)(this.collisionPosition.y + COLLIDER_DIMENSIONS.y);
         var endZ = (int)(this.collisionPosition.z + COLLIDER_DIMENSIONS.z);
 
-        var terrain = this.terrainProvider.getTerrain();
+        var terrainData = this.levelProvider.getLevel().terrainData;
         var blockPosition = new Vector3in();
         for(var x = startX; x <= endX; x += 1) {
             for(var y = startY; y <= endY; y += 1) {
                 for(var z = startZ; z <= endZ; z += 1) {
-                    var block = terrain.getBlock(blockPosition.set(x, y, z));
-                    if(block != null) {
+                    terrainData.getBlockData(blockPosition.set(x, y, z), this.blockDataBuffer);
+                    if(this.blockDataBuffer.block != null && this.blockDataBuffer.block.isSolid()) {
                         return true;
                     }
                 }

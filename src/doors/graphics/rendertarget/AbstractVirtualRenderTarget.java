@@ -3,8 +3,7 @@ package doors.graphics.rendertarget;
 import org.lwjgl.opengl.GL42;
 
 import doors.Config;
-import doors.graphics.texture.AbstractTextureChannel;
-import doors.graphics.texture.EmptyTexture;
+import doors.graphics.texture.FrameBufferTexture;
 import doors.utility.vector.Vector2in;
 
 public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
@@ -12,14 +11,10 @@ public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
     private int frameBufferID;
     private int depthBufferID;
 
-    public EmptyTexture texture;
+    public FrameBufferTexture texture;
 
-    public AbstractVirtualRenderTarget() {
-         this.texture = new EmptyTexture(this.getTextureChannel(), Config.CONFIG.getResolution());
-    }
-
-    public void setup() {        
-        this.texture.setup();
+    public AbstractVirtualRenderTarget(FrameBufferTexture screenBufferTexture) {
+         this.texture = screenBufferTexture;
 
         this.frameBufferID = GL42.glGenFramebuffers();
         this.useRenderTarget();
@@ -31,8 +26,6 @@ public abstract class AbstractVirtualRenderTarget extends AbstractRenderTarget {
         GL42.glRenderbufferStorage(GL42.GL_RENDERBUFFER, GL42.GL_DEPTH_COMPONENT, Config.CONFIG.getResolution().x, Config.CONFIG.getResolution().y);
         GL42.glFramebufferRenderbuffer(GL42.GL_FRAMEBUFFER, GL42.GL_DEPTH_ATTACHMENT, GL42.GL_RENDERBUFFER, this.depthBufferID);
     }
-
-    public abstract AbstractTextureChannel getTextureChannel();
 
     @Override
     protected int getFramebufferID() {

@@ -1,55 +1,56 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class DisabledDialogBorderSchema extends AbstractBorderSchema {
 
     public static DisabledDialogBorderSchema SCHEMA = new DisabledDialogBorderSchema();
 
     @Override
-    public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledTop;
-    }
 
-    @Override
-    public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledBottom;
-    }
+        public TextureSample getTopTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_TOP;
+        }
 
-    @Override
-    public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledLeft;
-    }
+        @Override
+        public TextureSample getBottomTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_BOTTOM;
+        }
 
-    @Override
-    public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledRight;
-    }
+        @Override
+        public TextureSample getLeftTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_LEFT;
+        }
 
-    @Override
-    public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledCenter;
-    }
+        @Override
+        public TextureSample getRightTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_RIGHT;
+        }
 
-    @Override
-    public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledTopLeft;
-    }
+        @Override
+        public TextureSample getCenterTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_CENTER;
+        }
 
-    @Override
-    public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledTopRight;
-    }
+        @Override
+        public TextureSample getTopLeftTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_TOP_LEFT;
+        }
 
-    @Override
-    public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledBottomLeft;
-    }
+        @Override
+        public TextureSample getTopRightTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_TOP_RIGHT;
+        }
 
-    @Override
-    public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogDisabledBottomRight;
+        @Override
+        public TextureSample getBottomLeftTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_BOTTOM_LEFT;
+        }
+
+        @Override
+        public TextureSample getBottomRightTextureSample() {
+            return MenuTextureSample.DIALOG_DISABLED_BOTTOM_RIGHT;
+        }
+        
     }
-    
-}

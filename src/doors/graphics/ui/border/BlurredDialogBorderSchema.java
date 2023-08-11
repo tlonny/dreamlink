@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class BlurredDialogBorderSchema extends AbstractBorderSchema {
 
@@ -9,47 +9,47 @@ public class BlurredDialogBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredTop;
+        return MenuTextureSample.DIALOG_BLURRED_TOP;
     }
 
     @Override
     public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredBottom;
+        return MenuTextureSample.DIALOG_BLURRED_BOTTOM;
     }
 
     @Override
     public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredLeft;
+        return MenuTextureSample.DIALOG_BLURRED_LEFT;
     }
 
     @Override
     public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredRight;
+        return MenuTextureSample.DIALOG_BLURRED_RIGHT;
     }
 
     @Override
     public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredCenter;
+        return MenuTextureSample.DIALOG_BLURRED_CENTER;
     }
 
     @Override
     public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredTopLeft;
+        return MenuTextureSample.DIALOG_BLURRED_TOP_LEFT;
     }
 
     @Override
     public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredTopRight;
+        return MenuTextureSample.DIALOG_BLURRED_TOP_RIGHT;
     }
 
     @Override
     public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredBottomLeft;
+        return MenuTextureSample.DIALOG_BLURRED_BOTTOM_LEFT;
     }
 
     @Override
     public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.dialogBlurredBottomRight;
+        return MenuTextureSample.DIALOG_BLURRED_BOTTOM_RIGHT;
     }
     
 }

@@ -1,7 +1,7 @@
 package doors.graphics.ui.border;
 
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 
 public class NormalButtonBorderSchema extends AbstractBorderSchema {
 
@@ -9,46 +9,46 @@ public class NormalButtonBorderSchema extends AbstractBorderSchema {
 
     @Override
     public TextureSample getTopTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonTop;
+        return MenuTextureSample.BUTTON_TOP;
     }
 
     @Override
     public TextureSample getBottomTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonBottom;
+        return MenuTextureSample.BUTTON_BOTTOM;
     }
 
     @Override
     public TextureSample getLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonLeft;
+        return MenuTextureSample.BUTTON_LEFT;
     }
 
     @Override
     public TextureSample getRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonRight;
+        return MenuTextureSample.BUTTON_RIGHT;
     }
 
     @Override
     public TextureSample getCenterTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonCenter;
+        return MenuTextureSample.BUTTON_CENTER;
     }
 
     @Override
     public TextureSample getTopLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonTopLeft;
+        return MenuTextureSample.BUTTON_TOP_LEFT;
     }
 
     @Override
     public TextureSample getTopRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonTopRight;
+        return MenuTextureSample.BUTTON_TOP_RIGHT;
     }
 
     @Override
     public TextureSample getBottomLeftTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonBottomLeft;
+        return MenuTextureSample.BUTTON_BOTTOM_LEFT;
     }
 
     @Override
     public TextureSample getBottomRightTextureSample() {
-        return MenuTexture.MENU_TEXTURE.buttonBottomRight;
+        return MenuTextureSample.BUTTON_BOTTOM_RIGHT;
     }
 }

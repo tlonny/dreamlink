@@ -12,6 +12,7 @@ public class Config {
     private Vector2in resolution;
     private String workspacePath;
     private String cachePath;
+    private int numThreads;
 
     public Config() {
         var configPath = System.getenv("CONFIG_PATH");
@@ -26,6 +27,11 @@ public class Config {
 
         this.workspacePath = config.getString("workspacePath");
         this.cachePath = config.getString("cachePath");
+        this.numThreads = config.getInt("numThreads");
+    }
+
+    public int getNumThreads() {
+        return this.numThreads;
     }
 
     public Vector2in getResolution() {

@@ -1,15 +1,12 @@
 package doors.graphics.rendertarget;
 
-import doors.graphics.texture.AbstractTextureChannel;
-import doors.graphics.texture.channel.PortalRenderTextureChannel;
+import doors.graphics.texture.PortalRenderTexture;
 
 public class PortalVirtualRenderTarget extends AbstractVirtualRenderTarget {
 
     public static PortalVirtualRenderTarget PORTAL_VIRTUAL_RENDER_TARGET = new PortalVirtualRenderTarget();
 
-    @Override
-    public AbstractTextureChannel getTextureChannel() {
-        return PortalRenderTextureChannel.PORTAL_RENDER_TEXTURE_CHANNEL;
+    public PortalVirtualRenderTarget() {
+        super(PortalRenderTexture.PORTAL_RENDER_TEXTURE);
     }
-    
 }

@@ -12,14 +12,12 @@ import doors.io.Mouse;
 import doors.io.TypedCharacters;
 import doors.ui.component.IComponent;
 import doors.ui.root.UIRoot;
-import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
 public class TextInputTextComponent implements IComponent {
 
     public boolean isDisabled;
-    public IAction0 onChange;
     public int maxLength;
 
     private StringBuilder stringBuilder = new StringBuilder();
@@ -30,17 +28,18 @@ public class TextInputTextComponent implements IComponent {
     private int cursorPosition;
     private boolean isFocused;
 
-    public TextInputTextComponent(int maxLength, IAction0 onChange) {
-        this.maxLength = maxLength;
-        this.onChange = onChange;
-    }
-
     public TextInputTextComponent(int maxLength) {
-        this(maxLength, null);
+        this.maxLength = maxLength;
     }
 
     public String getText() {
         return this.stringBuilder.toString();
+    }
+
+    public void setText(String text) {
+        this.stringBuilder.setLength(0);
+        this.stringBuilder.append(text);
+        this.onChange();
     }
 
     @Override
@@ -76,13 +75,11 @@ public class TextInputTextComponent implements IComponent {
             this.stringBuilder.length()
         );
         root.focusedComponent = this;
+        this.isFocused = true;
+        this.onChange();
     }
     
     private void onChange() {
-        if(this.onChange != null) {
-            this.onChange.invoke();
-        }
-
         this.textFragment.clear();
         var inputString = this.stringBuilder.toString();
         for(var ix = 0; ix <= inputString.length(); ix += 1) {

@@ -1,14 +1,13 @@
 package doors.graphics.mesh;
 
 import doors.graphics.shader.Shader;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.utility.CubeFace;
-import doors.utility.Orientation;
 import doors.utility.vector.Vector3fl;
 
 public class CubeSchema {
 
-    public Vector3fl origin;
+    public Vector3fl fulcrum;
     public Vector3fl position;
     public Vector3fl dimensions;
 
@@ -25,7 +24,7 @@ public class CubeSchema {
 
     public CubeSchema(
         Vector3fl position, 
-        Vector3fl origin,
+        Vector3fl fulcrum,
         Vector3fl dimensions,
         TextureSample frontSample,
         TextureSample backSample,
@@ -35,8 +34,8 @@ public class CubeSchema {
         TextureSample leftSample,
         int cubeID
     ) {
-        this.position = new Vector3fl(position).sub(origin);
-        this.origin = origin;
+        this.position = new Vector3fl(position).sub(fulcrum);
+        this.fulcrum = fulcrum;
         this.dimensions = dimensions;
         this.frontSample = frontSample;
         this.backSample = backSample;
@@ -97,7 +96,7 @@ public class CubeSchema {
     }
 
     public void transform(Vector3fl position, Vector3fl rotation, Vector3fl scale) {
-        this.positionBuffer.set(position).add(this.origin);
+        this.positionBuffer.set(position).add(this.fulcrum);
         Shader.SHADER.setCubeTransformer(this.cubeID, this.positionBuffer, rotation, scale);
     }
 
@@ -108,7 +107,7 @@ public class CubeSchema {
                 textureSample,
                 this.cubeID,
                 this.position,
-                Orientation.FRONT,
+                0f,
                 this.dimensions,
                 cubeFace,
                 Vector3fl.WHITE

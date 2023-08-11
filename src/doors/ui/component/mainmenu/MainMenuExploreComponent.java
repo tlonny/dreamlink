@@ -2,8 +2,8 @@ package doors.ui.component.mainmenu;
 
 import doors.Config;
 import doors.graphics.text.FontDecoration;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.MenuTexture;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
 import doors.ui.component.ButtonComponent;
@@ -55,10 +55,12 @@ public class MainMenuExploreComponent implements IComponent {
         layoutSpanComponent.children.add(this.statusComponent);
 
         this.windowComponent = new WindowComponent(
-            MenuTexture.MENU_TEXTURE.iconFolder,
+            MenuTextureSample.ICON_FOLDER,
             "Explore Menu",
             new PaddingComponent(layoutSpanComponent, WINDOW_PADDING)
         );
+
+        this.textInputComponent.setText("sm_ncage_isocube");
     }
 
     private ButtonComponent createButton(String text, IAction0 onClick) {
@@ -99,16 +101,6 @@ public class MainMenuExploreComponent implements IComponent {
     @Override
     public void update(UIRoot root) {
         this.windowComponent.update(root);
-
-        var exploreState = MainMenuGameState.MAIN_MENU_GAME_STATE.getLevelCacheEntryState();
-        var isDisabled = exploreState != null && !exploreState.isTerminal;
-        this.exploreButton.isDisabled = isDisabled;
-        this.backButton.isDisabled = isDisabled;
-        if(exploreState == null) {
-            this.statusComponent.setStatus("", false);
-        } else {
-            this.statusComponent.setStatus(exploreState.name, exploreState.isError);
-        }
     }
 
     private void gotoRootMenu() {

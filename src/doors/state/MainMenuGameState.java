@@ -2,6 +2,7 @@ package doors.state;
 
 import org.lwjgl.opengl.GL42;
 
+import doors.debug.SimpleMesh;
 import doors.graphics.mesh.Mesh;
 import doors.graphics.mesh.MeshBuffer;
 import doors.graphics.rendertarget.PhysicalRenderTarget;
@@ -9,11 +10,11 @@ import doors.graphics.shader.Shader;
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.io.Mouse;
 import doors.level.cache.LevelCache;
-import doors.level.cache.LevelCacheEntryState;
 import doors.ui.component.mainmenu.MainMenuEditComponent;
 import doors.ui.component.mainmenu.MainMenuExploreComponent;
 import doors.ui.component.mainmenu.MainMenuRootComponent;
 import doors.ui.root.UIRoot;
+import doors.work.WorkUnit;
 
 public class MainMenuGameState extends AbstractGameState {
 
@@ -24,13 +25,12 @@ public class MainMenuGameState extends AbstractGameState {
     private MainMenuRootComponent rootMenuComponent = new MainMenuRootComponent();
     private MainMenuEditComponent editMenuComponent = new MainMenuEditComponent();
     private MainMenuExploreComponent exploreMenuComponent = new MainMenuExploreComponent();
+    private SimpleMesh simpleMesh = new SimpleMesh();
 
     private UIRoot rootMenu = new UIRoot();
     private UIRoot editMenu = new UIRoot();
     private UIRoot exploreMenu = new UIRoot();
-    private UIRoot usedRoot = this.editMenu;
-
-    private String levelToExplore;
+    private UIRoot usedRoot = this.exploreMenu;
 
     private SpriteBatch spriteBatch = new SpriteBatch();
     private MeshBuffer meshBuffer = new MeshBuffer(SPRITE_BATCH_QUADS);
@@ -38,9 +38,7 @@ public class MainMenuGameState extends AbstractGameState {
 
     public MainMenuGameState() {
         this.rootMenu.rootComponents.add(this.rootMenuComponent);
-
         this.editMenu.rootComponents.add(this.editMenuComponent);
-
         this.exploreMenu.rootComponents.add(this.exploreMenuComponent);
     }
 
@@ -49,7 +47,6 @@ public class MainMenuGameState extends AbstractGameState {
         super.use();
         Mouse.MOUSE.setLocked(false);
         this.editMenuComponent.readLevels();
-        this.levelToExplore = null;
     }
 
     public void gotoExploreMenu() {
@@ -57,8 +54,10 @@ public class MainMenuGameState extends AbstractGameState {
     }
 
     public void gotoExplore(String levelName) {
-        this.levelToExplore = levelName;
-        LevelCache.LEVEL_CACHE.requestLevel(levelName);
+        var levelCacheEntry = LevelCache.LEVEL_CACHE.getLevelCacheEntry(levelName);
+        var gotoWorkUnit = new WorkUnit(() -> ExploreGameState.EXPLORE_GAME_STATE.use(levelName));
+        gotoWorkUnit.registerDependency(levelCacheEntry.setupWorkUnit);
+        gotoWorkUnit.submit();
     }
 
     public void gotoEditMenu() {
@@ -69,22 +68,10 @@ public class MainMenuGameState extends AbstractGameState {
         this.usedRoot = this.rootMenu;
     }
 
-    public LevelCacheEntryState getLevelCacheEntryState() {
-        if(this.levelToExplore == null) {
-            return null;
-        }
-
-        return LevelCache.LEVEL_CACHE.getLevelCacheEntryState(this.levelToExplore);
-    }
-
     @Override
     public void update() {
         this.meshBuffer.clear();
         this.spriteBatch.clear();
-
-        if(this.levelToExplore != null && LevelCache.LEVEL_CACHE.isLevelReady(this.levelToExplore)) {
-            ExploreGameState.EXPLORE_GAME_STATE.use(this.levelToExplore);
-        }
 
         var root = this.usedRoot;
         root.update();
@@ -92,7 +79,7 @@ public class MainMenuGameState extends AbstractGameState {
         root.selectedCursor.writeCursor(this.spriteBatch);
 
         this.spriteBatch.writeSpriteBatchToMeshBuffer(this.meshBuffer);
-        this.meshBuffer.writeMeshTo(this.mesh);
+        this.meshBuffer.writeMeshBufferToMesh(this.mesh);
 
         PhysicalRenderTarget.PHYSICAL_RENDER_TARGET.useRenderTarget();
         GL42.glDisable(GL42.GL_DEPTH_TEST);

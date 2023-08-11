@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import doors.Config;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.level.block.Block;
+import doors.level.block.AbstractBlock;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.WindowBorderComponent;
 import doors.ui.component.layout.RowComponent;
@@ -49,7 +49,7 @@ public class EditQuickBarComponent implements IComponent {
         this.borderComponent = new WindowBorderComponent(paddingComponent);
     }
 
-    public Block getSelectedBlock() {
+    public AbstractBlock getSelectedBlock() {
         var slot = this.selectedSlot.value;
         if(slot == null) {
             return null;

@@ -3,7 +3,7 @@ package doors.ui.component.edit;
 import doors.Config;
 import doors.graphics.text.FontDecoration;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.MenuTexture;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.level.Level;
 import doors.state.MainMenuGameState;
 import doors.ui.component.ButtonComponent;
@@ -53,7 +53,7 @@ public class EditMenuComponent implements IComponent {
         layoutComponent.children.add(buttonSpan);
 
         this.windowComponent = new WindowComponent(
-            MenuTexture.MENU_TEXTURE.iconFolder, 
+            MenuTextureSample.ICON_FOLDER, 
             "Choose blocks:",
             new PaddingComponent(layoutComponent, WINDOW_PADDING)
         );
@@ -73,7 +73,7 @@ public class EditMenuComponent implements IComponent {
 
     public void setLevel(Level level) {
         this.tableComponent.getRows().clear();
-        for(var block : level.blockMap.getBlocks()) {
+        for(var block : level.getBlocks()) {
             this.tableComponent.getRows().add(new EditBlockTableRowComponent(block));
         }
     }

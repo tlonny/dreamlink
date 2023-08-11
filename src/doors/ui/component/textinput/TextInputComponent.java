@@ -7,7 +7,6 @@ import doors.ui.component.border.DialogState;
 import doors.ui.component.layout.PaddingComponent;
 import doors.ui.cursor.PointerCursor;
 import doors.ui.root.UIRoot;
-import doors.utility.Functional.IAction0;
 import doors.utility.vector.Vector2in;
 
 public class TextInputComponent implements IComponent {
@@ -18,18 +17,18 @@ public class TextInputComponent implements IComponent {
     private PaddingComponent paddingComponent;
     private DialogBorderComponent dialogBorderComponent;
 
-    public TextInputComponent(int maxLength, IAction0 onChange) {
-        this.textInputComponent = new TextInputTextComponent(maxLength, onChange);
+    public TextInputComponent(int maxLength) {
+        this.textInputComponent = new TextInputTextComponent(maxLength);
         this.paddingComponent = new PaddingComponent(textInputComponent, PADDING);
         this.dialogBorderComponent = new DialogBorderComponent(paddingComponent);
     }
 
-    public TextInputComponent(int maxLength) {
-        this(maxLength, null);
-    }
-
     public String getText() {
         return this.textInputComponent.getText();
+    }
+
+    public void setText(String text) {
+        this.textInputComponent.setText(text);
     }
 
     public void setDisabled(boolean isDisabled) {

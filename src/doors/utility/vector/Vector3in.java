@@ -138,6 +138,10 @@ public class Vector3in implements IVector3fl {
         return this.x * this.y * this.z;
     }
 
+    public int getIntSum() {
+        return this.x + this.y + this.z;
+    }
+
     public int serialize(Vector3in dimensions) {
         var index = 0;
         index += this.z * dimensions.x * dimensions.y;
@@ -148,5 +152,28 @@ public class Vector3in implements IVector3fl {
 
     public String toString() {
         return String.format("Vector3in(%d, %d, %d)", this.x, this.y, this.z);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return true
+            && other instanceof Vector3in
+            && this.x == ((Vector3in) other).x
+            && this.y == ((Vector3in) other).y
+            && this.z == ((Vector3in) other).z;
+    }
+
+    @Override
+    public int hashCode() {
+        var result = 17;
+
+        result *= 31;
+        result += this.x;
+        result *= 31;
+        result += this.y;
+        result *= 31;
+        result += this.z;
+
+        return result;
     }
 }

@@ -37,9 +37,7 @@ public class Window {
         var vidMode = GLFW.glfwGetVideoMode(primaryMonitorID);
         this.dimensions.set(vidMode.width(), vidMode.height());
         this.windowID = GLFW.glfwCreateWindow(this.dimensions.x, this.dimensions.y, TITLE, primaryMonitorID, MemoryUtil.NULL);
-    }
 
-    public void setup() {
         GLFW.glfwMakeContextCurrent(this.windowID);
         GLFW.glfwSwapInterval(1);
         GLFW.glfwShowWindow(this.windowID);
@@ -51,6 +49,16 @@ public class Window {
         GL42.glBlendFunc(GL42.GL_SRC_ALPHA, GL42.GL_ONE_MINUS_SRC_ALPHA);
         GL42.glPixelStorei(GL42.GL_UNPACK_ALIGNMENT, 1);
         GLFW.glfwSetInputMode(this.windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+
+        // Debug stuff to toggle on/off if stuff breaks
+        // GL42.glDisable(GL42.GL_CULL_FACE);
+        // GL42.glPolygonMode(GL42.GL_FRONT_AND_BACK, GL42.GL_LINE);
+    }
+
+    public void noop() {
+        // This no-op function call allows us to force the Window singleton
+        // to be initialized earlier than it would be otherwise. This is important
+        // as without this class, other GLFW/GL calls will fail.
     }
 
     public boolean isFocused() {

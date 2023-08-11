@@ -1,14 +1,12 @@
 package doors.graphics.texture.channel;
 
-import doors.graphics.texture.AbstractTextureChannel;
-
 public class EntityTextureChannel extends AbstractTextureChannel {
 
     public static EntityTextureChannel ENTITY_TEXTURE_CHANNEL = new EntityTextureChannel();
 
     @Override
-    public int getTextureChannelID() {
-        return 2;
+    public int getTextureUnitID() {
+        return 3;
     }
     
 }

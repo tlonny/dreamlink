@@ -8,6 +8,7 @@ import doors.Config;
 import doors.graphics.mesh.TextureSampleMode;
 import doors.utility.FileIO;
 import doors.utility.vector.Vector3fl;
+import doors.utility.vector.IVector2fl;
 import doors.utility.vector.IVector3fl;
 
 import java.nio.FloatBuffer;
@@ -27,6 +28,7 @@ public class Shader {
     private static String UNIFORM_MODEL_MATRIX = "model_matrix";
     private static String UNIFORM_COLOR = "color";
     private static String UNIFORM_TEXTURE_SAMPLE_MODE = "texture_sample_mode";
+    private static String UNIFORM_TEXTURE_DIMENSIONS = "texture_dimensions";
     private static String UNIFORM_CUBE_TRANSFORMER_MATRICES = "cube_transformer_matrices";
 
     private static String UNIFORM_SAMPLER_PREFIX = "sampler_";
@@ -47,21 +49,8 @@ public class Shader {
     private int uniformModelMatrixID;
     private int uniformColorID;
     private int uniformCubeTransformerMatricesID;
+    private int uniformTextureDimensionsID;
     private int uniformTextureSampleModeID;
-
-    private int createUniformVariable(String uniformName) {
-        return GL42.glGetUniformLocation(this.programID, uniformName);
-    }
-
-    private void attachShader(int shaderID, String shaderCode) {
-        GL42.glShaderSource(shaderID, shaderCode);
-        GL42.glCompileShader(shaderID);
-        if(GL42.glGetShaderi(shaderID, GL42.GL_COMPILE_STATUS) == 0) {
-            System.err.println(GL42.glGetShaderInfoLog(shaderID));
-            throw new RuntimeException("Shader compilation failed");
-        }
-        GL42.glAttachShader(this.programID, shaderID);
-    }
 
     public Shader() {
         this.programID = GL42.glCreateProgram();
@@ -83,6 +72,7 @@ public class Shader {
         this.uniformModelMatrixID = this.createUniformVariable(UNIFORM_MODEL_MATRIX);
         this.uniformColorID = this.createUniformVariable(UNIFORM_COLOR);
         this.uniformCubeTransformerMatricesID = this.createUniformVariable(UNIFORM_CUBE_TRANSFORMER_MATRICES);
+        this.uniformTextureDimensionsID = this.createUniformVariable(UNIFORM_TEXTURE_DIMENSIONS);
         this.uniformTextureSampleModeID = this.createUniformVariable(UNIFORM_TEXTURE_SAMPLE_MODE);
 
         for(var ix = 0; ix < NUM_TEXTURE_CHANNELS; ix++) {
@@ -95,6 +85,19 @@ public class Shader {
         this.setCubeTransformer(DEFAULT_CUBE_ID, Vector3fl.ZERO, Vector3fl.ZERO, Vector3fl.ONE);
     }
 
+    private int createUniformVariable(String uniformName) {
+        return GL42.glGetUniformLocation(this.programID, uniformName);
+    }
+
+    private void attachShader(int shaderID, String shaderCode) {
+        GL42.glShaderSource(shaderID, shaderCode);
+        GL42.glCompileShader(shaderID);
+        if(GL42.glGetShaderi(shaderID, GL42.GL_COMPILE_STATUS) == 0) {
+            System.err.println(GL42.glGetShaderInfoLog(shaderID));
+            throw new RuntimeException("Shader compilation failed");
+        }
+        GL42.glAttachShader(this.programID, shaderID);
+    }
     public void setTextureSampleMode(TextureSampleMode mode) {
         this.setUniform(this.uniformTextureSampleModeID, mode.value);
     }
@@ -114,9 +117,8 @@ public class Shader {
         this.workingMatrix.identity().translate(-position.getFloatX(), -position.getFloatY(), -position.getFloatZ());
         this.setUniform(this.uniformViewTranslationMatrixID, this.workingMatrix);
 
-        // By default openGL looks down the negative Z axis [BACK]. Our "default" orientation is [FRONT],
-        // thus ontop of the standard camera view translations, we want to finish by rotating the world
-        // by 180 degrees to ensure the camera is looking in the [FRONT] direction.
+        // If the CAMERA is facing in the positive Z (FRONT) direction, then we will be seeing all of the
+        // BACK faces. Thus, we need to rotate our camera by 180 degrees.
         this.workingMatrix.identity().rotateY((float)Math.PI).rotateX(-rotation.x).rotateY(-rotation.y);
         this.setUniform(this.uniformViewRotationMatrixID, this.workingMatrix);
 
@@ -142,6 +144,11 @@ public class Shader {
         this.setUniform(offsetID, this.workingMatrix);
     }
 
+    public void setTextureDimensions(int textureUnitID, IVector2fl dimensions) {
+        var offsetID = this.uniformTextureDimensionsID + textureUnitID;
+        this.setUniform(offsetID, dimensions);
+    }
+
     public void setColor(Vector3fl color) {
         this.setUniform(this.uniformColorID, color);
     }
@@ -150,8 +157,12 @@ public class Shader {
         GL42.glUniform1i(uniformID, value);
     }
 
-    private void setUniform(int uniformID, Vector3fl value) {
-        GL42.glUniform3f(uniformID, value.x, value.y, value.z);
+    private void setUniform(int uniformID, IVector3fl value) {
+        GL42.glUniform3f(uniformID, value.getFloatX(), value.getFloatY(), value.getFloatZ());
+    }
+
+    private void setUniform(int uniformID, IVector2fl value) {
+        GL42.glUniform2f(uniformID, value.getFloatX(), value.getFloatY());
     }
 
     private void setUniform(int uniformID, Matrix4f value) {

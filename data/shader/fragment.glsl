@@ -19,6 +19,7 @@ uniform sampler2D sampler_8;
 uniform sampler2D sampler_9;
 uniform int texture_sample_mode;
 uniform vec3 color;
+uniform vec2 texture_dimensions[10];
 
 const int TEXTURE_SAMPLE_MODE_NORMAL = 0;
 const int TEXTURE_SAMPLE_MODE_SCREEN = 1;

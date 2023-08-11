@@ -2,7 +2,7 @@ package doors.ui.component.edit;
 
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.io.Keyboard;
-import doors.level.block.Block;
+import doors.level.block.AbstractBlock;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.DialogBorderComponent;
 import doors.ui.component.border.DialogState;
@@ -12,7 +12,6 @@ import doors.ui.component.layout.box.FixedDimension;
 import doors.ui.component.BackgroundComponent;
 import doors.ui.root.UIRoot;
 import doors.utility.BoxedValue;
-import doors.utility.CubeFace;
 import doors.utility.vector.Vector2in;
 
 public class EditQuickBarSlotComponent implements IComponent {
@@ -26,7 +25,7 @@ public class EditQuickBarSlotComponent implements IComponent {
     private DialogBorderComponent borderComponent;
     private BackgroundComponent slotComponent;
 
-    public Block block;
+    public AbstractBlock block;
     
     public EditQuickBarSlotComponent(int keyCode, BoxedValue<EditQuickBarSlotComponent> selectedSlot) {
         this.keyCode = keyCode;
@@ -95,9 +94,9 @@ public class EditQuickBarSlotComponent implements IComponent {
 
         if(isDragged && isHovered) {
             var draggedBlock = ((EditBlockTableRowComponent)root.draggedComponent).block;
-            this.slotComponent.textureSample = draggedBlock.getTextureSample(CubeFace.FRONT);
+            this.slotComponent.textureSample = draggedBlock.getIconTextureSample();
         } else if(this.block != null) {
-            this.slotComponent.textureSample = this.block.getTextureSample(CubeFace.FRONT);
+            this.slotComponent.textureSample = this.block.getIconTextureSample();
         } else {
             this.slotComponent.textureSample = null;
         }

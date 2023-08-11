@@ -2,8 +2,8 @@ package doors.graphics.text;
 
 import doors.graphics.spritebatch.SpriteBatch;
 import doors.graphics.spritebatch.SpriteBatchHeight;
-import doors.graphics.texture.MenuTexture;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.MenuTextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
@@ -40,7 +40,7 @@ public class Glyph {
     ) {
         if(fontDecoration == FontDecoration.HIGHLIGHT) {
             spriteBatch.pushSprite(
-                MenuTexture.MENU_TEXTURE.white,
+                MenuTextureSample.WHITE,
                 position,
                 GLYPH_DIMENSIONS,
                 height,

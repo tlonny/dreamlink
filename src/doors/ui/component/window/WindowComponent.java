@@ -1,7 +1,7 @@
 package doors.ui.component.window;
 
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.ui.component.IComponent;
 import doors.ui.component.border.WindowBorderComponent;
 import doors.ui.component.layout.ColumnComponent;

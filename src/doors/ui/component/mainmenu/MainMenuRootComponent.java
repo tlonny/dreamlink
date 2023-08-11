@@ -1,9 +1,9 @@
 package doors.ui.component.mainmenu;
 
 import doors.graphics.text.FontDecoration;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.Config;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.MenuTexture;
 import doors.io.Window;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
@@ -36,7 +36,7 @@ public class MainMenuRootComponent implements IComponent {
         layoutSpanComponent.children.add(this.createButton("Quit", this::quit));
 
         this.windowComponent = new WindowComponent(
-            MenuTexture.MENU_TEXTURE.iconFolder,
+            MenuTextureSample.ICON_FOLDER,
             "Main Menu",
             new PaddingComponent(layoutSpanComponent, WINDOW_PADDING)
         );

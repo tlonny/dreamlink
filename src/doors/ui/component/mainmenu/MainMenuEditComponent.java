@@ -4,8 +4,8 @@ import java.io.File;
 
 import doors.Config;
 import doors.graphics.text.FontDecoration;
+import doors.graphics.texture.sample.MenuTextureSample;
 import doors.graphics.spritebatch.SpriteBatch;
-import doors.graphics.texture.MenuTexture;
 import doors.state.EditGameState;
 import doors.state.MainMenuGameState;
 import doors.ui.component.IComponent;
@@ -56,7 +56,7 @@ public class MainMenuEditComponent implements IComponent {
         layoutComponent.children.add(buttonSpan);
 
         this.windowComponent = new WindowComponent(
-            MenuTexture.MENU_TEXTURE.iconFolder,
+            MenuTextureSample.ICON_FOLDER,
             "Edit Menu",
             new PaddingComponent(layoutComponent, WINDOW_PADDING)
         );

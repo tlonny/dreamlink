@@ -1,6 +1,6 @@
 package doors.graphics.spritebatch;
 
-import doors.graphics.texture.TextureSample;
+import doors.graphics.texture.sample.TextureSample;
 import doors.utility.vector.Vector2in;
 import doors.utility.vector.Vector3fl;
 
