@@ -245,7 +245,7 @@ public class HomeCreditsComponent extends WrapperComponent {
     }
 
     private ISpriteTemplate getSelectedAvatar() {
-        if(this.selectedRowIndex == -1) {
+        if(!IntMaths.inRange(CreditsRow.getSize(), this.selectedRowIndex)) {
             return null;
         }
 
