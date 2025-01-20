@@ -41,7 +41,7 @@ public class HomeEditRoomCreateComponent extends WrapperComponent{
             var roomName = HomeEditRoomCreateComponent.this.name;
             var packName = PackState.instance.getPack(HomeEditRoomCreateComponent.this.selectedPackIndex);
             var roomPath = LocalRoomState.instance.addRoom(roomName).file.toPath();
-            FileFns.copyDirectory(packName.packPath, roomPath.resolve("pack").toFile());
+            FileFns.copyDirectory(packName.file, roomPath.resolve("pack").toFile());
             var terrainFile = roomPath.resolve("terrain.dat").toFile();
 
             try(
