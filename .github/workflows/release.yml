@@ -60,6 +60,12 @@ jobs:
             path: |
                 dist/*.dmg
                 target/*.jar
+          - id: "win-build"
+            os: windows-2022
+            build: "mvn clean compile package jpackage:jpackage -Pwindows"
+            path: |
+                dist/*.msi
+                target/*.jar
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout code"
@@ -103,4 +109,5 @@ jobs:
           files: |
             dist/**/*.deb
             dist/**/*.dmg
+            dist/**/*.msi
             dist/**/*.jar

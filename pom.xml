@@ -40,18 +40,18 @@
                             </arguments>
                         </configuration>
                     </plugin>
-                <plugin>
-                    <groupId>org.panteleyev</groupId>
-                    <artifactId>jpackage-maven-plugin</artifactId>
-                    <version>1.6.0</version>
-                    <configuration>
-                        <type>DMG</type>
-                        <javaOptions>
-                            <option>-XstartOnFirstThread</option>
-                            <option>-Dfile.encoding=UTF-8</option>
-                        </javaOptions>
-                    </configuration>
-                </plugin>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <configuration>
+                            <type>DMG</type>
+                            <javaOptions>
+                                <option>-XstartOnFirstThread</option>
+                                <option>-Dfile.encoding=UTF-8</option>
+                            </javaOptions>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -68,6 +68,20 @@
                 <profile.id>windows</profile.id>
                 <lwjgl.classifier>natives-windows</lwjgl.classifier>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <configuration>
+                            <winShortcut>true</winShortcut>
+                            <winMenu>true</winMenu>
+                            <type>MSI</type>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
