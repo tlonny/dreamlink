@@ -40,7 +40,9 @@ public class PackState {
                         continue;
                     }
 
-                    try(var stream = classLoader.getResourceAsStream(pack.file.toString())) {
+                    // Windows paths are backslash-separated, but we need forward slashes when using the class loader
+                    var resourcePath = pack.file.toString().replace("\\", "/");
+                    try(var stream = classLoader.getResourceAsStream(resourcePath)) {
                         Files.copy(stream, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
                         FileFns.extractZip(tempFilePath.toFile(), destinationFile);
                     }

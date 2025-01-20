@@ -7,8 +7,8 @@ public class Pack {
     public final String packName;
     public final File file; 
 
-    public Pack(String roomName, File file) {
-        this.packName = roomName;
+    public Pack(String packName, File file) {
+        this.packName = packName;
         this.file = file;
     }
     
