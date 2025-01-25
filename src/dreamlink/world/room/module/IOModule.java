@@ -53,8 +53,10 @@ public class IOModule {
                 var contentType = connection.getContentType();
                 var tempFile = File.createTempFile("room", ".zip");
 
-                if(!IOModule.expectedContentType.equals(contentType)) {
-                    throw RoomLoadException.invalidContentType(contentType);
+                if(connection.getResponseCode() != 200) {
+                    throw RoomLoadException.downloadFailed(roomName);
+                } else if(!IOModule.expectedContentType.equals(contentType)) {
+                    throw RoomLoadException.downloadFailed(roomName);
                 }
 
                 try(
@@ -67,7 +69,7 @@ public class IOModule {
                     tempFile.delete();
                 }
             } catch(IOException e) {
-                throw RoomLoadException.downloadFailed(downloadPathSegment);
+                throw RoomLoadException.downloadFailed(roomName);
             } finally {
                 if(connection != null) {
                     connection.disconnect();

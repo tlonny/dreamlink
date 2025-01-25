@@ -63,9 +63,11 @@ public class FileFns {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    var zipEntry = new ZipEntry(String.format("%s/", basePath.relativize(dir)));
-                    zipStream.putNextEntry(zipEntry);
-                    zipStream.closeEntry();
+                    if(!basePath.equals(dir)) {
+                        var zipEntry = new ZipEntry(String.format("%s/", basePath.relativize(dir)));
+                        zipStream.putNextEntry(zipEntry);
+                        zipStream.closeEntry();
+                    }
                     return FileVisitResult.CONTINUE;
                 }
             });

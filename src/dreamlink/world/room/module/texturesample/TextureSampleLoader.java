@@ -59,14 +59,6 @@ public class TextureSampleLoader {
 
             var animationSpeed = config.optInt(TextureSampleLoader.animationSpeedKey, TextureSampleLoader.defaultAnimationSpeed);
 
-            if(file.getName().contains("magma")) {
-                System.out.println("Magma: " + file.getName());
-                System.out.println(animationFramesRow);
-                System.out.println(animationFramesTotal);
-                System.out.println(animationFramesStart);
-                System.out.println(animationSpeed);
-            }
-
             return new TextureSample(
                 TextureUnit.room,
                 provider.getTextureAtlasModule().getDimensions(new Vector2i()),
