@@ -151,7 +151,7 @@ public class TerrainShaderProgram extends ShaderProgram {
 
     private final AnimationFrameUniformVariable animationFrame = new AnimationFrameUniformVariable(this);
     private final ArrayList<UniformVariable<Matrix4f>> transformMatrices = new ArrayList<>();
-    private final ArrayList<UniformVariable<Vector3fc>> shaderProgramLights = new ArrayList<>();
+    private final ArrayList<UniformVariable<Vector3fc>> shaderProgramColors = new ArrayList<>();
     private final ArrayList<UniformVariable<Integer>> samplers = new ArrayList<>();
 
     private final TransformerStrategy transformerStrategy = new TransformerStrategy(
@@ -180,7 +180,7 @@ public class TerrainShaderProgram extends ShaderProgram {
 
         for(var ix = 0; ix < ShaderProgramColor.size(); ix += 1) {
             var shaderLightColor = ShaderProgramColor.get(ix);
-            this.shaderProgramLights.add(
+            this.shaderProgramColors.add(
                 new UniformVariable<>(
                     this,
                     new Vector3fUniformStrategy(),
@@ -202,7 +202,7 @@ public class TerrainShaderProgram extends ShaderProgram {
     }
 
     public void setColor(ShaderProgramColor channel, Vector3fc lightColor) {
-        this.shaderProgramLights.get(channel.getIndex()).setValue(lightColor);
+        this.shaderProgramColors.get(channel.getIndex()).setValue(lightColor);
     }
 
     public void setAnimationFrame(int frame) {

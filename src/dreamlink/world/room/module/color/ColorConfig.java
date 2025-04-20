@@ -26,24 +26,31 @@ public class ColorConfig {
         Vector3fMaths.zero
     );
 
-    private static final ColorConfig[] lightConfigs = new ColorConfig[] {
+    private static final ColorConfig fog = new ColorConfig(
+        "fog",
+        ShaderProgramColor.fog,
+        Vector3fMaths.zero
+    );
+
+    private static final ColorConfig[] colorConfigs = new ColorConfig[] {
         ColorConfig.primary,
         ColorConfig.secondary,
-        ColorConfig.tertiary
+        ColorConfig.tertiary,
+        ColorConfig.fog
     };
 
     public static void setup() {
-        for(var ix = 0; ix < lightConfigs.length; ix += 1) {
-            lightConfigs[ix].index = ix;
+        for(var ix = 0; ix < colorConfigs.length; ix += 1) {
+            colorConfigs[ix].index = ix;
         }
     }
 
     public static int getSize() {
-        return ColorConfig.lightConfigs.length;
+        return ColorConfig.colorConfigs.length;
     }
 
     public static ColorConfig get(int index) {
-        return ColorConfig.lightConfigs[index];
+        return ColorConfig.colorConfigs[index];
     }
 
     private int index;

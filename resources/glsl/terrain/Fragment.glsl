@@ -31,6 +31,7 @@ uniform vec3 primary_light_color;
 uniform vec3 secondary_light_color;
 uniform vec3 tertiary_light_color;
 uniform vec3 portal_light_color;
+uniform vec3 fog_color;
 
 uniform int can_see_hidden_blocks;
 uniform int is_lighting_enabled;
@@ -89,8 +90,8 @@ void main() {
     }
 
     if(is_fog_enabled == 1) {
-        float fog_factor = (camera_distance - fog_start_distance) / (fog_range + epsilon);
-        frag_color.rgb = frag_color.rgb * (1.0 - clamp(fog_factor, 0.0, 1.0));
+        float fog_factor = clamp((camera_distance - fog_start_distance) / (fog_range + epsilon), 0.0, 1.0);
+        frag_color.rgb = frag_color.rgb * (1.0 - fog_factor) + fog_color * fog_factor;
     }
     
     if(vert_terrain_metadata.is_hidden == 1 && can_see_hidden_blocks != 1) {

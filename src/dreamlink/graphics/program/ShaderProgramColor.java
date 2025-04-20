@@ -22,25 +22,30 @@ public class ShaderProgramColor {
         "portal_light_color"
     );
 
-    private static final ShaderProgramColor[] lightColors = new ShaderProgramColor[] {
+    public static final ShaderProgramColor fog = new ShaderProgramColor(
+        "fog_color"
+    );
+
+    private static final ShaderProgramColor[] colors = new ShaderProgramColor[] {
         ShaderProgramColor.baseLight,
         ShaderProgramColor.primaryLight,
         ShaderProgramColor.secondaryLight,
         ShaderProgramColor.tertiaryLight,
-        ShaderProgramColor.portalLight
+        ShaderProgramColor.portalLight,
+        ShaderProgramColor.fog
     };
 
     public static int size() {
-        return lightColors.length;
+        return colors.length;
     }
 
     public static ShaderProgramColor get(int index) {
-        return lightColors[index];
+        return colors[index];
     }
 
     public static void setup() {
-        for(var ix = 0; ix < lightColors.length; ix += 1) {
-            lightColors[ix].index = ix;
+        for(var ix = 0; ix < colors.length; ix += 1) {
+            colors[ix].index = ix;
         }
     }
 
