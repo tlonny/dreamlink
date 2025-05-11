@@ -16,8 +16,9 @@ public class PackState {
     public static final PackState instance = new PackState();
 
     private static Pack[] defaultPacks = new Pack[] {
-        new Pack("dreamlink/colors", new File("pack/colors.zip")),
-        new Pack("dreamlink/mc", new File("pack/mc.zip"))
+        new Pack("colors", new File("pack/colors.zip")),
+        new Pack("minecraft", new File("pack/minecraft.zip")),
+        new Pack("blank", new File("pack/blank.zip"))
     };
 
     private final List<Pack> packs = new ArrayList<>();
