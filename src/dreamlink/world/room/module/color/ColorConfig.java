@@ -26,6 +26,12 @@ public class ColorConfig {
         Vector3fMaths.zero
     );
 
+    public static final ColorConfig base = new ColorConfig(
+        "base_light",
+        ShaderProgramColor.baseLight,
+        Vector3fMaths.one
+    );
+
     private static final ColorConfig fog = new ColorConfig(
         "fog",
         ShaderProgramColor.fog,
@@ -36,6 +42,7 @@ public class ColorConfig {
         ColorConfig.primary,
         ColorConfig.secondary,
         ColorConfig.tertiary,
+        ColorConfig.base,
         ColorConfig.fog
     };
 

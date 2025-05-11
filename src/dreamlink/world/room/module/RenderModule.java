@@ -44,7 +44,6 @@ public class RenderModule {
     private final CullFaceConfig renderCullFaceConfig = new CullFaceConfig();
 
     private final DoorLinkData renderDoorLinkData = new DoorLinkData();
-    private final Vector3f renderBaseLightColor = new Vector3f();
     private final Vector3f renderIncidentLight = new Vector3f();
     private final Vector3f renderShaderLight = new Vector3f();
     private final Vector3f renderTargetIncidentLight = new Vector3f();
@@ -112,11 +111,14 @@ public class RenderModule {
                 TerrainShaderProgram.instance.setColor(ShaderProgramColor.portalLight, targetIncidentLight);
             }
 
-            var baseLightColor = this.renderBaseLightColor.set(settingsModule.baseLight);
-            TerrainShaderProgram.instance.setColor(ShaderProgramColor.baseLight, baseLightColor);
             for(var ix = 0; ix < ColorConfig.getSize(); ix += 1) {
                 var colorConfig = ColorConfig.get(ix);
                 var lightColor = colorModule.getColor(this.renderShaderLight, colorConfig);
+
+                if(colorConfig == ColorConfig.base) {
+                    lightColor.mul(settingsModule.baseLight);
+                }
+
                 TerrainShaderProgram.instance.setColor(
                     colorConfig.color,
                     lightColor
